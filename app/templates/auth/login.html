@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+
+{% block auth_content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background:#0A0F1E;">
+  <div style="width:100%;max-width:400px;padding:1rem;">
+
+    <div class="text-center mb-4">
+      <h1 style="font-size:1.5rem;font-weight:800;color:#fff;">
+        Invoice<span style="color:#E91E8C;">Bot</span>
+      </h1>
+      <div style="font-size:.6rem;letter-spacing:.14em;color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:2px;">AINTORA SYSTEMS</div>
+      <p style="font-size:.875rem;color:rgba(255,255,255,.4);margin-top:.5rem;">Automated invoice follow-up for freelancers</p>
+    </div>
+
+    <div class="card border-0" style="border-radius:12px;background:#111827;border:1px solid rgba(255,255,255,.08)!important;">
+      <div class="card-body p-4">
+        <h2 class="mb-4" style="font-size:1.125rem;font-weight:700;color:#fff;">Sign in to your account</h2>
+
+        <form method="POST">
+          {{ form.hidden_tag() }}
+
+          <div class="mb-3">
+            {{ form.email.label(class="form-label", style="color:rgba(255,255,255,.6);") }}
+            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""),
+               placeholder="you@example.com",
+               style="background:#0A0F1E;border-color:rgba(255,255,255,.1);color:#fff;") }}
+            {% for e in form.email.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+
+          <div class="mb-3">
+            {{ form.password.label(class="form-label", style="color:rgba(255,255,255,.6);") }}
+            {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""),
+               placeholder="••••••••",
+               style="background:#0A0F1E;border-color:rgba(255,255,255,.1);color:#fff;") }}
+            {% for e in form.password.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+
+          <div class="mb-3 form-check">
+            {{ form.remember(class="form-check-input") }}
+            <label class="form-check-label" for="remember" style="font-size:.875rem;color:rgba(255,255,255,.5);">Remember me</label>
+          </div>
+
+          <button type="submit" class="btn btn-brand w-100 py-2" style="font-weight:600;">Sign in</button>
+        </form>
+      </div>
+    </div>
+
+    <p class="text-center mt-3" style="font-size:.875rem;color:rgba(255,255,255,.35);">
+      <a href="{{ url_for('auth.forgot_password') }}" style="color:rgba(255,255,255,.4);">Forgot password?</a>
+      &nbsp;·&nbsp;
+      No account? <a href="{{ url_for('auth.register') }}" style="color:#E91E8C;">Create one free</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

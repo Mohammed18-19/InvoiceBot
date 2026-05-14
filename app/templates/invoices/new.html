@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}New Invoice{% endblock %}
+{% block page_title %}New Invoice{% endblock %}
+
+{% block content %}
+<div style="max-width:680px;">
+
+  {% if not current_user.can_add_invoice %}
+  <div class="alert alert-warning">
+    You've reached your plan limit of <strong>{{ current_user.invoice_limit }} active invoices</strong>.
+    <a href="{{ url_for('billing.upgrade') }}" style="color:#92400e;">Upgrade to add more.</a>
+  </div>
+  {% endif %}
+
+  <form method="POST" action="{{ url_for('invoices.new_invoice') }}">
+    {{ form.hidden_tag() }}
+
+    <div class="card-section mb-3">
+      <h2 style="font-size:1rem;font-weight:700;margin-bottom:1.25rem;">Invoice details</h2>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          {{ form.client_name.label(class="form-label") }}
+          {{ form.client_name(class="form-control" + (" is-invalid" if form.client_name.errors else ""), placeholder="Acme Corp") }}
+          {% for e in form.client_name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="col-md-6">
+          {{ form.client_email.label(class="form-label") }}
+          {{ form.client_email(class="form-control" + (" is-invalid" if form.client_email.errors else ""), placeholder="client@company.com") }}
+          {% for e in form.client_email.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          {{ form.invoice_number.label(class="form-label") }}
+          {{ form.invoice_number(class="form-control", placeholder="INV-001") }}
+        </div>
+        <div class="col-md-4">
+          {{ form.amount.label(class="form-label") }}
+          {{ form.amount(class="form-control" + (" is-invalid" if form.amount.errors else "")) }}
+          {% for e in form.amount.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="col-md-4">
+          {{ form.currency.label(class="form-label") }}
+          {{ form.currency(class="form-select") }}
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          {{ form.due_date.label(class="form-label") }}
+          {{ form.due_date(class="form-control" + (" is-invalid" if form.due_date.errors else "")) }}
+          {% for e in form.due_date.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="col-md-6">
+          {{ form.payment_link.label(class="form-label") }}
+          {{ form.payment_link(class="form-control", placeholder="https://...") }}
+          <div class="form-text">Embedded in reminder emails so clients can pay with one click.</div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        {{ form.description.label(class="form-label") }}
+        {{ form.description(class="form-control", rows=2, placeholder="Website redesign — Phase 1") }}
+      </div>
+    </div>
+
+    <div class="card-section mb-3">
+      <h2 style="font-size:1rem;font-weight:700;margin-bottom:.25rem;">Email tone</h2>
+      <p class="text-muted mb-3" style="font-size:.8rem;">Controls the language of all automated reminders for this invoice.</p>
+
+      <div class="row g-2 mb-4">
+        <div class="col-md-4">
+          <label class="d-block" style="cursor:pointer;">
+            <input type="radio" name="tone" value="polite" class="d-none tone-radio" checked>
+            <div class="tone-option p-3 border rounded">
+              <div style="font-weight:600;font-size:.875rem;">Polite</div>
+              <div style="font-size:.75rem;color:#6b7280;margin-top:2px;">Friendly & warm — best for long-term clients</div>
+            </div>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="d-block" style="cursor:pointer;">
+            <input type="radio" name="tone" value="professional" class="d-none tone-radio">
+            <div class="tone-option p-3 border rounded">
+              <div style="font-weight:600;font-size:.875rem;">Professional</div>
+              <div style="font-size:.75rem;color:#6b7280;margin-top:2px;">Formal business tone — best for corporate clients</div>
+            </div>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <label class="d-block" style="cursor:pointer;">
+            <input type="radio" name="tone" value="firm" class="d-none tone-radio">
+            <div class="tone-option p-3 border rounded">
+              <div style="font-weight:600;font-size:.875rem;">Firm</div>
+              <div style="font-size:.75rem;color:#6b7280;margin-top:2px;">Direct & urgent — best for overdue situations</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <h2 style="font-size:1rem;font-weight:700;margin-bottom:.25rem;">Send schedule</h2>
+      <p class="text-muted mb-3" style="font-size:.8rem;">Days <strong>after</strong> the due date each reminder fires. Emails send at 09:00 UTC.</p>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <label class="form-label">Stage 1 (polite reminder)</label>
+          <div class="d-flex align-items-center gap-2">
+            {{ form.stage1_delay(class="form-control", style="width:80px;") }}
+            <span class="text-muted" style="font-size:.8rem;">days after due</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Stage 2 (follow-up)</label>
+          <div class="d-flex align-items-center gap-2">
+            {{ form.stage2_delay(class="form-control", style="width:80px;") }}
+            <span class="text-muted" style="font-size:.8rem;">days after due</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Stage 3 (final notice)</label>
+          <div class="d-flex align-items-center gap-2">
+            {{ form.stage3_delay(class="form-control", style="width:80px;") }}
+            <span class="text-muted" style="font-size:.8rem;">days after due</span>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-brand px-4 py-2">
+        <i class="bi bi-check-circle me-2"></i>Add invoice &amp; start sequence
+      </button>
+      <a href="{{ url_for('invoices.list_invoices') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+
+    </div>
+  </form>
+</div>
+
+<style>
+  .tone-option {
+    border: 1.5px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    transition: .15s;
+  }
+  input[type="radio"].tone-radio:checked + .tone-option {
+    border-color: #E91E8C !important;
+    background: rgba(233,30,140,.05);
+  }
+</style>
+
+{% block extra_js %}
+<script>
+  document.querySelectorAll('.tone-radio').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.tone-option').forEach(opt => {
+        opt.style.borderColor = '#e5e7eb';
+        opt.style.background = '';
+      });
+      if (radio.checked) {
+        radio.nextElementSibling.style.borderColor = '#E91E8C';
+        radio.nextElementSibling.style.background = 'rgba(233,30,140,.05)';
+      }
+    });
+  });
+</script>
+{% endblock %}
+
+{% endblock %}

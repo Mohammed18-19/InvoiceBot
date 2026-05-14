@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Invoices{% endblock %}
+{% block page_title %}All Invoices{% endblock %}
+
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div class="d-flex gap-2">
+    {% for label, val in [('All','all'),('Pending','pending'),('Paid','paid'),('Cancelled','cancelled')] %}
+    <a href="{{ url_for('invoices.list_invoices', status=val) }}"
+       class="btn btn-sm {{ 'btn-dark' if status_filter == val else 'btn-outline-secondary' }}">
+      {{ label }}
+    </a>
+    {% endfor %}
+  </div>
+  <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-brand btn-sm">
+    <i class="bi bi-plus"></i> New invoice
+  </a>
+</div>
+
+<div class="card-section p-0">
+  {% if invoices %}
+  <table class="table invoice-table mb-0">
+    <thead>
+      <tr>
+        <th class="ps-3">Client</th>
+        <th>Invoice #</th>
+        <th>Amount</th>
+        <th>Due date</th>
+        <th>Tone</th>
+        <th>Status</th>
+        <th>Emails</th>
+        <th class="pe-3"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inv in invoices %}
+      <tr>
+        <td class="ps-3">
+          <div style="font-weight:600;">{{ inv.client_name }}</div>
+          <div style="font-size:.72rem;color:#6b7280;">{{ inv.client_email }}</div>
+        </td>
+        <td><code style="font-size:.8rem;">{{ inv.invoice_number or ('—') }}</code></td>
+        <td><strong>{{ inv.currency }} {{ "%.2f"|format(inv.amount|float) }}</strong></td>
+        <td>
+          {{ inv.due_date.strftime('%b %d, %Y') }}
+          {% if inv.days_overdue > 0 %}
+            <br><span style="font-size:.72rem;color:#dc2626;">{{ inv.days_overdue }}d overdue</span>
+          {% endif %}
+        </td>
+        <td><span class="badge tone-{{ inv.tone }}">{{ inv.tone }}</span></td>
+        <td>
+          {% if inv.status == 'paid' %}<span class="badge badge-paid">Paid</span>
+          {% elif inv.status == 'cancelled' %}<span class="badge badge-cancelled">Cancelled</span>
+          {% elif inv.days_overdue > 0 %}<span class="badge badge-overdue">Overdue</span>
+          {% else %}<span class="badge badge-pending">Pending</span>{% endif %}
+        </td>
+        <td>{{ inv.sent_emails_count }}/3</td>
+        <td class="pe-3">
+          <a href="{{ url_for('invoices.detail', invoice_id=inv.id) }}"
+             class="btn btn-sm btn-outline-secondary">View</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="text-center py-5 text-muted">
+    <i class="bi bi-inbox" style="font-size:2.5rem;display:block;margin-bottom:.5rem;"></i>
+    <p>No invoices found. <a href="{{ url_for('invoices.new_invoice') }}" style="color:#0d6e4f;">Add your first one.</a></p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

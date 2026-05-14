@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+
+{% block auth_content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background: #f8f9fa;">
+  <div style="width: 100%; max-width: 420px; padding: 1rem;">
+
+    <div class="text-center mb-4">
+      <h1 style="font-size: 1.5rem; font-weight: 800; color: #111;">
+        Invoice<span style="color: #0d6e4f;">Nudge</span>
+      </h1>
+      <p class="text-muted" style="font-size: .875rem;">Stop chasing. Start automating.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+      <div class="card-body p-4">
+        <h2 class="mb-1" style="font-size: 1.125rem; font-weight: 700;">Create your free account</h2>
+        <p class="text-muted mb-4" style="font-size: .8rem;">Free forever · No credit card required</p>
+
+        <form method="POST">
+          {{ form.hidden_tag() }}
+
+          <div class="mb-3">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), placeholder="Mohammed Tomar") }}
+            {% for e in form.name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+
+          <div class="mb-3">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="you@example.com") }}
+            {% for e in form.email.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+
+          <div class="mb-3">
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Min. 8 characters") }}
+            {% for e in form.password.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+
+          <div class="mb-4">
+            {{ form.confirm.label(class="form-label") }}
+            {{ form.confirm(class="form-control" + (" is-invalid" if form.confirm.errors else ""), placeholder="Repeat password") }}
+            {% for e in form.confirm.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          </div>
+
+          <button type="submit" class="btn btn-brand w-100 py-2">Create free account</button>
+        </form>
+      </div>
+    </div>
+
+    <p class="text-center mt-3 text-muted" style="font-size: .875rem;">
+      Already have an account? <a href="{{ url_for('auth.login') }}" style="color: #0d6e4f;">Sign in</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
