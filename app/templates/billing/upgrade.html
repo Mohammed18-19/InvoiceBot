@@ -1,96 +1,105 @@
 {% extends "base.html" %}
-{% block title %}Upgrade plan{% endblock %}
+{% block title %}Upgrade — InvoiceBot{% endblock %}
 {% block page_title %}Upgrade your plan{% endblock %}
 
 {% block content %}
-<div style="max-width:720px;">
-
-  <p class="text-muted mb-4" style="font-size:.875rem;">
-    You are currently on the <strong>{{ current_user.plan.title() }}</strong> plan.
-    Upgrade to unlock more invoices and premium features.
+<div style="max-width:760px;">
+  <p style="font-size:.875rem;color:#64748b;margin-bottom:2rem;">
+    You're on the <strong style="color:#0f172a;">{{ current_user.plan.title() }}</strong> plan. Upgrade to unlock more invoices and get paid faster.
   </p>
 
-  <div class="row g-3">
+  <div class="row g-3 mb-4">
 
-    <!-- Free -->
-    <div class="col-md-4">
-      <div class="card-section h-100 {% if current_user.plan == 'free' %}border-success{% endif %}">
-        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;">Free</div>
-        <div style="font-size:1.75rem;font-weight:800;margin:.25rem 0;">$0</div>
-        <div style="font-size:.75rem;color:#9ca3af;margin-bottom:1rem;">forever</div>
-        <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;color:#374151;">
-          <li class="mb-2"><i class="bi bi-check text-success me-2"></i>3 active invoices</li>
-          <li class="mb-2"><i class="bi bi-check text-success me-2"></i>3-stage email sequence</li>
-          <li class="mb-2"><i class="bi bi-x text-danger me-2"></i>Tone control</li>
-          <li class="mb-2"><i class="bi bi-x text-danger me-2"></i>Remove branding</li>
-        </ul>
-        {% if current_user.plan == 'free' %}
-        <div class="mt-3 text-center"><span class="badge bg-success">Current plan</span></div>
-        {% endif %}
-      </div>
-    </div>
-
-    <!-- Starter -->
-    <div class="col-md-4">
-      <div class="card-section h-100" style="border:2px solid #E91E8C;">
-        <div class="d-flex align-items-center gap-2 mb-1">
-          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#E91E8C;">Starter</div>
-          <span class="badge" style="background:rgba(233,30,140,.1);color:#E91E8C;font-size:.65rem;">Most popular</span>
-        </div>
-        <div style="font-size:1.75rem;font-weight:800;margin:.25rem 0;">$9</div>
-        <div style="font-size:.75rem;color:#9ca3af;margin-bottom:1rem;">/ month</div>
-        <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;color:#374151;">
-          <li class="mb-2"><i class="bi bi-check text-success me-2"></i>20 active invoices</li>
-          <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Full tone control</li>
-          <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Custom send schedule</li>
-          <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Remove InvoiceBot branding</li>
-          <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Payment link embedding</li>
-        </ul>
-        {% if current_user.plan == 'starter' %}
-        <div class="mt-3 text-center"><span class="badge bg-success">Current plan</span></div>
-        {% elif starter_url %}
-        <a href="{{ starter_url }}?checkout[custom][user_id]={{ current_user.id }}&checkout[custom][user_email]={{ current_user.email }}"
-           class="btn btn-brand w-100 mt-3" target="_blank" style="font-weight:600;">
-          Upgrade to Starter
-        </a>
-        {% else %}
-        <div class="mt-3 text-center text-muted" style="font-size:.75rem;">Payment coming soon</div>
-        {% endif %}
-      </div>
-    </div>
-
-    <!-- Pro -->
     <div class="col-md-4">
       <div class="card-section h-100">
-        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;">Pro</div>
-        <div style="font-size:1.75rem;font-weight:800;margin:.25rem 0;">$19</div>
-        <div style="font-size:.75rem;color:#9ca3af;margin-bottom:1rem;">/ month</div>
-        <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;color:#374151;">
-          <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Unlimited invoices</li>
-          <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Everything in Starter</li>
-          <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Custom email templates</li>
-          <li class="mb-2"><i class="bi bi-check text-success me-2"></i>WhatsApp reminders <span class="badge bg-warning text-dark" style="font-size:.6rem;">Soon</span></li>
-          <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Priority support</li>
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:.5rem;">Free</div>
+        <div style="font-size:2rem;font-weight:800;color:#0f172a;line-height:1;">$0</div>
+        <div style="font-size:.78rem;color:#94a3b8;margin-bottom:1.25rem;">forever</div>
+        <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;color:#475569;">
+          <li class="mb-2">✓ 3 active invoices</li>
+          <li class="mb-2">✓ 3-stage email sequence</li>
+          <li class="mb-2" style="color:#cbd5e1;">✗ Tone control</li>
+          <li class="mb-2" style="color:#cbd5e1;">✗ Remove branding</li>
         </ul>
-        {% if current_user.plan == 'pro' %}
-        <div class="mt-3 text-center"><span class="badge bg-success">Current plan</span></div>
-        {% elif pro_url %}
-        <a href="{{ pro_url }}?checkout[custom][user_id]={{ current_user.id }}&checkout[custom][user_email]={{ current_user.email }}"
-           class="btn btn-outline-dark w-100 mt-3" target="_blank" style="font-weight:600;">
-          Upgrade to Pro
-        </a>
-        {% else %}
-        <div class="mt-3 text-center text-muted" style="font-size:.75rem;">Payment coming soon</div>
+        {% if current_user.plan == 'free' %}
+        <div class="mt-4 text-center"><span class="badge px-3 py-2" style="background:rgba(233,30,140,.1);color:var(--brand);font-size:.75rem;border-radius:20px;">✓ Current plan</span></div>
         {% endif %}
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-section h-100" style="border:2px solid #E91E8C;position:relative;">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);">
+          <span style="background:var(--brand);color:#fff;font-size:.68rem;font-weight:700;padding:3px 12px;border-radius:20px;">MOST POPULAR</span>
+        </div>
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.5rem;">Starter</div>
+        <div style="font-size:2rem;font-weight:800;color:#0f172a;line-height:1;">$9</div>
+        <div style="font-size:.78rem;color:#94a3b8;margin-bottom:1.25rem;">/ month · cancel anytime</div>
+        <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;color:#475569;">
+          <li class="mb-2">✓ <strong>20 active invoices</strong></li>
+          <li class="mb-2">✓ Full tone control</li>
+          <li class="mb-2">✓ Custom send schedule</li>
+          <li class="mb-2">✓ Remove branding</li>
+          <li>✓ Payment link embedding</li>
+        </ul>
+        <div class="mt-4">
+          {% if current_user.plan == 'starter' %}
+          <div class="text-center"><span class="badge px-3 py-2" style="background:rgba(233,30,140,.1);color:var(--brand);font-size:.75rem;border-radius:20px;">✓ Current plan</span></div>
+          {% elif starter_url %}
+          <a href="{{ starter_url }}?checkout[custom][user_id]={{ current_user.id }}&checkout[custom][user_email]={{ current_user.email }}" class="btn btn-brand w-100 py-2" target="_blank" style="font-weight:700;">Upgrade to Starter →</a>
+          <p style="font-size:.72rem;color:#94a3b8;text-align:center;margin-top:.5rem;">Secure payment by Lemon Squeezy</p>
+          {% else %}
+          <div class="text-center text-muted" style="font-size:.8rem;">Coming soon</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-section h-100">
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#7c3aed;margin-bottom:.5rem;">Pro</div>
+        <div style="font-size:2rem;font-weight:800;color:#0f172a;line-height:1;">$19</div>
+        <div style="font-size:.78rem;color:#94a3b8;margin-bottom:1.25rem;">/ month · cancel anytime</div>
+        <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;color:#475569;">
+          <li class="mb-2">✓ <strong>Unlimited invoices</strong></li>
+          <li class="mb-2">✓ Everything in Starter</li>
+          <li class="mb-2">✓ Custom email templates</li>
+          <li class="mb-2">✓ Priority support</li>
+          <li>✓ WhatsApp reminders <span class="badge ms-1" style="background:#fef9c3;color:#854d0e;font-size:.62rem;border-radius:4px;">Soon</span></li>
+        </ul>
+        <div class="mt-4">
+          {% if current_user.plan == 'pro' %}
+          <div class="text-center"><span class="badge px-3 py-2" style="background:rgba(124,58,237,.1);color:#7c3aed;font-size:.75rem;border-radius:20px;">✓ Current plan</span></div>
+          {% elif pro_url %}
+          <a href="{{ pro_url }}?checkout[custom][user_id]={{ current_user.id }}&checkout[custom][user_email]={{ current_user.email }}" class="btn w-100 py-2" target="_blank" style="background:#7c3aed;color:#fff;font-weight:700;border:none;border-radius:8px;">Upgrade to Pro →</a>
+          <p style="font-size:.72rem;color:#94a3b8;text-align:center;margin-top:.5rem;">Secure payment by Lemon Squeezy</p>
+          {% else %}
+          <div class="text-center text-muted" style="font-size:.8rem;">Coming soon</div>
+          {% endif %}
+        </div>
       </div>
     </div>
 
   </div>
 
-  <p class="text-muted mt-4" style="font-size:.75rem;">
-    Payments processed securely by Lemon Squeezy.
-    Cancel anytime. Accepts all major cards and PayPal worldwide including Morocco.
-  </p>
-
+  <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:1.25rem;">
+    <div class="row g-3 text-center">
+      <div class="col-4">
+        <div style="font-size:1.25rem;margin-bottom:.25rem;">🔒</div>
+        <div style="font-size:.75rem;color:#64748b;font-weight:600;">Secure payments</div>
+        <div style="font-size:.7rem;color:#94a3b8;">Via Lemon Squeezy</div>
+      </div>
+      <div class="col-4">
+        <div style="font-size:1.25rem;margin-bottom:.25rem;">↩️</div>
+        <div style="font-size:.75rem;color:#64748b;font-weight:600;">Cancel anytime</div>
+        <div style="font-size:.7rem;color:#94a3b8;">No contracts</div>
+      </div>
+      <div class="col-4">
+        <div style="font-size:1.25rem;margin-bottom:.25rem;">🌍</div>
+        <div style="font-size:.75rem;color:#64748b;font-weight:600;">Worldwide</div>
+        <div style="font-size:.7rem;color:#94a3b8;">All cards + PayPal</div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

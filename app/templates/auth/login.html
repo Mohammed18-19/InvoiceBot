@@ -1,55 +1,48 @@
 {% extends "base.html" %}
-{% block title %}Sign in{% endblock %}
+{% block title %}Sign in — InvoiceBot{% endblock %}
 
 {% block auth_content %}
-<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background:#0A0F1E;">
-  <div style="width:100%;max-width:400px;padding:1rem;">
-
+<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background:#0A0F1E;padding:1rem;">
+  <div style="width:100%;max-width:420px;">
     <div class="text-center mb-4">
-      <h1 style="font-size:1.5rem;font-weight:800;color:#fff;">
-        Invoice<span style="color:#E91E8C;">Bot</span>
-      </h1>
-      <div style="font-size:.6rem;letter-spacing:.14em;color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:2px;">AINTORA SYSTEMS</div>
-      <p style="font-size:.875rem;color:rgba(255,255,255,.4);margin-top:.5rem;">Automated invoice follow-up for freelancers</p>
+      <h1 style="font-size:1.75rem;font-weight:800;color:#fff;letter-spacing:-.02em;">Invoice<span style="color:#E91E8C;">Bot</span></h1>
+      <div style="font-size:.6rem;letter-spacing:.16em;color:rgba(255,255,255,.25);text-transform:uppercase;margin-top:3px;">AINTORA SYSTEMS</div>
+      <p style="font-size:.875rem;color:rgba(255,255,255,.4);margin-top:.75rem;">Stop chasing. Start automating.</p>
     </div>
 
-    <div class="card border-0" style="border-radius:12px;background:#111827;border:1px solid rgba(255,255,255,.08)!important;">
-      <div class="card-body p-4">
-        <h2 class="mb-4" style="font-size:1.125rem;font-weight:700;color:#fff;">Sign in to your account</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else 'info' if category == 'info' else 'danger' }} mb-3" style="font-size:.8rem;border-radius:8px;">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
 
-        <form method="POST">
-          {{ form.hidden_tag() }}
-
-          <div class="mb-3">
-            {{ form.email.label(class="form-label", style="color:rgba(255,255,255,.6);") }}
-            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""),
-               placeholder="you@example.com",
-               style="background:#0A0F1E;border-color:rgba(255,255,255,.1);color:#fff;") }}
-            {% for e in form.email.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    <div style="background:#111827;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:2rem;">
+      <h2 style="font-size:1.125rem;font-weight:700;color:#fff;margin-bottom:1.5rem;">Sign in to your account</h2>
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+          <label style="font-size:.8rem;font-weight:600;color:rgba(255,255,255,.55);display:block;margin-bottom:.375rem;">Email</label>
+          {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="you@example.com", style="background:#0A0F1E;border-color:rgba(255,255,255,.1);color:#fff;padding:.75rem 1rem;border-radius:8px;") }}
+          {% for e in form.email.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label style="font-size:.8rem;font-weight:600;color:rgba(255,255,255,.55);">Password</label>
+            <a href="{{ url_for('auth.forgot_password') }}" style="font-size:.75rem;color:rgba(255,255,255,.35);">Forgot password?</a>
           </div>
-
-          <div class="mb-3">
-            {{ form.password.label(class="form-label", style="color:rgba(255,255,255,.6);") }}
-            {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""),
-               placeholder="••••••••",
-               style="background:#0A0F1E;border-color:rgba(255,255,255,.1);color:#fff;") }}
-            {% for e in form.password.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
-          </div>
-
-          <div class="mb-3 form-check">
-            {{ form.remember(class="form-check-input") }}
-            <label class="form-check-label" for="remember" style="font-size:.875rem;color:rgba(255,255,255,.5);">Remember me</label>
-          </div>
-
-          <button type="submit" class="btn btn-brand w-100 py-2" style="font-weight:600;">Sign in</button>
-        </form>
-      </div>
+          {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="••••••••", style="background:#0A0F1E;border-color:rgba(255,255,255,.1);color:#fff;padding:.75rem 1rem;border-radius:8px;") }}
+          {% for e in form.password.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="mb-4 d-flex align-items-center gap-2">
+          {{ form.remember(class="form-check-input", style="background:#0A0F1E;border-color:rgba(255,255,255,.2);") }}
+          <label style="font-size:.8rem;color:rgba(255,255,255,.4);cursor:pointer;">Remember me for 30 days</label>
+        </div>
+        <button type="submit" class="btn w-100 py-3" style="background:#E91E8C;color:#fff;font-weight:700;font-size:.95rem;border-radius:8px;border:none;">Sign in →</button>
+      </form>
     </div>
 
-    <p class="text-center mt-3" style="font-size:.875rem;color:rgba(255,255,255,.35);">
-      <a href="{{ url_for('auth.forgot_password') }}" style="color:rgba(255,255,255,.4);">Forgot password?</a>
-      &nbsp;·&nbsp;
-      No account? <a href="{{ url_for('auth.register') }}" style="color:#E91E8C;">Create one free</a>
+    <p class="text-center mt-3" style="font-size:.875rem;color:rgba(255,255,255,.3);">
+      No account yet? <a href="{{ url_for('auth.register') }}" style="color:#E91E8C;font-weight:600;">Create one free →</a>
     </p>
   </div>
 </div>

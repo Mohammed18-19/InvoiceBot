@@ -1,75 +1,69 @@
 {% extends "base.html" %}
-{% block title %}Invoices{% endblock %}
-{% block page_title %}All Invoices{% endblock %}
+{% block title %}Invoices — InvoiceBot{% endblock %}
+{% block page_title %}Invoices{% endblock %}
 
 {% block content %}
-
-<div class="d-flex align-items-center justify-content-between mb-3">
-  <div class="d-flex gap-2">
+<div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+  <div class="d-flex gap-2 flex-wrap">
     {% for label, val in [('All','all'),('Pending','pending'),('Paid','paid'),('Cancelled','cancelled')] %}
     <a href="{{ url_for('invoices.list_invoices', status=val) }}"
-       class="btn btn-sm {{ 'btn-dark' if status_filter == val else 'btn-outline-secondary' }}">
-      {{ label }}
-    </a>
+       class="btn btn-sm {{ 'btn-dark' if status_filter == val else 'btn-outline-secondary' }}"
+       style="border-radius:20px;font-size:.78rem;font-weight:600;">{{ label }}</a>
     {% endfor %}
   </div>
-  <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-brand btn-sm">
-    <i class="bi bi-plus"></i> New invoice
+  <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-brand btn-sm px-3">
+    <i class="bi bi-plus me-1"></i>New invoice
   </a>
 </div>
 
-<div class="card-section p-0">
+<div class="card-section p-0" style="overflow:hidden;">
   {% if invoices %}
-  <table class="table invoice-table mb-0">
-    <thead>
-      <tr>
-        <th class="ps-3">Client</th>
-        <th>Invoice #</th>
-        <th>Amount</th>
-        <th>Due date</th>
-        <th>Tone</th>
-        <th>Status</th>
-        <th>Emails</th>
-        <th class="pe-3"></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for inv in invoices %}
-      <tr>
-        <td class="ps-3">
-          <div style="font-weight:600;">{{ inv.client_name }}</div>
-          <div style="font-size:.72rem;color:#6b7280;">{{ inv.client_email }}</div>
-        </td>
-        <td><code style="font-size:.8rem;">{{ inv.invoice_number or ('—') }}</code></td>
-        <td><strong>{{ inv.currency }} {{ "%.2f"|format(inv.amount|float) }}</strong></td>
-        <td>
-          {{ inv.due_date.strftime('%b %d, %Y') }}
-          {% if inv.days_overdue > 0 %}
-            <br><span style="font-size:.72rem;color:#dc2626;">{{ inv.days_overdue }}d overdue</span>
-          {% endif %}
-        </td>
-        <td><span class="badge tone-{{ inv.tone }}">{{ inv.tone }}</span></td>
-        <td>
-          {% if inv.status == 'paid' %}<span class="badge badge-paid">Paid</span>
-          {% elif inv.status == 'cancelled' %}<span class="badge badge-cancelled">Cancelled</span>
-          {% elif inv.days_overdue > 0 %}<span class="badge badge-overdue">Overdue</span>
-          {% else %}<span class="badge badge-pending">Pending</span>{% endif %}
-        </td>
-        <td>{{ inv.sent_emails_count }}/3</td>
-        <td class="pe-3">
-          <a href="{{ url_for('invoices.detail', invoice_id=inv.id) }}"
-             class="btn btn-sm btn-outline-secondary">View</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table invoice-table mb-0">
+      <thead>
+        <tr>
+          <th class="ps-3">Client</th><th>Invoice #</th><th>Amount</th>
+          <th>Due date</th><th>Tone</th><th>Status</th><th>Emails</th><th class="pe-3"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inv in invoices %}
+        <tr>
+          <td class="ps-3">
+            <div style="font-weight:600;color:#0f172a;">{{ inv.client_name }}</div>
+            <div style="font-size:.72rem;color:#94a3b8;">{{ inv.client_email }}</div>
+          </td>
+          <td>
+            {% if inv.invoice_number %}
+            <code style="font-size:.78rem;background:#f8fafc;padding:2px 6px;border-radius:4px;color:#475569;">{{ inv.invoice_number }}</code>
+            {% else %}<span style="color:#cbd5e1;">—</span>{% endif %}
+          </td>
+          <td><strong style="color:#0f172a;">{{ inv.currency }} {{ "%.2f"|format(inv.amount|float) }}</strong></td>
+          <td>
+            <div style="font-size:.8rem;">{{ inv.due_date.strftime('%b %d, %Y') }}</div>
+            {% if inv.days_overdue > 0 %}<div style="font-size:.7rem;color:#dc2626;font-weight:600;">{{ inv.days_overdue }}d overdue</div>{% endif %}
+          </td>
+          <td><span class="badge tone-{{ inv.tone }} px-2 py-1" style="border-radius:4px;font-size:.72rem;">{{ inv.tone }}</span></td>
+          <td>
+            {% if inv.status == 'paid' %}<span class="badge badge-paid px-2 py-1 rounded-pill">✓ Paid</span>
+            {% elif inv.status == 'cancelled' %}<span class="badge badge-cancelled px-2 py-1 rounded-pill">Cancelled</span>
+            {% elif inv.days_overdue > 0 %}<span class="badge badge-overdue px-2 py-1 rounded-pill">Overdue</span>
+            {% else %}<span class="badge badge-pending px-2 py-1 rounded-pill">Pending</span>{% endif %}
+          </td>
+          <td style="font-size:.8rem;color:#64748b;">{{ inv.sent_emails_count }}/3</td>
+          <td class="pe-3"><a href="{{ url_for('invoices.detail', invoice_id=inv.id) }}" class="btn btn-sm btn-outline-secondary" style="font-size:.78rem;border-radius:6px;">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
   {% else %}
-  <div class="text-center py-5 text-muted">
-    <i class="bi bi-inbox" style="font-size:2.5rem;display:block;margin-bottom:.5rem;"></i>
-    <p>No invoices found. <a href="{{ url_for('invoices.new_invoice') }}" style="color:#0d6e4f;">Add your first one.</a></p>
+  <div class="text-center py-5" style="color:#94a3b8;">
+    <div style="font-size:2.5rem;margin-bottom:.75rem;">📭</div>
+    <div style="font-weight:600;color:#64748b;margin-bottom:.375rem;">No invoices found</div>
+    <p style="font-size:.875rem;margin-bottom:1.25rem;">{% if status_filter != 'all' %}No {{ status_filter }} invoices.{% else %}Add your first invoice to get started.{% endif %}</p>
+    <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-brand px-4">Add invoice</a>
   </div>
   {% endif %}
 </div>
-
 {% endblock %}

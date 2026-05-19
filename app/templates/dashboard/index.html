@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}Dashboard — InvoiceBot{% endblock %}
 {% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
@@ -7,139 +7,124 @@
 {% if current_user.plan == 'free' %}
 <div class="upgrade-banner">
   <div>
-    <div style="font-weight: 700; font-size: .9rem;">You're on the Free plan — 3 active invoices max.</div>
-    <div style="font-size: .8rem; opacity: .8; margin-top: 2px;">Upgrade to Starter ($9/mo) for 20 invoices and custom tone control.</div>
+    <div style="font-weight:700;font-size:.875rem;margin-bottom:.2rem;">⚡ You're on the Free plan — 3 active invoices max</div>
+    <div style="font-size:.78rem;opacity:.65;">Upgrade to Starter for $9/mo and track up to 20 invoices with full tone control.</div>
   </div>
-  <a href="{{ url_for('billing.upgrade') }}" class="btn btn-sm" style="background:#34d399;color:#064e3b;font-weight:600;white-space:nowrap;">Upgrade now</a>
+  <a href="{{ url_for('billing.upgrade') }}" class="btn btn-sm px-3 py-2" style="background:var(--brand);color:#fff;font-weight:700;white-space:nowrap;border-radius:8px;font-size:.8rem;">Upgrade now →</a>
 </div>
 {% endif %}
 
-<!-- Stats row -->
 <div class="row g-3 mb-4">
   <div class="col-6 col-md-3">
-    <div class="stat-card blue">
+    <div class="stat-card accent-blue">
       <div class="label">Total invoices</div>
       <div class="value">{{ stats.total }}</div>
+      <div class="sub">All time</div>
     </div>
   </div>
   <div class="col-6 col-md-3">
-    <div class="stat-card amber">
+    <div class="stat-card accent-amber">
       <div class="label">Pending</div>
       <div class="value">{{ stats.pending }}</div>
+      <div class="sub">Awaiting payment</div>
     </div>
   </div>
   <div class="col-6 col-md-3">
-    <div class="stat-card red">
+    <div class="stat-card accent-red">
       <div class="label">Overdue</div>
       <div class="value">{{ stats.overdue }}</div>
+      <div class="sub">Past due date</div>
     </div>
   </div>
   <div class="col-6 col-md-3">
-    <div class="stat-card green">
+    <div class="stat-card accent-green">
       <div class="label">Paid</div>
       <div class="value">{{ stats.paid }}</div>
+      <div class="sub">Collected ✓</div>
     </div>
   </div>
 </div>
 
 <div class="row g-3 mb-4">
   <div class="col-md-6">
-    <div class="stat-card">
+    <div class="stat-card accent-pink">
       <div class="label">Total outstanding</div>
       <div class="value">${{ "%.2f"|format(stats.total_outstanding) }}</div>
       <div class="sub">Across all pending invoices</div>
     </div>
   </div>
   <div class="col-md-6">
-    <div class="stat-card green">
+    <div class="stat-card accent-green">
       <div class="label">Reminders sent</div>
       <div class="value">{{ stats.emails_sent }}</div>
-      <div class="sub">Total automated emails delivered</div>
+      <div class="sub">Automated emails — you wrote zero</div>
     </div>
   </div>
 </div>
 
-<!-- Recent invoices -->
 <div class="card-section">
   <div class="d-flex align-items-center justify-content-between mb-3">
-    <h2 style="font-size:.9rem;font-weight:700;margin:0;">Recent invoices</h2>
-    <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-brand btn-sm">
-      <i class="bi bi-plus"></i> New invoice
-    </a>
+    <h2 style="font-size:.9375rem;font-weight:700;margin:0;color:#0f172a;">Recent invoices</h2>
+    <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-brand btn-sm px-3"><i class="bi bi-plus me-1"></i>New invoice</a>
   </div>
 
   {% if invoices %}
-  <table class="table invoice-table mb-0">
-    <thead>
-      <tr>
-        <th>Client</th>
-        <th>Amount</th>
-        <th>Due date</th>
-        <th>Status</th>
-        <th>Reminders</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for inv in invoices %}
-      <tr>
-        <td>
-          <div style="font-weight:600;">{{ inv.client_name }}</div>
-          <div style="font-size:.75rem;color:#6b7280;">{{ inv.client_email }}</div>
-        </td>
-        <td><strong>{{ inv.currency }} {{ "%.2f"|format(inv.amount|float) }}</strong></td>
-        <td>
-          {{ inv.due_date.strftime('%b %d, %Y') }}
-          {% if inv.days_overdue > 0 %}
-            <br><span style="font-size:.72rem;color:#dc2626;">{{ inv.days_overdue }}d overdue</span>
-          {% endif %}
-        </td>
-        <td>
-          {% if inv.status == 'paid' %}
-            <span class="badge badge-paid">Paid</span>
-          {% elif inv.status == 'cancelled' %}
-            <span class="badge badge-cancelled">Cancelled</span>
-          {% elif inv.days_overdue > 0 %}
-            <span class="badge badge-overdue">Overdue</span>
-          {% else %}
-            <span class="badge badge-pending">Pending</span>
-          {% endif %}
-        </td>
-        <td>{{ inv.sent_emails_count }} sent</td>
-        <td><a href="{{ url_for('invoices.detail', invoice_id=inv.id) }}" class="btn btn-sm btn-outline-secondary">View</a></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table invoice-table mb-0">
+      <thead>
+        <tr><th>Client</th><th>Amount</th><th>Due date</th><th>Status</th><th>Reminders</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for inv in invoices %}
+        <tr>
+          <td>
+            <div style="font-weight:600;color:#0f172a;">{{ inv.client_name }}</div>
+            <div style="font-size:.72rem;color:#94a3b8;">{{ inv.client_email }}</div>
+          </td>
+          <td><strong style="color:#0f172a;">{{ inv.currency }} {{ "%.2f"|format(inv.amount|float) }}</strong></td>
+          <td>
+            <div>{{ inv.due_date.strftime('%b %d, %Y') }}</div>
+            {% if inv.days_overdue > 0 %}<div style="font-size:.72rem;color:#dc2626;font-weight:600;">{{ inv.days_overdue }}d overdue</div>{% endif %}
+          </td>
+          <td>
+            {% if inv.status == 'paid' %}<span class="badge badge-paid px-2 py-1 rounded-pill">✓ Paid</span>
+            {% elif inv.status == 'cancelled' %}<span class="badge badge-cancelled px-2 py-1 rounded-pill">Cancelled</span>
+            {% elif inv.days_overdue > 0 %}<span class="badge badge-overdue px-2 py-1 rounded-pill">Overdue</span>
+            {% else %}<span class="badge badge-pending px-2 py-1 rounded-pill">Pending</span>{% endif %}
+          </td>
+          <td style="color:#64748b;font-size:.8rem;">{{ inv.sent_emails_count }}/3</td>
+          <td><a href="{{ url_for('invoices.detail', invoice_id=inv.id) }}" class="btn btn-sm btn-outline-secondary" style="font-size:.78rem;border-radius:6px;">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
   <div class="mt-2 text-end">
-    <a href="{{ url_for('invoices.list_invoices') }}" style="font-size:.8rem;color:#0d6e4f;">View all invoices →</a>
+    <a href="{{ url_for('invoices.list_invoices') }}" style="font-size:.8rem;color:var(--brand);font-weight:600;text-decoration:none;">View all invoices →</a>
   </div>
   {% else %}
-  <div class="text-center py-4 text-muted">
-    <i class="bi bi-file-earmark-plus" style="font-size: 2rem; display:block; margin-bottom:.5rem;"></i>
-    <p>No invoices yet. <a href="{{ url_for('invoices.new_invoice') }}" style="color:#0d6e4f;">Add your first one.</a></p>
+  <div class="text-center py-5" style="color:#94a3b8;">
+    <div style="font-size:2.5rem;margin-bottom:.75rem;">📄</div>
+    <div style="font-weight:600;color:#64748b;margin-bottom:.375rem;">No invoices yet</div>
+    <p style="font-size:.875rem;margin-bottom:1.25rem;">Add your first invoice and let InvoiceBot do the chasing.</p>
+    <a href="{{ url_for('invoices.new_invoice') }}" class="btn btn-brand px-4">Add your first invoice</a>
   </div>
   {% endif %}
 </div>
 
-<!-- Recent email activity -->
 {% if recent_logs %}
 <div class="card-section">
-  <h2 style="font-size:.9rem;font-weight:700;margin-bottom:1rem;">Recent email activity</h2>
+  <h2 style="font-size:.9375rem;font-weight:700;margin-bottom:1rem;color:#0f172a;">Recent email activity</h2>
   {% for log in recent_logs %}
-  <div class="d-flex align-items-start gap-3 mb-3 pb-3 border-bottom">
-    <div class="timeline-dot mt-1 {{ 'dot-sent' if log.success else 'dot-skipped' }}"></div>
+  <div class="d-flex align-items-start gap-3 {% if not loop.last %}mb-3 pb-3 border-bottom{% endif %}">
+    <div class="timeline-dot mt-1 {{ 'dot-sent' if log.success else 'dot-failed' }}"></div>
     <div>
-      <div style="font-size:.8rem;font-weight:600;">
+      <div style="font-size:.8rem;font-weight:600;color:#0f172a;">
         Stage {{ log.stage }} reminder —
-        <a href="{{ url_for('invoices.detail', invoice_id=log.invoice_id) }}" style="color:#0d6e4f;">
-          {{ log.invoice.client_name }}
-        </a>
+        <a href="{{ url_for('invoices.detail', invoice_id=log.invoice_id) }}" style="color:var(--brand);text-decoration:none;">{{ log.invoice.client_name }}</a>
+        {% if log.success %}<span style="color:#10b981;font-size:.72rem;"> ✓ Delivered</span>{% else %}<span style="color:#ef4444;font-size:.72rem;"> ✗ Failed</span>{% endif %}
       </div>
-      <div style="font-size:.75rem;color:#6b7280;">
-        {{ log.sent_at.strftime('%b %d, %Y at %H:%M UTC') }}
-        {% if not log.success %}<span class="text-danger ms-2">Failed</span>{% endif %}
-      </div>
+      <div style="font-size:.73rem;color:#94a3b8;">{{ log.sent_at.strftime('%b %d, %Y at %H:%M UTC') }}</div>
     </div>
   </div>
   {% endfor %}
