@@ -53,3 +53,9 @@ config = {
     "production":  ProductionConfig,
     "default":     DevelopmentConfig,
 }
+
+SQLALCHEMY_ENGINE_OPTIONS = {
+    "pool_pre_ping": True,
+    "pool_recycle": 300,
+    "connect_args": {"connect_timeout": 10},
+}

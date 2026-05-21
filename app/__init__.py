@@ -4,6 +4,15 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from config import config
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_talisman import Talisman
+
+
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -22,6 +31,15 @@ def create_app(config_name="default"):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     csrf.init_app(app)
+    limiter.init_app(app)
+    if config_name == "production":
+        Talisman(
+            app,
+            force_https=True,
+            strict_transport_security=True,
+            session_cookie_secure=True,
+            content_security_policy=False,
+        )
 
     # Register blueprints
     from app.auth.routes import auth_bp
