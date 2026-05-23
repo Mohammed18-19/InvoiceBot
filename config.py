@@ -16,6 +16,8 @@ class Config:
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD", "")
     MAIL_FROM     = os.environ.get("MAIL_FROM", "")
     MAIL_FROM_NAME = os.environ.get("MAIL_FROM_NAME", "InvoiceBot")
+    MAIL_USE_TLS  = os.environ.get("MAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
+    MAIL_USE_SSL  = os.environ.get("MAIL_USE_SSL", "False").lower() in ("1", "true", "yes")
 
     # Lemon Squeezy
     LS_WEBHOOK_SECRET = os.environ.get("LS_WEBHOOK_SECRET", "")

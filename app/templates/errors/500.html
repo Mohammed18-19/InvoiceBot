@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Something went wrong — InvoiceBot{% endblock %}
+{% block page_title %}500 — Something went wrong{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:720px;margin:auto;">
+  <div class="card-body text-center" style="padding:3rem;">
+    <h1 class="display-4" style="font-weight:800;color:#0f172a;">500</h1>
+    <p class="lead" style="color:#475569;">An internal error occurred.</p>
+    <p style="color:#64748b;">The team has been notified and we're working on it.</p>
+    <a href="{{ url_for('dashboard.index') }}" class="btn btn-brand mt-3">Go back to home</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block auth_content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background:#0A0F1E;padding:1rem;">
+  <div style="width:100%;max-width:420px;">
+    <div style="background:#111827;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:2rem;text-align:center;">
+      <h1 style="font-size:2.5rem;font-weight:800;color:#fff;">500</h1>
+      <p style="font-size:1rem;color:rgba(255,255,255,.65);">An internal error occurred. Please try again in a moment.</p>
+      <a href="{{ url_for('auth.login') }}" class="btn btn-brand mt-3" style="display:inline-block;">Sign in</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

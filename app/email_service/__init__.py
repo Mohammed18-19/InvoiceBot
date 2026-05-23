@@ -166,6 +166,8 @@ def send_invoice_reminder(invoice, stage):
     mail_password = current_app.config.get("MAIL_PASSWORD", "")
     mail_server   = current_app.config.get("MAIL_SERVER", "smtp.gmail.com")
     mail_port     = current_app.config.get("MAIL_PORT", 587)
+    mail_use_tls  = current_app.config.get("MAIL_USE_TLS", True)
+    mail_use_ssl  = current_app.config.get("MAIL_USE_SSL", False)
     mail_from     = current_app.config.get("MAIL_FROM", mail_username)
     mail_name     = current_app.config.get("MAIL_FROM_NAME", "InvoiceBot")
 
@@ -197,8 +199,14 @@ def send_invoice_reminder(invoice, stage):
     msg.attach(MIMEText(body, "plain"))
 
     try:
-        server = smtplib.SMTP(mail_server, mail_port)
-        server.starttls()
+        if mail_use_ssl or mail_port == 465:
+            server = smtplib.SMTP_SSL(mail_server, mail_port, timeout=10)
+        else:
+            server = smtplib.SMTP(mail_server, mail_port, timeout=10)
+            server.ehlo()
+            if mail_use_tls:
+                server.starttls()
+                server.ehlo()
         server.login(mail_username, mail_password)
         server.sendmail(mail_from, invoice.client_email, msg.as_string())
         server.quit()

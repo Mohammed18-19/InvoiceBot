@@ -27,6 +27,8 @@ def _send_reset_email(user_email, reset_url):
     mail_pass   = config.get("MAIL_PASSWORD", "")
     mail_from   = config.get("MAIL_FROM", mail_user)
     mail_name   = config.get("MAIL_FROM_NAME", "InvoiceBot")
+    mail_use_tls = config.get("MAIL_USE_TLS", True)
+    mail_use_ssl = config.get("MAIL_USE_SSL", False)
 
     if not mail_user or not mail_pass:
         logger.warning("SMTP not configured")
@@ -53,14 +55,22 @@ If you didn't request this, ignore this email.
     msg.attach(MIMEText(body, "plain"))
 
     try:
-        server = smtplib.SMTP(mail_server, mail_port)
-        server.starttls()
+        if mail_use_ssl or mail_port == 465:
+            server = smtplib.SMTP_SSL(mail_server, mail_port, timeout=10)
+        else:
+            server = smtplib.SMTP(mail_server, mail_port, timeout=10)
+            server.ehlo()
+            if mail_use_tls:
+                server.starttls()
+                server.ehlo()
+
         server.login(mail_user, mail_pass)
-        server.sendmail(mail_from, user_email, msg.as_string())
+        server.sendmail(mail_from, [user_email], msg.as_string())
         server.quit()
+        logger.info("Reset email sent to %s", user_email)
         return True
     except Exception as e:
-        logger.error(f"Reset email failed: {e}")
+        logger.exception("Reset email failed")
         return False
 
 
@@ -121,7 +131,10 @@ def forgot_password():
             s         = _get_serializer()
             token     = s.dumps(email, salt="password-reset")
             reset_url = url_for("auth.reset_password", token=token, _external=True)
-            _send_reset_email(email, reset_url)
+            if not _send_reset_email(email, reset_url):
+                logger.error("Password reset email delivery failed for %s", email)
+                flash("Unable to send the password reset email right now. Please try again later.", "danger")
+                return redirect(url_for("auth.forgot_password"))
         flash("If that email exists, a reset link has been sent. Check your inbox and spam.", "info")
         return redirect(url_for("auth.login"))
     return render_template("auth/forgot_password.html", form=form)

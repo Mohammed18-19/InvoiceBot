@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, url_for
+from flask import Flask, flash, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, logout_user, current_user
@@ -64,5 +64,18 @@ def create_app(config_name="default"):
     # Start background scheduler
     from app.scheduler.jobs import start_scheduler
     start_scheduler(app)
+
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return render_template("errors/404.html"), 404
+
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        app.logger.exception(error)
+        return render_template("errors/500.html"), 500
+
+    @app.errorhandler(403)
+    def forbidden_error(error):
+        return render_template("errors/403.html"), 403
 
     return app
