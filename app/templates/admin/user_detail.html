@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}{{ user.email }} — Admin{% endblock %}
+{% block page_title %}User Detail{% endblock %}
+{% block content %}
+<div style="max-width:740px;">
+  <div class="card-section mb-3">
+    <h2 style="font-size:1rem;font-weight:700;color:#0f172a;margin-bottom:1rem;">{{ user.name or 'No name' }}</h2>
+    <div class="row g-3">
+      <div class="col-sm-4">
+        <div style="font-size:.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem;">Email</div>
+        <div style="font-size:.875rem;color:#0f172a;">{{ user.email }}</div>
+      </div>
+      <div class="col-sm-4">
+        <div style="font-size:.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem;">Plan</div>
+        <span class="badge plan-{{ user.plan }} sidebar-plan">{{ user.plan }}</span>
+      </div>
+      <div class="col-sm-4">
+        <div style="font-size:.7rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem;">Joined</div>
+        <div style="font-size:.875rem;color:#0f172a;">{{ user.created_at.strftime('%b %d, %Y') }}</div>
+      </div>
+    </div>
+    <hr style="border-color:#f1f5f9;margin:1rem 0;">
+    <h3 style="font-size:.875rem;font-weight:700;color:#0f172a;margin-bottom:.75rem;">Change plan</h3>
+    <form action="{{ url_for('admin.set_plan', user_id=user.id) }}" method="POST" class="d-flex gap-2 align-items-center">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <select name="plan" class="form-select" style="width:auto;">
+        <option value="free" {% if user.plan == 'free' %}selected{% endif %}>Free</option>
+        <option value="starter" {% if user.plan == 'starter' %}selected{% endif %}>Starter</option>
+        <option value="pro" {% if user.plan == 'pro' %}selected{% endif %}>Pro</option>
+      </select>
+      <button type="submit" class="btn btn-brand btn-sm px-3">Update plan</button>
+    </form>
+    <div class="mt-3">
+      {% if user.is_blocked %}
+      <form action="{{ url_for('admin.unblock_user', user_id=user.id) }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <button type="submit" class="btn btn-sm btn-outline-success">Unblock user</button>
+      </form>
+      {% else %}
+      <form action="{{ url_for('admin.block_user', user_id=user.id) }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <button type="submit" class="btn btn-sm btn-outline-danger">Block user</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  <div class="card-section mb-3">
+    <h3 style="font-size:.875rem;font-weight:700;color:#0f172a;margin-bottom:1rem;">Invoices ({{ invoices|length }})</h3>
+    {% for inv in invoices %}
+    <div class="d-flex justify-content-between py-2 {% if not loop.last %}border-bottom{% endif %}">
+      <div>
+        <div style="font-size:.8rem;font-weight:600;color:#0f172a;">{{ inv.client_name }}</div>
+        <div style="font-size:.72rem;color:#94a3b8;">{{ inv.client_email }}</div>
+      </div>
+      <div class="text-end">
+        <div style="font-size:.8rem;font-weight:600;">{{ inv.currency }} {{ "%.2f"|format(inv.amount|float) }}</div>
+        <span class="badge badge-{{ inv.status }} px-2" style="font-size:.68rem;">{{ inv.status }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="card-section">
+    <h3 style="font-size:.875rem;font-weight:700;color:#0f172a;margin-bottom:1rem;">Recent email logs</h3>
+    {% for log in logs %}
+    <div class="d-flex justify-content-between py-2 {% if not loop.last %}border-bottom{% endif %}">
+      <div style="font-size:.78rem;color:#0f172a;">Stage {{ log.stage }} → {{ log.invoice.client_name }}</div>
+      <div style="font-size:.75rem;">
+        {% if log.success %}<span style="color:#10b981;">✓ Sent</span>{% else %}<span style="color:#ef4444;">✗ Failed</span>{% endif %}
+        <span style="color:#94a3b8;margin-left:.5rem;">{{ log.sent_at.strftime('%b %d %H:%M') }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}Admin — InvoiceBot{% endblock %}
+{% block page_title %}Admin Panel{% endblock %}
+
+{% block content %}
+
+<!-- MRR Banner -->
+<div style="background:linear-gradient(135deg,#0A0F1E,#1a0a14);border:1px solid rgba(233,30,140,.3);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+  <div>
+    <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:.25rem;">Monthly Recurring Revenue</div>
+    <div style="font-size:2rem;font-weight:800;color:#E91E8C;">${{ stats.mrr }}<span style="font-size:.875rem;font-weight:400;color:rgba(255,255,255,.4);">/mo</span></div>
+  </div>
+  <div style="display:flex;gap:1.5rem;">
+    <div class="text-center">
+      <div style="font-size:1.25rem;font-weight:800;color:#fff;">{{ stats.starter_count }}</div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.4);">Starter ($9)</div>
+    </div>
+    <div class="text-center">
+      <div style="font-size:1.25rem;font-weight:800;color:#a78bfa;">{{ stats.pro_count }}</div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.4);">Pro ($19)</div>
+    </div>
+    <div class="text-center">
+      <div style="font-size:1.25rem;font-weight:800;color:rgba(255,255,255,.4);">{{ stats.free_users }}</div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.4);">Free</div>
+    </div>
+  </div>
+  <!-- Trigger email button -->
+  <form action="{{ url_for('admin.trigger_emails') }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <button type="submit" class="btn btn-sm px-3 py-2"
+            style="background:rgba(233,30,140,.2);color:#E91E8C;border:1px solid rgba(233,30,140,.3);border-radius:8px;font-weight:600;font-size:.8rem;">
+      ▶ Trigger emails now
+    </button>
+  </form>
+</div>
+
+<!-- Stats grid -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-card accent-blue">
+      <div class="label">Total users</div>
+      <div class="value">{{ stats.total_users }}</div>
+      <div class="sub">{{ stats.paying_users }} paying</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card accent-amber">
+      <div class="label">Invoices tracked</div>
+      <div class="value">{{ stats.total_invoices }}</div>
+      <div class="sub">{{ stats.pending_invoices }} pending</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card accent-green">
+      <div class="label">Emails sent</div>
+      <div class="value">{{ stats.emails_sent }}</div>
+      <div class="sub">{{ stats.emails_failed }} failed</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card accent-pink">
+      <div class="label">Invoices paid</div>
+      <div class="value">{{ stats.paid_invoices }}</div>
+      <div class="sub">Recovered by users</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card accent-red">
+      <div class="label">Blocked users</div>
+      <div class="value">{{ stats.blocked_users }}</div>
+      <div class="sub">Blocked by admin</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+
+  <!-- Recent users -->
+  <div class="col-md-6">
+    <div class="card-section">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 style="font-size:.9rem;font-weight:700;margin:0;color:#0f172a;">Recent signups</h2>
+        <a href="{{ url_for('admin.users') }}" style="font-size:.78rem;color:var(--brand);font-weight:600;text-decoration:none;">View all →</a>
+      </div>
+      {% for user in recent_users %}
+      <div class="d-flex align-items-center justify-content-between py-2 {% if not loop.last %}border-bottom{% endif %}">
+        <div>
+          <div style="font-size:.8rem;font-weight:600;color:#0f172a;">{{ user.name or 'No name' }}</div>
+          <div style="font-size:.72rem;color:#94a3b8;">{{ user.email }}</div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge plan-{{ user.plan }} sidebar-plan">{{ user.plan }}</span>
+          <a href="{{ url_for('admin.user_detail', user_id=user.id) }}"
+             style="font-size:.72rem;color:var(--brand);">View</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Upcoming scheduled emails -->
+  <div class="col-md-6">
+    <div class="card-section">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 style="font-size:.9rem;font-weight:700;margin:0;color:#0f172a;">Upcoming emails</h2>
+        <span style="font-size:.72rem;color:#94a3b8;">Next scheduled reminders</span>
+      </div>
+      {% if upcoming %}
+      {% for s in upcoming %}
+      <div class="d-flex align-items-start gap-3 py-2 {% if not loop.last %}border-bottom{% endif %}">
+        <div class="timeline-dot mt-1 dot-pending"></div>
+        <div>
+          <div style="font-size:.78rem;font-weight:600;color:#0f172a;">
+            Stage {{ s.stage }} — {{ s.invoice.client_name }}
+          </div>
+          <div style="font-size:.72rem;color:#94a3b8;">
+            {{ s.send_at.strftime('%b %d at %H:%M UTC') }}
+          </div>
+          <div style="font-size:.7rem;color:#64748b;">
+            {{ s.invoice.owner.email }}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div style="font-size:.8rem;color:#94a3b8;text-align:center;padding:1rem;">No upcoming emails scheduled</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Recent email logs -->
+  <div class="col-12">
+    <div class="card-section">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 style="font-size:.9rem;font-weight:700;margin:0;color:#0f172a;">Recent email activity</h2>
+        <a href="{{ url_for('admin.logs') }}" style="font-size:.78rem;color:var(--brand);font-weight:600;text-decoration:none;">View all →</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table invoice-table mb-0">
+          <thead>
+            <tr><th>Time</th><th>User</th><th>Client</th><th>Stage</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            {% for log in recent_logs %}
+            <tr>
+              <td style="font-size:.75rem;color:#94a3b8;">{{ log.sent_at.strftime('%b %d %H:%M') }}</td>
+              <td style="font-size:.78rem;">{{ log.invoice.owner.email }}</td>
+              <td style="font-size:.78rem;font-weight:600;">{{ log.invoice.client_name }}</td>
+              <td><span class="badge" style="background:#f1f5f9;color:#475569;font-size:.72rem;">Stage {{ log.stage }}</span></td>
+              <td>
+                {% if log.success %}
+                <span style="color:#10b981;font-size:.78rem;font-weight:600;">✓ Sent</span>
+                {% else %}
+                <span style="color:#ef4444;font-size:.78rem;font-weight:600;" title="{{ log.error }}">✗ Failed</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

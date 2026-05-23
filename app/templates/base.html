@@ -107,6 +107,12 @@
       <i class="bi bi-credit-card"></i> Billing
     </a>
     {% endif %}
+    {% if current_user.email == 'aintomar.mohamed19@gmail.com' %}
+<div class="nav-section-label" style="margin-top:.5rem;">Admin</div>
+<a href="{{ url_for('admin.index') }}" class="nav-link {% if request.endpoint and 'admin' in request.endpoint %}active{% endif %}" style="color:#E91E8C;">
+  <i class="bi bi-shield-check"></i> Admin panel
+</a>
+{% endif %}
   </nav>
   <div class="sidebar-footer">
     <a href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-left"></i> Sign out</a>

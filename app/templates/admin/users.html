@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Users — Admin{% endblock %}
+{% block page_title %}All Users{% endblock %}
+{% block content %}
+<div class="card-section">
+  <table class="table invoice-table mb-0">
+    <thead>
+      <tr><th>Name</th><th>Email</th><th>Plan</th><th>Status</th><th>Joined</th><th>Invoices</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td style="font-weight:600;color:#0f172a;">{{ user.name or '—' }}</td>
+        <td style="font-size:.8rem;">{{ user.email }}</td>
+        <td><span class="badge plan-{{ user.plan }} sidebar-plan">{{ user.plan }}</span></td>
+        <td style="font-size:.8rem;">{% if user.is_blocked %}<span class="badge badge-overdue">Blocked</span>{% else %}<span class="badge plan-free">Active</span>{% endif %}</td>
+        <td style="font-size:.78rem;color:#94a3b8;">{{ user.created_at.strftime('%b %d, %Y') }}</td>
+        <td style="font-size:.8rem;">{{ user.invoices.count() }}</td>
+        <td><a href="{{ url_for('admin.user_detail', user_id=user.id) }}" class="btn btn-sm btn-outline-secondary" style="font-size:.75rem;">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

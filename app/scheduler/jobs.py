@@ -1,93 +1,75 @@
-import logging
 from datetime import datetime, timezone
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
-logger = logging.getLogger(__name__)
-_scheduler = None
+from app import db
+from app.email_service import send_invoice_reminder
+from app.models import Invoice, EmailSchedule, EmailLog
+
+scheduler = BackgroundScheduler()
+scheduler_started = False
 
 
-def process_due_emails():
-    """
-    Runs every hour. Finds all unsent email schedules whose send_at <= now
-    and fires them off. Skips invoices that are paid or cancelled.
-    """
-    from app import db
-    from app.models import EmailSchedule, EmailLog, Invoice
-    from app.email_service import send_invoice_reminder
+def process_due_emails(app=None):
+    """Send all due email schedules and create logs."""
+    if app is None:
+        from flask import current_app
+        app = current_app
 
-    now = datetime.now(timezone.utc)
-    logger.info(f"[Scheduler] Running email check at {now.isoformat()}")
-
-    due_schedules = (
-        EmailSchedule.query
-        .join(Invoice)
-        .filter(
-            EmailSchedule.sent == False,
-            EmailSchedule.send_at <= now,
-            Invoice.status == "pending",
+    with app.app_context():
+        now = datetime.now(timezone.utc)
+        due_schedules = (
+            EmailSchedule.query
+            .join(Invoice)
+            .filter(
+                EmailSchedule.sent == False,
+                EmailSchedule.send_at <= now,
+                Invoice.status == "pending",
+            )
+            .order_by(EmailSchedule.send_at)
+            .all()
         )
-        .all()
-    )
 
-    logger.info(f"[Scheduler] Found {len(due_schedules)} emails to send")
+        for schedule in due_schedules:
+            invoice = schedule.invoice
+            if not invoice or invoice.status != "pending":
+                schedule.sent = True
+                db.session.commit()
+                continue
 
-    for schedule in due_schedules:
-        invoice = schedule.invoice
-        success, msg_id, error = send_invoice_reminder(invoice, schedule.stage)
+            success, message_id, error = send_invoice_reminder(invoice, schedule.stage)
+            email_log = EmailLog(
+                invoice_id=invoice.id,
+                stage=schedule.stage,
+                subject=None,
+                sendgrid_message_id=message_id,
+                error=error,
+                success=success,
+            )
+            db.session.add(email_log)
 
-        log = EmailLog(
-            invoice_id=invoice.id,
-            stage=schedule.stage,
-            subject=f"Stage {schedule.stage} reminder",
-            sendgrid_message_id=msg_id,
-            success=success,
-            error=error,
-        )
-        db.session.add(log)
+            if success:
+                schedule.sent = True
+            db.session.commit()
 
-        if success:
-            schedule.sent = True
-            logger.info(f"[Scheduler] Sent stage {schedule.stage} for invoice {invoice.id}")
-        else:
-            logger.error(f"[Scheduler] Failed stage {schedule.stage} for invoice {invoice.id}: {error}")
-
-    db.session.commit()
+    return len(due_schedules)
 
 
 def start_scheduler(app):
-    global _scheduler
-
-    if _scheduler is not None:
+    """Start APScheduler to process due invoice emails every minute."""
+    global scheduler_started
+    if scheduler_started:
         return
 
-    _scheduler = BackgroundScheduler(timezone="UTC")
-    _scheduler.add_job(
-        func=lambda: app.app_context().__enter__() or process_due_emails(),
-        trigger=IntervalTrigger(hours=1),
+    scheduler.configure(job_defaults={"coalesce": False, "max_instances": 1})
+    scheduler.add_job(
+        func=process_due_emails,
+        trigger=IntervalTrigger(minutes=1),
+        args=[app],
         id="process_due_emails",
-        name="Process due invoice reminder emails",
         replace_existing=True,
-        coalesce=True,
         max_instances=1,
     )
-
-    # Better pattern: use app context properly
-    def run_with_context():
-        with app.app_context():
-            process_due_emails()
-
-    _scheduler.add_job(
-        func=run_with_context,
-        trigger=IntervalTrigger(minutes=60),
-        id="email_runner",
-        name="Email runner",
-        replace_existing=True,
-        coalesce=True,
-        max_instances=1,
-    )
-    # Remove the broken lambda job
-    _scheduler.remove_job("process_due_emails")
-
-    _scheduler.start()
-    logger.info("[Scheduler] Background scheduler started")
+    scheduler.start()
+    scheduler_started = True

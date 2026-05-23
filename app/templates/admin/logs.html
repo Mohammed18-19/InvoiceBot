@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Email Logs — Admin{% endblock %}
+{% block page_title %}Email Logs{% endblock %}
+{% block content %}
+<div class="card-section p-0" style="overflow:hidden;">
+  <div class="table-responsive">
+    <table class="table invoice-table mb-0">
+      <thead>
+        <tr><th class="ps-3">Time</th><th>User</th><th>Client</th><th>Stage</th><th>Status</th><th>Error</th></tr>
+      </thead>
+      <tbody>
+        {% for log in logs.items %}
+        <tr>
+          <td class="ps-3" style="font-size:.75rem;color:#94a3b8;">{{ log.sent_at.strftime('%b %d %H:%M UTC') }}</td>
+          <td style="font-size:.75rem;">{{ log.invoice.owner.email }}</td>
+          <td style="font-size:.78rem;font-weight:600;color:#0f172a;">{{ log.invoice.client_name }}</td>
+          <td><span class="badge" style="background:#f1f5f9;color:#475569;font-size:.72rem;">Stage {{ log.stage }}</span></td>
+          <td>
+            {% if log.success %}
+            <span style="color:#10b981;font-size:.78rem;font-weight:600;">✓ Sent</span>
+            {% else %}
+            <span style="color:#ef4444;font-size:.78rem;font-weight:600;">✗ Failed</span>
+            {% endif %}
+          </td>
+          <td style="font-size:.72rem;color:#ef4444;">{{ log.error or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <!-- Pagination -->
+  {% if logs.pages > 1 %}
+  <div class="p-3 d-flex gap-2 justify-content-center">
+    {% if logs.has_prev %}
+    <a href="{{ url_for('admin.logs', page=logs.prev_num) }}" class="btn btn-sm btn-outline-secondary">← Prev</a>
+    {% endif %}
+    <span style="font-size:.8rem;color:#64748b;padding:.375rem .75rem;">Page {{ logs.page }} of {{ logs.pages }}</span>
+    {% if logs.has_next %}
+    <a href="{{ url_for('admin.logs', page=logs.next_num) }}" class="btn btn-sm btn-outline-secondary">Next →</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

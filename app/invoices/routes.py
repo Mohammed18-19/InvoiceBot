@@ -1,9 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, date, timedelta, timezone
+
 from app import db
 from app.models import Invoice, EmailSchedule, EmailLog
 from app.invoices.forms import InvoiceForm
+from app.scheduler.jobs import process_due_emails
 
 invoices_bp = Blueprint("invoices", __name__)
 
@@ -17,7 +19,6 @@ def _create_email_schedules(invoice):
 
     for stage, delay in enumerate(delays, start=1):
         send_date = base_date + timedelta(days=delay)
-        # Send at 09:00 UTC
         send_at = datetime.combine(send_date, time(9, 0), tzinfo=timezone.utc)
         schedule = EmailSchedule(
             invoice_id=invoice.id,
@@ -68,10 +69,21 @@ def new_invoice():
             stage3_delay=form.stage3_delay.data,
         )
         db.session.add(invoice)
-        db.session.flush()  # get invoice.id before creating schedules
+        db.session.flush()
         _create_email_schedules(invoice)
         db.session.commit()
-        flash(f"Invoice for {invoice.client_name} added. Reminders scheduled.", "success")
+
+        overdue_schedules = invoice.email_schedules.filter(
+            EmailSchedule.sent == False,
+            EmailSchedule.send_at <= datetime.now(timezone.utc),
+        ).count()
+
+        if overdue_schedules:
+            process_due_emails()
+            flash(f"Invoice for {invoice.client_name} added. Overdue reminder is being sent now.", "success")
+        else:
+            flash(f"Invoice for {invoice.client_name} added. Reminders scheduled.", "success")
+
         return redirect(url_for("invoices.detail", invoice_id=invoice.id))
 
     return render_template("invoices/new.html", form=form)
@@ -92,7 +104,6 @@ def mark_paid(invoice_id):
     invoice = Invoice.query.filter_by(id=invoice_id, user_id=current_user.id).first_or_404()
     invoice.status = "paid"
     invoice.marked_paid_at = datetime.now(timezone.utc)
-    # Cancel unsent schedules
     invoice.email_schedules.filter_by(sent=False).update({"sent": True})
     db.session.commit()
     flash(f"Invoice marked as paid. No more reminders will be sent.", "success")

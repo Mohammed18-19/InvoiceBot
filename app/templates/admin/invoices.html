@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}All Invoices — Admin{% endblock %}
+{% block page_title %}All Invoices{% endblock %}
+{% block content %}
+<div class="card-section p-0" style="overflow:hidden;">
+  <div class="table-responsive">
+    <table class="table invoice-table mb-0">
+      <thead>
+        <tr><th class="ps-3">User</th><th>Client</th><th>Amount</th><th>Due date</th><th>Status</th><th>Emails</th></tr>
+      </thead>
+      <tbody>
+        {% for inv in invoices %}
+        <tr>
+          <td class="ps-3" style="font-size:.75rem;color:#94a3b8;">{{ inv.owner.email }}</td>
+          <td>
+            <div style="font-weight:600;font-size:.8rem;color:#0f172a;">{{ inv.client_name }}</div>
+            <div style="font-size:.72rem;color:#94a3b8;">{{ inv.client_email }}</div>
+          </td>
+          <td style="font-size:.8rem;font-weight:600;">{{ inv.currency }} {{ "%.2f"|format(inv.amount|float) }}</td>
+          <td style="font-size:.78rem;">{{ inv.due_date.strftime('%b %d, %Y') }}</td>
+          <td><span class="badge badge-{{ inv.status }} px-2 py-1 rounded-pill" style="font-size:.72rem;">{{ inv.status }}</span></td>
+          <td style="font-size:.78rem;color:#64748b;">{{ inv.sent_emails_count }}/3</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

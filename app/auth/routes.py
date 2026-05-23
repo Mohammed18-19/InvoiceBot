@@ -92,6 +92,9 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower().strip()).first()
         if user and user.check_password(form.password.data):
+            if user.is_blocked:
+                flash("This account has been blocked. Contact the admin.", "danger")
+                return render_template("auth/login.html", form=form)
             login_user(user, remember=form.remember.data)
             next_page = request.args.get("next")
             return redirect(next_page or url_for("dashboard.index"))

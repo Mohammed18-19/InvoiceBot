@@ -20,6 +20,7 @@ class User(UserMixin, db.Model):
     stripe_customer_id = db.Column(db.String(100), nullable=True)
     stripe_subscription_id = db.Column(db.String(100), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    is_blocked = db.Column(db.Boolean, default=False, nullable=False)
 
     invoices = db.relationship("Invoice", backref="owner", lazy="dynamic", cascade="all, delete-orphan")
 
@@ -41,6 +42,10 @@ class User(UserMixin, db.Model):
     @property
     def can_add_invoice(self):
         return self.active_invoice_count < self.invoice_limit
+
+    @property
+    def is_active(self):
+        return not self.is_blocked
 
     def __repr__(self):
         return f"<User {self.email}>"
