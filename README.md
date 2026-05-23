@@ -96,10 +96,14 @@ Then edit `.env` with your own settings.
 - `DATABASE_URL=postgresql://localhost/invoicebot_dev`
 - `MAIL_SERVER` (e.g. `smtp.gmail.com`)
 - `MAIL_PORT` (e.g. `587`)
+- `MAIL_USE_TLS` (e.g. `True`)
+- `MAIL_USE_SSL` (e.g. `False`)
 - `MAIL_USERNAME`
 - `MAIL_PASSWORD`
 - `MAIL_FROM`
 - `MAIL_FROM_NAME`
+- `SENDGRID_API_KEY` (recommended for Railway deployments)
+- `SENDGRID_FROM_EMAIL`
 - `LS_WEBHOOK_SECRET`
 - `LS_STARTER_URL`
 - `LS_PRO_URL`
@@ -135,7 +139,7 @@ Open `http://localhost:5000` in your browser.
 
 ## SMTP email configuration
 
-This project sends emails using SMTP directly through `smtplib`.
+This project sends emails using SMTP directly through `smtplib` by default.
 
 For Gmail SMTP, use the following settings:
 
@@ -157,6 +161,17 @@ MAIL_PORT=465
 MAIL_USE_SSL=True
 MAIL_USE_TLS=False
 ```
+
+### SendGrid (recommended for Railway)
+
+If SMTP fails in Railway or your host blocks outbound SMTP, configure SendGrid and add:
+
+```env
+SENDGRID_API_KEY=your_sendgrid_api_key
+SENDGRID_FROM_EMAIL=your@domain.com
+```
+
+When `SENDGRID_API_KEY` is set, InvoiceBot will send reminder emails through SendGrid instead of SMTP.
 
 ### Gmail notes
 

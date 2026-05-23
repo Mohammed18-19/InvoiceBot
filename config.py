@@ -19,6 +19,12 @@ class Config:
     MAIL_USE_TLS  = os.environ.get("MAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
     MAIL_USE_SSL  = os.environ.get("MAIL_USE_SSL", "False").lower() in ("1", "true", "yes")
 
+    SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "")
+    SENDGRID_FROM_EMAIL = os.environ.get("SENDGRID_FROM_EMAIL", MAIL_FROM)
+
+    # Email mode: 'smtp', 'sendgrid', or 'test' (logs emails instead of sending)
+    EMAIL_MODE = os.environ.get("EMAIL_MODE", "smtp")
+
     # Lemon Squeezy
     LS_WEBHOOK_SECRET = os.environ.get("LS_WEBHOOK_SECRET", "")
     LS_STARTER_URL    = os.environ.get("LS_STARTER_URL", "")

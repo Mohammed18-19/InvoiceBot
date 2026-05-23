@@ -162,6 +162,7 @@ def _render_template(tone, stage, context):
 def send_invoice_reminder(invoice, stage):
     from datetime import date
 
+    email_mode = current_app.config.get("EMAIL_MODE", "smtp")
     mail_username = current_app.config.get("MAIL_USERNAME", "")
     mail_password = current_app.config.get("MAIL_PASSWORD", "")
     mail_server   = current_app.config.get("MAIL_SERVER", "smtp.gmail.com")
@@ -170,10 +171,6 @@ def send_invoice_reminder(invoice, stage):
     mail_use_ssl  = current_app.config.get("MAIL_USE_SSL", False)
     mail_from     = current_app.config.get("MAIL_FROM", mail_username)
     mail_name     = current_app.config.get("MAIL_FROM_NAME", "InvoiceBot")
-
-    if not mail_username or not mail_password:
-        logger.warning("SMTP credentials not configured — skipping email send")
-        return False, None, "SMTP credentials not configured"
 
     due_date_str = invoice.due_date.strftime("%B %d, %Y")
     amount_str   = f"{float(invoice.amount):,.2f}"
@@ -191,6 +188,15 @@ def send_invoice_reminder(invoice, stage):
     }
 
     subject, body = _render_template(invoice.tone, stage, context)
+
+    # Test/Log mode: just log to console instead of sending
+    if email_mode == "test":
+        logger.info(f"\n{'='*60}\nTEST EMAIL MODE - Invoice Reminder\nTo: {invoice.client_email}\nSubject: {subject}\n{body}\n{'='*60}\n")
+        return True, "test-logged", None
+
+    if not mail_username or not mail_password:
+        logger.warning("SMTP credentials not configured — skipping email send")
+        return False, None, "SMTP credentials not configured"
 
     msg = MIMEMultipart()
     msg["From"]    = f"{mail_name} <{mail_from}>"

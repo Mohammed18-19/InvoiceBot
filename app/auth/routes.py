@@ -21,19 +21,8 @@ def _get_serializer():
 
 def _send_reset_email(user_email, reset_url):
     config = current_app.config
-    mail_server = config.get("MAIL_SERVER", "")
-    mail_port   = config.get("MAIL_PORT", 587)
-    mail_user   = config.get("MAIL_USERNAME", "")
-    mail_pass   = config.get("MAIL_PASSWORD", "")
-    mail_from   = config.get("MAIL_FROM", mail_user)
-    mail_name   = config.get("MAIL_FROM_NAME", "InvoiceBot")
-    mail_use_tls = config.get("MAIL_USE_TLS", True)
-    mail_use_ssl = config.get("MAIL_USE_SSL", False)
-
-    if not mail_user or not mail_pass:
-        logger.warning("SMTP not configured")
-        return False
-
+    email_mode = config.get("EMAIL_MODE", "smtp")
+    
     subject = "Reset your InvoiceBot password"
     body = f"""Hi,
 
@@ -48,6 +37,25 @@ If you didn't request this, ignore this email.
 
 — InvoiceBot · AINTORA SYSTEMS
 """
+    
+    # Test/Log mode: just log to console instead of sending
+    if email_mode == "test":
+        logger.info(f"\n{'='*60}\nTEST EMAIL MODE\nTo: {user_email}\nSubject: {subject}\n{body}\n{'='*60}\n")
+        return True
+    
+    mail_server = config.get("MAIL_SERVER", "")
+    mail_port   = config.get("MAIL_PORT", 587)
+    mail_user   = config.get("MAIL_USERNAME", "")
+    mail_pass   = config.get("MAIL_PASSWORD", "")
+    mail_from   = config.get("MAIL_FROM", mail_user)
+    mail_name   = config.get("MAIL_FROM_NAME", "InvoiceBot")
+    mail_use_tls = config.get("MAIL_USE_TLS", True)
+    mail_use_ssl = config.get("MAIL_USE_SSL", False)
+
+    if not mail_user or not mail_pass:
+        logger.warning("SMTP not configured")
+        return False
+
     msg = MIMEMultipart()
     msg["From"]    = f"{mail_name} <{mail_from}>"
     msg["To"]      = user_email
