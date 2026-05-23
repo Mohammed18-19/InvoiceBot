@@ -137,12 +137,10 @@ def forgot_password():
         user  = User.query.filter_by(email=email).first()
         if user:
             s         = _get_serializer()
-            token     = s.dumps(email, salt="password-reset")
+            # ✅ Include the password hash so the token is single-use
+            token     = s.dumps([email, user.password_hash], salt="password-reset")
             reset_url = url_for("auth.reset_password", token=token, _external=True)
-            if not _send_reset_email(email, reset_url):
-                logger.error("Password reset email delivery failed for %s", email)
-                flash("Unable to send the password reset email right now. Please try again later.", "danger")
-                return redirect(url_for("auth.forgot_password"))
+            _send_reset_email(email, reset_url)
         flash("If that email exists, a reset link has been sent. Check your inbox and spam.", "info")
         return redirect(url_for("auth.login"))
     return render_template("auth/forgot_password.html", form=form)
@@ -150,20 +148,26 @@ def forgot_password():
 
 @auth_bp.route("/reset-password/<token>", methods=["GET", "POST"])
 def reset_password(token):
-    # FIX: do NOT redirect logged-in users — they may reset while still logged in
     try:
-        s     = _get_serializer()
-        email = s.loads(token, salt="password-reset", max_age=1800)
+        s              = _get_serializer()
+        # ✅ Unpack both email and the hash that was current at send time
+        email, token_hash = s.loads(token, salt="password-reset", max_age=1800)
     except SignatureExpired:
         flash("This reset link has expired. Please request a new one.", "danger")
         return redirect(url_for("auth.forgot_password"))
-    except BadSignature:
+    except (BadSignature, ValueError):
+        # ValueError handles the case where old single-value tokens are unpacked as a list
         flash("Invalid or already used reset link. Please request a new one.", "danger")
         return redirect(url_for("auth.forgot_password"))
 
     user = User.query.filter_by(email=email).first()
     if not user:
         flash("User not found.", "danger")
+        return redirect(url_for("auth.forgot_password"))
+
+    # ✅ If the password has already changed, the token is dead
+    if user.password_hash != token_hash:
+        flash("This reset link has already been used. Please request a new one.", "danger")
         return redirect(url_for("auth.forgot_password"))
 
     form = ResetPasswordForm()
