@@ -189,35 +189,79 @@ def send_invoice_reminder(invoice, stage):
 
     subject, body = _render_template(invoice.tone, stage, context)
 
-    # Test/Log mode: just log to console instead of sending
+    # Use shared send_mail helper
+    subject = subject
+    body_text = body
+    ok, provider_tag, err = send_mail(
+        to_address=invoice.client_email,
+        subject=subject,
+        body=body_text,
+        from_name=mail_name,
+        from_email=mail_from,
+    )
+
+    if ok:
+        logger.info(f"Email sent: invoice={invoice.id} stage={stage} provider={provider_tag}")
+        return True, provider_tag, None
+    else:
+        logger.error(f"Email failed: invoice={invoice.id} stage={stage} error={err}")
+        return False, None, err
+
+
+def send_mail(to_address, subject, body, html_body=None, from_name=None, from_email=None):
+    """Send an email using configured provider (smtp or test).
+
+    Returns (ok: bool, provider_tag: str_or_none, error: str_or_none).
+    """
+    email_mode = current_app.config.get("EMAIL_MODE", "smtp")
+    mail_username = current_app.config.get("MAIL_USERNAME", "")
+    mail_password = current_app.config.get("MAIL_PASSWORD", "")
+    mail_server = current_app.config.get("MAIL_SERVER", "smtp.gmail.com")
+    mail_port = current_app.config.get("MAIL_PORT", 587)
+    mail_use_tls = current_app.config.get("MAIL_USE_TLS", True)
+    mail_use_ssl = current_app.config.get("MAIL_USE_SSL", False)
+    default_from = current_app.config.get("MAIL_FROM", mail_username)
+    default_from_name = current_app.config.get("MAIL_FROM_NAME", "InvoiceBot")
+
+    mail_from = from_email or default_from
+    mail_name = from_name or default_from_name
+
+    # Test mode: log and return success
     if email_mode == "test":
-        logger.info(f"\n{'='*60}\nTEST EMAIL MODE - Invoice Reminder\nTo: {invoice.client_email}\nSubject: {subject}\n{body}\n{'='*60}\n")
+        logger.info(f"\n{'='*60}\nTEST EMAIL MODE\nTo: {to_address}\nSubject: {subject}\n{body}\n{'='*60}\n")
         return True, "test-logged", None
 
-    if not mail_username or not mail_password:
-        logger.warning("SMTP credentials not configured — skipping email send")
-        return False, None, "SMTP credentials not configured"
+    # SMTP mode
+    if email_mode in ("smtp", ""):
+        if not mail_username or not mail_password:
+            msg = "SMTP credentials not configured"
+            logger.warning(msg)
+            return False, None, msg
 
-    msg = MIMEMultipart()
-    msg["From"]    = f"{mail_name} <{mail_from}>"
-    msg["To"]      = invoice.client_email
-    msg["Subject"] = subject
-    msg.attach(MIMEText(body, "plain"))
+        msg = MIMEMultipart()
+        msg["From"] = f"{mail_name} <{mail_from}>"
+        msg["To"] = to_address
+        msg["Subject"] = subject
+        msg.attach(MIMEText(body, "plain"))
 
-    try:
-        if mail_use_ssl or mail_port == 465:
-            server = smtplib.SMTP_SSL(mail_server, mail_port, timeout=10)
-        else:
-            server = smtplib.SMTP(mail_server, mail_port, timeout=10)
-            server.ehlo()
-            if mail_use_tls:
-                server.starttls()
+        try:
+            if mail_use_ssl or int(mail_port) == 465:
+                server = smtplib.SMTP_SSL(mail_server, int(mail_port), timeout=10)
+            else:
+                server = smtplib.SMTP(mail_server, int(mail_port), timeout=10)
                 server.ehlo()
-        server.login(mail_username, mail_password)
-        server.sendmail(mail_from, invoice.client_email, msg.as_string())
-        server.quit()
-        logger.info(f"Email sent: invoice={invoice.id} stage={stage}")
-        return True, "smtp-sent", None
-    except Exception as e:
-        logger.error(f"SMTP error: invoice={invoice.id} stage={stage} error={str(e)}")
-        return False, None, str(e)
+                if mail_use_tls:
+                    server.starttls()
+                    server.ehlo()
+            server.login(mail_username, mail_password)
+            server.sendmail(mail_from, to_address, msg.as_string())
+            server.quit()
+            return True, "smtp-sent", None
+        except Exception as e:
+            logger.exception("SMTP error sending email")
+            return False, None, str(e)
+
+    # Sendgrid or other providers can be added here later
+    msg = f"Unsupported EMAIL_MODE: {email_mode}"
+    logger.error(msg)
+    return False, None, msg

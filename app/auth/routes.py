@@ -4,11 +4,9 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from app import db
 from app.models import User
 from app.auth.forms import RegisterForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 import logging
 from app import limiter
+from app.email_service import send_mail
 
 
 logger = logging.getLogger(__name__)
@@ -20,9 +18,10 @@ def _get_serializer():
 
 
 def _send_reset_email(user_email, reset_url):
-    config = current_app.config
-    email_mode = config.get("EMAIL_MODE", "smtp")
-    
+    mail_user = current_app.config.get("MAIL_USERNAME", "")
+    mail_from = current_app.config.get("MAIL_FROM", mail_user)
+    mail_name = current_app.config.get("MAIL_FROM_NAME", "InvoiceBot")
+
     subject = "Reset your InvoiceBot password"
     body = f"""Hi,
 
@@ -35,51 +34,21 @@ This link expires in 30 minutes.
 
 If you didn't request this, ignore this email.
 
-— InvoiceBot · AINTORA SYSTEMS
+ InvoiceBot · AINTORA SYSTEMS
 """
-    
-    # Test/Log mode: just log to console instead of sending
-    if email_mode == "test":
-        logger.info(f"\n{'='*60}\nTEST EMAIL MODE\nTo: {user_email}\nSubject: {subject}\n{body}\n{'='*60}\n")
-        return True
-    
-    mail_server = config.get("MAIL_SERVER", "")
-    mail_port   = config.get("MAIL_PORT", 587)
-    mail_user   = config.get("MAIL_USERNAME", "")
-    mail_pass   = config.get("MAIL_PASSWORD", "")
-    mail_from   = config.get("MAIL_FROM", mail_user)
-    mail_name   = config.get("MAIL_FROM_NAME", "InvoiceBot")
-    mail_use_tls = config.get("MAIL_USE_TLS", True)
-    mail_use_ssl = config.get("MAIL_USE_SSL", False)
 
-    if not mail_user or not mail_pass:
-        logger.warning("SMTP not configured")
+    ok, provider, err = send_mail(
+        to_address=user_email,
+        subject=subject,
+        body=body,
+        from_name=mail_name,
+        from_email=mail_from,
+    )
+
+    if not ok:
+        logger.error(f"Reset email failed: {err}")
         return False
-
-    msg = MIMEMultipart()
-    msg["From"]    = f"{mail_name} <{mail_from}>"
-    msg["To"]      = user_email
-    msg["Subject"] = subject
-    msg.attach(MIMEText(body, "plain"))
-
-    try:
-        if mail_use_ssl or mail_port == 465:
-            server = smtplib.SMTP_SSL(mail_server, mail_port, timeout=10)
-        else:
-            server = smtplib.SMTP(mail_server, mail_port, timeout=10)
-            server.ehlo()
-            if mail_use_tls:
-                server.starttls()
-                server.ehlo()
-
-        server.login(mail_user, mail_pass)
-        server.sendmail(mail_from, [user_email], msg.as_string())
-        server.quit()
-        logger.info("Reset email sent to %s", user_email)
-        return True
-    except Exception as e:
-        logger.exception("Reset email failed")
-        return False
+    return True
 
 
 @auth_bp.route("/register", methods=["GET", "POST"])
@@ -137,10 +106,19 @@ def forgot_password():
         user  = User.query.filter_by(email=email).first()
         if user:
             s         = _get_serializer()
-            # ✅ Include the password hash so the token is single-use
             token     = s.dumps([email, user.password_hash], salt="password-reset")
-            reset_url = url_for("auth.reset_password", token=token, _external=True)
-            _send_reset_email(email, reset_url)
+            app_url   = current_app.config.get("APP_URL", "http://127.0.0.1:5000").rstrip("/")
+            reset_url = f"{app_url}/auth/reset-password/{token}"
+
+            logger.info(f"PASSWORD RESET LINK → {reset_url}")
+
+            # Always attempt to send the reset email. In dev you can set
+            # EMAIL_MODE=test to log instead of sending, or use real SMTP
+            # credentials to test actual delivery.
+            ok = _send_reset_email(email, reset_url)
+            if not ok:
+                logger.warning("Reset email could not be sent; link still logged for manual use")
+
         flash("If that email exists, a reset link has been sent. Check your inbox and spam.", "info")
         return redirect(url_for("auth.login"))
     return render_template("auth/forgot_password.html", form=form)
@@ -149,14 +127,12 @@ def forgot_password():
 @auth_bp.route("/reset-password/<token>", methods=["GET", "POST"])
 def reset_password(token):
     try:
-        s              = _get_serializer()
-        # ✅ Unpack both email and the hash that was current at send time
+        s                 = _get_serializer()
         email, token_hash = s.loads(token, salt="password-reset", max_age=1800)
     except SignatureExpired:
         flash("This reset link has expired. Please request a new one.", "danger")
         return redirect(url_for("auth.forgot_password"))
     except (BadSignature, ValueError):
-        # ValueError handles the case where old single-value tokens are unpacked as a list
         flash("Invalid or already used reset link. Please request a new one.", "danger")
         return redirect(url_for("auth.forgot_password"))
 
@@ -165,7 +141,7 @@ def reset_password(token):
         flash("User not found.", "danger")
         return redirect(url_for("auth.forgot_password"))
 
-    # ✅ If the password has already changed, the token is dead
+    # Single-use: if password already changed, token hash won't match
     if user.password_hash != token_hash:
         flash("This reset link has already been used. Please request a new one.", "danger")
         return redirect(url_for("auth.forgot_password"))
