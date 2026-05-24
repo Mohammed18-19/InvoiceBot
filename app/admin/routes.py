@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from functools import wraps
 from app import db
-from app.models import User, Invoice, EmailLog, EmailSchedule
+from app.models import User, Invoice, EmailLog, EmailSchedule, EmailDraft
 
 admin_bp = Blueprint("admin", __name__)
 
@@ -34,6 +34,7 @@ def index():
     blocked_users = User.query.filter_by(is_blocked=True).count()
     emails_sent = EmailLog.query.filter_by(success=True).count()
     emails_failed = EmailLog.query.filter_by(success=False).count()
+    draft_count = EmailDraft.query.count()
 
     starter_count = User.query.filter_by(plan="starter").count()
     pro_count = User.query.filter_by(plan="pro").count()
@@ -73,6 +74,7 @@ def index():
         "pending_invoices": pending_invoices,
         "paid_invoices": paid_invoices,
         "blocked_users": blocked_users,
+        "draft_count": draft_count,
         "emails_sent": emails_sent,
         "emails_failed": emails_failed,
         "mrr": mrr,
@@ -84,6 +86,7 @@ def index():
         recent_users=recent_users,
         recent_logs=recent_logs,
         upcoming=upcoming,
+        draft_count=draft_count,
     )
 
 
@@ -186,6 +189,27 @@ def all_invoices():
         .all()
     )
     return render_template("admin/invoices.html", invoices=invoices)
+
+
+@admin_bp.route("/email-drafts")
+@login_required
+@admin_required
+def email_drafts():
+    page = request.args.get("page", 1, type=int)
+    drafts = (
+        EmailDraft.query
+        .order_by(EmailDraft.created_at.desc())
+        .paginate(page=page, per_page=50)
+    )
+    return render_template("admin/email_drafts.html", drafts=drafts)
+
+
+@admin_bp.route("/email-drafts/<draft_id>")
+@login_required
+@admin_required
+def email_draft_detail(draft_id):
+    draft = EmailDraft.query.get_or_404(draft_id)
+    return render_template("admin/email_draft_detail.html", draft=draft)
 
 
 @admin_bp.route("/logs")

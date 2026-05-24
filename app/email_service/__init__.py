@@ -3,6 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask import current_app
+import resend as resend_client
 
 logger = logging.getLogger(__name__)
 
@@ -162,15 +163,8 @@ def _render_template(tone, stage, context):
 def send_invoice_reminder(invoice, stage):
     from datetime import date
 
-    email_mode = current_app.config.get("EMAIL_MODE", "smtp")
-    mail_username = current_app.config.get("MAIL_USERNAME", "")
-    mail_password = current_app.config.get("MAIL_PASSWORD", "")
-    mail_server   = current_app.config.get("MAIL_SERVER", "smtp.gmail.com")
-    mail_port     = current_app.config.get("MAIL_PORT", 587)
-    mail_use_tls  = current_app.config.get("MAIL_USE_TLS", True)
-    mail_use_ssl  = current_app.config.get("MAIL_USE_SSL", False)
-    mail_from     = current_app.config.get("MAIL_FROM", mail_username)
-    mail_name     = current_app.config.get("MAIL_FROM_NAME", "InvoiceBot")
+    mail_from = current_app.config.get("MAIL_FROM", "")
+    mail_name = current_app.config.get("MAIL_FROM_NAME", "InvoiceBot")
 
     due_date_str = invoice.due_date.strftime("%B %d, %Y")
     amount_str   = f"{float(invoice.amount):,.2f}"
@@ -189,15 +183,14 @@ def send_invoice_reminder(invoice, stage):
 
     subject, body = _render_template(invoice.tone, stage, context)
 
-    # Use shared send_mail helper
-    subject = subject
-    body_text = body
     ok, provider_tag, err = send_mail(
         to_address=invoice.client_email,
         subject=subject,
-        body=body_text,
+        body=body,
         from_name=mail_name,
         from_email=mail_from,
+        invoice_id=invoice.id,
+        email_type="invoice_reminder",
     )
 
     if ok:
@@ -208,30 +201,92 @@ def send_invoice_reminder(invoice, stage):
         return False, None, err
 
 
-def send_mail(to_address, subject, body, html_body=None, from_name=None, from_email=None):
-    """Send an email using configured provider (smtp or test).
+def send_mail(
+    to_address,
+    subject,
+    body,
+    html_body=None,
+    from_name=None,
+    from_email=None,
+    invoice_id=None,
+    email_type=None,
+):
+    """Send an email using configured provider (resend, smtp, db, or test).
 
     Returns (ok: bool, provider_tag: str_or_none, error: str_or_none).
     """
     email_mode = current_app.config.get("EMAIL_MODE", "smtp")
     mail_username = current_app.config.get("MAIL_USERNAME", "")
     mail_password = current_app.config.get("MAIL_PASSWORD", "")
-    mail_server = current_app.config.get("MAIL_SERVER", "smtp.gmail.com")
-    mail_port = current_app.config.get("MAIL_PORT", 587)
-    mail_use_tls = current_app.config.get("MAIL_USE_TLS", True)
-    mail_use_ssl = current_app.config.get("MAIL_USE_SSL", False)
-    default_from = current_app.config.get("MAIL_FROM", mail_username)
-    default_from_name = current_app.config.get("MAIL_FROM_NAME", "InvoiceBot")
+    mail_server   = current_app.config.get("MAIL_SERVER", "smtp.gmail.com")
+    mail_port     = current_app.config.get("MAIL_PORT", 587)
+    mail_use_tls  = current_app.config.get("MAIL_USE_TLS", True)
+    mail_use_ssl  = current_app.config.get("MAIL_USE_SSL", False)
+    default_from  = current_app.config.get("MAIL_FROM", mail_username)
+    default_name  = current_app.config.get("MAIL_FROM_NAME", "InvoiceBot")
 
     mail_from = from_email or default_from
-    mail_name = from_name or default_from_name
+    mail_name = from_name or default_name
 
-    # Test mode: log and return success
+    logger.info(
+        "send_mail called: mode=%s from=%s to=%s",
+        email_mode, mail_from, to_address,
+    )
+
+    # ── Test mode ──────────────────────────────────────────────────────────
     if email_mode == "test":
-        logger.info(f"\n{'='*60}\nTEST EMAIL MODE\nTo: {to_address}\nSubject: {subject}\n{body}\n{'='*60}\n")
+        logger.info(
+            f"\n{'='*60}\nTEST EMAIL MODE\nTo: {to_address}\n"
+            f"Subject: {subject}\n{body}\n{'='*60}\n"
+        )
         return True, "test-logged", None
 
-    # SMTP mode
+    # ── DB draft mode ──────────────────────────────────────────────────────
+    if email_mode == "db":
+        try:
+            from app import db
+            from app.models import EmailDraft
+
+            draft = EmailDraft(
+                invoice_id=invoice_id,
+                email_type=email_type,
+                to_address=to_address,
+                from_email=mail_from,
+                from_name=mail_name,
+                subject=subject,
+                body=body,
+                html_body=html_body,
+            )
+            db.session.add(draft)
+            db.session.commit()
+            logger.info("Email draft saved: %s", draft.id)
+            return True, "db-saved", None
+        except Exception as e:
+            logger.exception("Error saving email draft")
+            return False, None, str(e)
+
+    # ── Resend mode ────────────────────────────────────────────────────────
+    if email_mode == "resend":
+        api_key = current_app.config.get("RESEND_API_KEY", "")
+        if not api_key:
+            return False, None, "RESEND_API_KEY not configured"
+        try:
+            resend_client.api_key = api_key
+            params = {
+                "from": f"{mail_name} <{mail_from}>",
+                "to": [to_address],
+                "subject": subject,
+                "text": body,
+            }
+            if html_body:
+                params["html"] = html_body
+            resend_client.Emails.send(params)
+            return True, "resend-sent", None
+        except Exception as e:
+            logger.exception("Resend error sending email")
+            return False, None, str(e)
+
+    # ── SMTP mode ──────────────────────────────────────────────────────────
     if email_mode in ("smtp", ""):
         if not mail_username or not mail_password:
             msg = "SMTP credentials not configured"
@@ -239,8 +294,8 @@ def send_mail(to_address, subject, body, html_body=None, from_name=None, from_em
             return False, None, msg
 
         msg = MIMEMultipart()
-        msg["From"] = f"{mail_name} <{mail_from}>"
-        msg["To"] = to_address
+        msg["From"]    = f"{mail_name} <{mail_from}>"
+        msg["To"]      = to_address
         msg["Subject"] = subject
         msg.attach(MIMEText(body, "plain"))
 

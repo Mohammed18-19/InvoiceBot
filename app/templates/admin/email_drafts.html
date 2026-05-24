@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Email Drafts — Admin{% endblock %}
+{% block page_title %}Email Drafts{% endblock %}
+{% block content %}
+<div class="card-section p-0" style="overflow:hidden;">
+  <div class="table-responsive">
+    <table class="table invoice-table mb-0">
+      <thead>
+        <tr><th class="ps-3">Created</th><th>Type</th><th>To</th><th>Subject</th><th>Invoice</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        {% for draft in drafts.items %}
+        <tr>
+          <td class="ps-3" style="font-size:.75rem;color:#94a3b8;">{{ draft.created_at.strftime('%b %d %H:%M UTC') }}</td>
+          <td style="font-size:.78rem;text-transform:capitalize;">{{ draft.email_type or 'draft' }}</td>
+          <td style="font-size:.78rem;">{{ draft.to_address }}</td>
+          <td style="font-size:.78rem;font-weight:600;">{{ draft.subject }}</td>
+          <td style="font-size:.78rem;">{% if draft.invoice %}{{ draft.invoice.invoice_number or draft.invoice.id[:8].upper() }}{% else %}&mdash;{% endif %}</td>
+          <td><a href="{{ url_for('admin.email_draft_detail', draft_id=draft.id) }}" style="font-size:.78rem;color:var(--brand);">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if drafts.pages > 1 %}
+  <div class="p-3 d-flex gap-2 justify-content-center">
+    {% if drafts.has_prev %}
+    <a href="{{ url_for('admin.email_drafts', page=drafts.prev_num) }}" class="btn btn-sm btn-outline-secondary">← Prev</a>
+    {% endif %}
+    <span style="font-size:.8rem;color:#64748b;padding:.375rem .75rem;">Page {{ drafts.page }} of {{ drafts.pages }}</span>
+    {% if drafts.has_next %}
+    <a href="{{ url_for('admin.email_drafts', page=drafts.next_num) }}" class="btn btn-sm btn-outline-secondary">Next →</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

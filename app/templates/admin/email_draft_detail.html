@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Email Draft — Admin{% endblock %}
+{% block page_title %}Email Draft{% endblock %}
+{% block content %}
+<div class="card-section">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:.8rem;color:#94a3b8;margin-bottom:.25rem;">{{ draft.email_type or 'Email draft' }}</div>
+      <h2 style="font-size:1.1rem;font-weight:700;color:#0f172a;margin:0;">{{ draft.subject }}</h2>
+    </div>
+    <div style="font-size:.8rem;color:#64748b;">Created {{ draft.created_at.strftime('%b %d %Y %H:%M UTC') }}</div>
+  </div>
+  <div style="margin-top:1.25rem;">
+    <div style="margin-bottom:.5rem;"><strong>To:</strong> {{ draft.to_address }}</div>
+    <div style="margin-bottom:.5rem;"><strong>From:</strong> {{ draft.from_name }} &lt;{{ draft.from_email }}&gt;</div>
+    {% if draft.invoice %}
+    <div style="margin-bottom:.5rem;"><strong>Invoice:</strong> {{ draft.invoice.invoice_number or draft.invoice.id[:8].upper() }}</div>
+    {% endif %}
+  </div>
+  <div style="margin-top:1.5rem;">
+    <div style="font-size:.9rem;font-weight:600;color:#0f172a;margin-bottom:.5rem;">Body</div>
+    <div style="white-space:pre-wrap;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:1rem;font-family:ui-monospace,monospace;font-size:.9rem;color:#0f172a;">{{ draft.body }}</div>
+  </div>
+  {% if draft.html_body %}
+  <div style="margin-top:1.5rem;">
+    <div style="font-size:.9rem;font-weight:600;color:#0f172a;margin-bottom:.5rem;">HTML body</div>
+    <div style="white-space:pre-wrap;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:1rem;font-family:ui-monospace,monospace;font-size:.9rem;color:#0f172a;">{{ draft.html_body }}</div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

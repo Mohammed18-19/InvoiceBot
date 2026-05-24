@@ -174,6 +174,16 @@ SENDGRID_FROM_EMAIL=your@domain.com
 
 When `EMAIL_MODE=sendgrid` is set, InvoiceBot will send emails through SendGrid instead of SMTP. If no SMTP credentials are configured and a `SENDGRID_API_KEY` is present, the app will also fall back to SendGrid automatically.
 
+### DB draft-only mode (free preview)
+
+If you want to avoid any provider entirely and just store email content in the database, set:
+
+```env
+EMAIL_MODE=db
+```
+
+That mode saves invoice reminder and password-reset emails as drafts in the database so you can inspect them from the admin panel without actually sending mail.
+
 ### Gmail notes
 
 - Use an App Password if you have 2FA enabled

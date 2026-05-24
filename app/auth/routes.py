@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_user, logout_user, current_user, login_required
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
@@ -50,6 +52,8 @@ If you didn't request this, ignore this email.
         body=body,
         from_name=mail_name,
         from_email=mail_from,
+        invoice_id=None,
+        email_type="password_reset",
     )
 
     if not ok:
@@ -112,10 +116,10 @@ def forgot_password():
         email = form.email.data.lower().strip()
         user  = User.query.filter_by(email=email).first()
         if user:
+            logger.info("Password reset requested for email=%s", email)
             s         = _get_serializer()
             token     = s.dumps([email, user.password_hash], salt="password-reset")
-            app_url   = _normalize_app_url(current_app.config.get("APP_URL", "http://127.0.0.1:5000"))
-            reset_url = f"{app_url}/auth/reset-password/{token}"
+            reset_url = f"{url_for('auth.reset_password', _external=True)}?token={quote(token)}"
 
             logger.info(f"PASSWORD RESET LINK → {reset_url}")
 
@@ -131,8 +135,17 @@ def forgot_password():
     return render_template("auth/forgot_password.html", form=form)
 
 
-@auth_bp.route("/reset-password/<token>", methods=["GET", "POST"])
-def reset_password(token):
+@auth_bp.route("/reset-password", methods=["GET", "POST"])
+def reset_password():
+    token = request.args.get("token", "") if request.method == "GET" else request.form.get("token", "")
+    token = (token or "").strip()
+
+    if not token:
+        flash("Invalid or already used reset link. Please request a new one.", "danger")
+        return redirect(url_for("auth.forgot_password"))
+
+    logger.info("Reset password token received: %s", token)
+
     try:
         s                 = _get_serializer()
         email, token_hash = s.loads(token, salt="password-reset", max_age=1800)
@@ -161,4 +174,4 @@ def reset_password(token):
         flash("Password updated. Sign in with your new password.", "success")
         return redirect(url_for("auth.login"))
 
-    return render_template("auth/reset_password.html", form=form, email=email)
+    return render_template("auth/reset_password.html", form=form, email=email, token=token)

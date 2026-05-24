@@ -88,6 +88,7 @@ class Invoice(db.Model):
 
     email_schedules = db.relationship("EmailSchedule", backref="invoice", lazy="dynamic", cascade="all, delete-orphan")
     email_logs = db.relationship("EmailLog", backref="invoice", lazy="dynamic", cascade="all, delete-orphan")
+    email_drafts = db.relationship("EmailDraft", backref="invoice", lazy="dynamic", cascade="all, delete-orphan")
 
     @property
     def days_overdue(self):
@@ -142,3 +143,21 @@ class EmailLog(db.Model):
 
     def __repr__(self):
         return f"<EmailLog invoice={self.invoice_id} stage={self.stage}>"
+
+
+class EmailDraft(db.Model):
+    __tablename__ = "email_drafts"
+
+    id = db.Column(db.String(36), primary_key=True, default=gen_uuid)
+    invoice_id = db.Column(db.String(36), db.ForeignKey("invoices.id"), nullable=True)
+    email_type = db.Column(db.String(50), nullable=True)
+    to_address = db.Column(db.String(255), nullable=False)
+    from_email = db.Column(db.String(255), nullable=True)
+    from_name = db.Column(db.String(255), nullable=True)
+    subject = db.Column(db.String(500), nullable=False)
+    body = db.Column(db.Text, nullable=True)
+    html_body = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
+        return f"<EmailDraft to={self.to_address} type={self.email_type}>"
