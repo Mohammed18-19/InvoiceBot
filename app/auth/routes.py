@@ -17,6 +17,13 @@ def _get_serializer():
     return URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
 
 
+def _normalize_app_url(app_url):
+    app_url = (app_url or "").strip()
+    if not app_url.startswith(("http://", "https://")):
+        app_url = f"https://{app_url}"
+    return app_url.rstrip("/")
+
+
 def _send_reset_email(user_email, reset_url):
     mail_user = current_app.config.get("MAIL_USERNAME", "")
     mail_from = current_app.config.get("MAIL_FROM", mail_user)
@@ -34,7 +41,7 @@ This link expires in 30 minutes.
 
 If you didn't request this, ignore this email.
 
- InvoiceBot · AINTORA SYSTEMS
+— InvoiceBot · AINTORA SYSTEMS
 """
 
     ok, provider, err = send_mail(
@@ -107,7 +114,7 @@ def forgot_password():
         if user:
             s         = _get_serializer()
             token     = s.dumps([email, user.password_hash], salt="password-reset")
-            app_url   = current_app.config.get("APP_URL", "http://127.0.0.1:5000").rstrip("/")
+            app_url   = _normalize_app_url(current_app.config.get("APP_URL", "http://127.0.0.1:5000"))
             reset_url = f"{app_url}/auth/reset-password/{token}"
 
             logger.info(f"PASSWORD RESET LINK → {reset_url}")

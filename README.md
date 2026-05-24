@@ -167,11 +167,12 @@ MAIL_USE_TLS=False
 If SMTP fails in Railway or your host blocks outbound SMTP, configure SendGrid and add:
 
 ```env
+EMAIL_MODE=sendgrid
 SENDGRID_API_KEY=your_sendgrid_api_key
 SENDGRID_FROM_EMAIL=your@domain.com
 ```
 
-When `SENDGRID_API_KEY` is set, InvoiceBot will send reminder emails through SendGrid instead of SMTP.
+When `EMAIL_MODE=sendgrid` is set, InvoiceBot will send emails through SendGrid instead of SMTP. If no SMTP credentials are configured and a `SENDGRID_API_KEY` is present, the app will also fall back to SendGrid automatically.
 
 ### Gmail notes
 

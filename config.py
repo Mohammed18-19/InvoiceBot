@@ -4,34 +4,47 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def env(name, default=""):
+    return os.environ.get(name, default).strip()
+
+
+def normalize_url(url, default="http://localhost:5000"):
+    url = (url or "").strip()
+    if not url:
+        url = default
+    if not url.startswith(("http://", "https://")):
+        url = f"https://{url}"
+    return url.rstrip("/")
+
+
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-change-in-production")
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "postgresql://localhost/invoicenudge")
+    SECRET_KEY = env("SECRET_KEY", "dev-secret-change-in-production")
+    SQLALCHEMY_DATABASE_URI = env("DATABASE_URL", "postgresql://localhost/invoicenudge")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Mail (Gmail SMTP / Brevo)
-    MAIL_SERVER   = os.environ.get("MAIL_SERVER", "smtp.gmail.com")
-    MAIL_PORT     = int(os.environ.get("MAIL_PORT", 587))
-    MAIL_USERNAME = os.environ.get("MAIL_USERNAME", "")
-    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD", "")
-    MAIL_FROM     = os.environ.get("MAIL_FROM", "")
-    MAIL_FROM_NAME = os.environ.get("MAIL_FROM_NAME", "InvoiceBot")
-    MAIL_USE_TLS  = os.environ.get("MAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
-    MAIL_USE_SSL  = os.environ.get("MAIL_USE_SSL", "False").lower() in ("1", "true", "yes")
+    MAIL_SERVER   = env("MAIL_SERVER", "smtp.gmail.com")
+    MAIL_PORT     = int(env("MAIL_PORT", "587"))
+    MAIL_USERNAME = env("MAIL_USERNAME", "")
+    MAIL_PASSWORD = env("MAIL_PASSWORD", "")
+    MAIL_FROM     = env("MAIL_FROM", "")
+    MAIL_FROM_NAME = env("MAIL_FROM_NAME", "InvoiceBot")
+    MAIL_USE_TLS  = env("MAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
+    MAIL_USE_SSL  = env("MAIL_USE_SSL", "False").lower() in ("1", "true", "yes")
 
-    SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "")
-    SENDGRID_FROM_EMAIL = os.environ.get("SENDGRID_FROM_EMAIL", MAIL_FROM)
+    SENDGRID_API_KEY = env("SENDGRID_API_KEY", "")
+    SENDGRID_FROM_EMAIL = env("SENDGRID_FROM_EMAIL", MAIL_FROM)
 
     # Email mode: 'smtp', 'sendgrid', or 'test' (logs emails instead of sending)
-    EMAIL_MODE = os.environ.get("EMAIL_MODE", "smtp")
+    EMAIL_MODE = env("EMAIL_MODE", "smtp")
 
     # Lemon Squeezy
-    LS_WEBHOOK_SECRET = os.environ.get("LS_WEBHOOK_SECRET", "")
-    LS_STARTER_URL    = os.environ.get("LS_STARTER_URL", "")
-    LS_PRO_URL        = os.environ.get("LS_PRO_URL", "")
+    LS_WEBHOOK_SECRET = env("LS_WEBHOOK_SECRET", "")
+    LS_STARTER_URL    = env("LS_STARTER_URL", "")
+    LS_PRO_URL        = env("LS_PRO_URL", "")
 
     # App
-    APP_URL = os.environ.get("APP_URL", "http://localhost:5000")
+    APP_URL = normalize_url(env("APP_URL", "http://localhost:5000"))
 
     # Plan limits
     PLAN_LIMITS = {

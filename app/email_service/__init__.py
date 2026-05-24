@@ -3,6 +3,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask import current_app
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 logger = logging.getLogger(__name__)
 
@@ -226,6 +228,9 @@ def send_mail(to_address, subject, body, html_body=None, from_name=None, from_em
     mail_from = from_email or default_from
     mail_name = from_name or default_from_name
 
+    if email_mode == "smtp" and not mail_username and current_app.config.get("SENDGRID_API_KEY"):
+        email_mode = "sendgrid"
+
     # Test mode: log and return success
     if email_mode == "test":
         logger.info(f"\n{'='*60}\nTEST EMAIL MODE\nTo: {to_address}\nSubject: {subject}\n{body}\n{'='*60}\n")
@@ -261,7 +266,38 @@ def send_mail(to_address, subject, body, html_body=None, from_name=None, from_em
             logger.exception("SMTP error sending email")
             return False, None, str(e)
 
-    # Sendgrid or other providers can be added here later
+    # SendGrid mode
+    if email_mode == "sendgrid":
+        sendgrid_api_key = current_app.config.get("SENDGRID_API_KEY", "")
+        if not sendgrid_api_key:
+            msg = "SENDGRID_API_KEY not configured"
+            logger.warning(msg)
+            return False, None, msg
+
+        sendgrid_from_email = from_email or current_app.config.get("SENDGRID_FROM_EMAIL", default_from)
+        if not sendgrid_from_email:
+            msg = "SendGrid from email is not configured"
+            logger.warning(msg)
+            return False, None, msg
+
+        try:
+            message = Mail(
+                from_email=sendgrid_from_email,
+                to_emails=to_address,
+                subject=subject,
+                plain_text_content=body,
+            )
+            if html_body:
+                message.html_content = html_body
+
+            client = SendGridAPIClient(sendgrid_api_key)
+            response = client.send(message)
+            logger.info("SendGrid email sent: status=%s to=%s", response.status_code, to_address)
+            return True, "sendgrid", None
+        except Exception as e:
+            logger.exception("SendGrid error sending email")
+            return False, None, str(e)
+
     msg = f"Unsupported EMAIL_MODE: {email_mode}"
     logger.error(msg)
     return False, None, msg
