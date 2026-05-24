@@ -39,6 +39,7 @@ def create_app(config_name="default"):
             logout_user()
             flash("Your account has been blocked. Contact the admin.", "danger")
             return redirect(url_for("auth.login"))
+
     if config_name == "production":
         Talisman(
             app,
@@ -54,12 +55,14 @@ def create_app(config_name="default"):
     from app.invoices.routes import invoices_bp
     from app.billing.routes import billing_bp
     from app.admin.routes import admin_bp
+    from app.debug_routes import debug_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(dashboard_bp, url_prefix="/")
     app.register_blueprint(invoices_bp, url_prefix="/invoices")
     app.register_blueprint(billing_bp, url_prefix="/billing")
     app.register_blueprint(admin_bp, url_prefix="/admin")
+    app.register_blueprint(debug_bp)
 
     # Start background scheduler
     from app.scheduler.jobs import start_scheduler
