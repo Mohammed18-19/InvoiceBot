@@ -1,3 +1,4 @@
+# path: config.py
 import os
 from dotenv import load_dotenv
 
@@ -22,20 +23,20 @@ class Config:
     SQLALCHEMY_DATABASE_URI = env("DATABASE_URL", "postgresql://localhost/invoicenudge")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Mail (Gmail SMTP / Brevo)
-    MAIL_SERVER   = env("MAIL_SERVER", "smtp.gmail.com")
-    MAIL_PORT     = int(env("MAIL_PORT", "587"))
-    MAIL_USERNAME = env("MAIL_USERNAME", "")
-    MAIL_PASSWORD = env("MAIL_PASSWORD", "")
-    MAIL_FROM     = env("MAIL_FROM", "")
+    # Mail
+    MAIL_SERVER    = env("MAIL_SERVER", "smtp.gmail.com")
+    MAIL_PORT      = int(env("MAIL_PORT", "587"))
+    MAIL_USERNAME  = env("MAIL_USERNAME", "")
+    MAIL_PASSWORD  = env("MAIL_PASSWORD", "")
+    MAIL_FROM      = env("MAIL_FROM", "")
     MAIL_FROM_NAME = env("MAIL_FROM_NAME", "InvoiceBot")
-    MAIL_USE_TLS  = env("MAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
-    MAIL_USE_SSL  = env("MAIL_USE_SSL", "False").lower() in ("1", "true", "yes")
+    MAIL_USE_TLS   = env("MAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
+    MAIL_USE_SSL   = env("MAIL_USE_SSL", "False").lower() in ("1", "true", "yes")
 
-    SENDGRID_API_KEY = env("SENDGRID_API_KEY", "")
-    SENDGRID_FROM_EMAIL = env("SENDGRID_FROM_EMAIL", MAIL_FROM)
+    # Resend
+    RESEND_API_KEY = env("RESEND_API_KEY", "")
 
-    # Email mode: 'smtp', 'sendgrid', or 'test' (logs emails instead of sending)
+    # Email mode: 'resend', 'smtp', 'db', or 'test'
     EMAIL_MODE = env("EMAIL_MODE", "smtp")
 
     # Lemon Squeezy
