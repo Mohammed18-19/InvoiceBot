@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Settings — InvoiceBot{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% block content %}
+<div style="max-width:600px;">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} mb-3" style="border-radius:10px;">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <form method="POST" action="{{ url_for('auth.settings') }}">
+    {{ form.hidden_tag() }}
+
+    <div class="card-section mb-3">
+      <h2 style="font-size:.9375rem;font-weight:700;margin-bottom:1.25rem;color:#0f172a;">
+        <i class="bi bi-person-circle me-2" style="color:var(--brand);"></i>Profile
+      </h2>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Full name *</label>
+          {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), placeholder="Issam Benali") }}
+          {% for e in form.name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Company name</label>
+          {{ form.company(class="form-control", placeholder="AINTORA Systems") }}
+          <div class="form-text">Shown in email signatures sent to your clients.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-section mb-3">
+      <h2 style="font-size:.9375rem;font-weight:700;margin-bottom:1.25rem;color:#0f172a;">
+        <i class="bi bi-credit-card me-2" style="color:var(--brand);"></i>Payment
+      </h2>
+      <div class="mb-3">
+        <label class="form-label">Default payment link</label>
+        {{ form.default_payment_link(class="form-control", placeholder="https://www.paypal.me/yourusername") }}
+        <div class="form-text">Auto-filled on every new invoice. You can override it per invoice.</div>
+      </div>
+    </div>
+
+    <div class="card-section mb-3">
+      <h2 style="font-size:.9375rem;font-weight:700;margin-bottom:1.25rem;color:#0f172a;">
+        <i class="bi bi-envelope me-2" style="color:var(--brand);"></i>Account
+      </h2>
+      <div class="mb-0">
+        <label class="form-label">Email address</label>
+        <input type="text" class="form-control" value="{{ current_user.email }}" disabled>
+        <div class="form-text">Email cannot be changed.</div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-brand px-4">Save settings</button>
+  </form>
+</div>
+{% endblock %}

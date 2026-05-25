@@ -17,3 +17,6 @@ env/
 instance/
 migrations/versions/*.py
 !migrations/versions/.gitkeep
+cookies.txt
+*.cookies
+*.session

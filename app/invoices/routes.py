@@ -86,6 +86,8 @@ def new_invoice():
 
         return redirect(url_for("invoices.detail", invoice_id=invoice.id))
 
+    if request.method == "GET" and current_user.default_payment_link:
+        form.payment_link.data = current_user.default_payment_link
     return render_template("invoices/new.html", form=form)
 
 

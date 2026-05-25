@@ -175,3 +175,18 @@ def reset_password():
         return redirect(url_for("auth.login"))
 
     return render_template("auth/reset_password.html", form=form, email=email, token=token)
+
+
+@auth_bp.route("/settings", methods=["GET", "POST"])
+@login_required
+def settings():
+    from app.auth.forms import SettingsForm
+    form = SettingsForm(obj=current_user)
+    if form.validate_on_submit():
+        current_user.name = form.name.data.strip()
+        current_user.company = form.company.data.strip() if form.company.data else None
+        current_user.default_payment_link = form.default_payment_link.data.strip() if form.default_payment_link.data else None
+        db.session.commit()
+        flash("Settings saved.", "success")
+        return redirect(url_for("auth.settings"))
+    return render_template("auth/settings.html", form=form)

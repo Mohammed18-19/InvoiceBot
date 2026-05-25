@@ -177,7 +177,7 @@ def send_invoice_reminder(invoice, stage):
         "currency":        invoice.currency,
         "due_date":        due_date_str,
         "days_overdue":    days_overdue,
-        "sender_name":     invoice.owner.name or invoice.owner.email,
+        "sender_name": f"{invoice.owner.name or invoice.owner.email} — {invoice.owner.company}" if invoice.owner.company else (invoice.owner.name or invoice.owner.email),
         "payment_section": _build_payment_section(invoice.payment_link),
     }
 
@@ -217,7 +217,7 @@ def send_mail(
     """
     email_mode = current_app.config.get("EMAIL_MODE", "smtp")
     mail_username = current_app.config.get("MAIL_USERNAME", "")
-    mail_password = current_app.config.get("MAIL_PASSWORD", "")
+    mail_password = current_app.config.get("MAIL_PASSWORD", "").replace(" ", "")
     mail_server   = current_app.config.get("MAIL_SERVER", "smtp.gmail.com")
     mail_port     = current_app.config.get("MAIL_PORT", 587)
     mail_use_tls  = current_app.config.get("MAIL_USE_TLS", True)

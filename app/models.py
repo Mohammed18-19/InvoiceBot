@@ -21,6 +21,8 @@ class User(UserMixin, db.Model):
     stripe_subscription_id = db.Column(db.String(100), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     is_blocked = db.Column(db.Boolean, default=False, nullable=False)
+    company = db.Column(db.String(255), nullable=True)
+    default_payment_link = db.Column(db.String(500), nullable=True)
 
     invoices = db.relationship("Invoice", backref="owner", lazy="dynamic", cascade="all, delete-orphan")
 
@@ -161,3 +163,4 @@ class EmailDraft(db.Model):
 
     def __repr__(self):
         return f"<EmailDraft to={self.to_address} type={self.email_type}>"
+# ← this won't work, we need to edit directly

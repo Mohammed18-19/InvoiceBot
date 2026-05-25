@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
+from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, Optional
 from app.models import User
 
 
@@ -33,3 +33,11 @@ class ResetPasswordForm(FlaskForm):
     confirm = PasswordField("Confirm new password", validators=[DataRequired(), EqualTo("password")])
     submit = SubmitField("Set new password")
 
+
+
+
+class SettingsForm(FlaskForm):
+    name = StringField("Full name", validators=[DataRequired(), Length(1, 255)])
+    company = StringField("Company name", validators=[Optional(), Length(0, 255)])
+    default_payment_link = StringField("Default payment link", validators=[Optional(), Length(0, 500)])
+    submit = SubmitField("Save settings")
