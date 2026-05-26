@@ -47,6 +47,14 @@ class Config:
     # App
     APP_URL = normalize_url(env("APP_URL", "http://localhost:5000"))
 
+
+    # Security
+    SESSION_COOKIE_SECURE      = True
+    SESSION_COOKIE_HTTPONLY    = True
+    SESSION_COOKIE_SAMESITE    = "Lax"
+    PERMANENT_SESSION_LIFETIME = 86400
+    WTF_CSRF_TIME_LIMIT        = 3600
+
     # Plan limits
     PLAN_LIMITS = {
         "free":    {"invoices": 3,       "csv_export": False, "pdf_report": False},
@@ -81,3 +89,16 @@ SQLALCHEMY_ENGINE_OPTIONS = {
     "pool_recycle": 300,
     "connect_args": {"connect_timeout": 10},
 }
+
+class SecurityConfig:
+    # Session security
+    SESSION_COOKIE_SECURE     = True   # HTTPS only
+    SESSION_COOKIE_HTTPONLY   = True   # No JS access
+    SESSION_COOKIE_SAMESITE   = "Lax"
+    PERMANENT_SESSION_LIFETIME = 86400  # 1 day
+
+    # CSRF already handled by Flask-WTF
+    WTF_CSRF_TIME_LIMIT = 3600  # 1 hour
+
+    # Prevent clickjacking
+    X_FRAME_OPTIONS = "DENY"
