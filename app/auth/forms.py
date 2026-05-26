@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, Optional
 from app.models import User
 
@@ -40,4 +40,5 @@ class SettingsForm(FlaskForm):
     name = StringField("Full name", validators=[DataRequired(), Length(1, 255)])
     company = StringField("Company name", validators=[Optional(), Length(0, 255)])
     default_payment_link = StringField("Default payment link", validators=[Optional(), Length(0, 500)])
+    language = SelectField("Email language", choices=[("en","English"),("fr","Français"),("ar","العربية")], default="en")
     submit = SubmitField("Save settings")

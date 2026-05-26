@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_required, current_user
 from datetime import datetime, date, timedelta, timezone
 
@@ -131,3 +131,112 @@ def delete_invoice(invoice_id):
     db.session.commit()
     flash("Invoice deleted.", "info")
     return redirect(url_for("invoices.list_invoices"))
+
+
+@invoices_bp.route("/<invoice_id>/preview-email/<int:stage>")
+@login_required
+def preview_email(invoice_id, stage):
+    from app.email_service import _render_template, _build_payment_section
+    from datetime import date
+    invoice = Invoice.query.filter_by(id=invoice_id, user_id=current_user.id).first_or_404()
+    due_date_str = invoice.due_date.strftime("%B %d, %Y")
+    days_overdue = max((date.today() - invoice.due_date).days, 0)
+    sender_name = current_user.name or current_user.email
+    if current_user.company:
+        sender_name = f"{sender_name} — {current_user.company}"
+    context = {
+        "client_name":     invoice.client_name,
+        "invoice_number":  invoice.invoice_number or invoice.id[:8].upper(),
+        "amount":          f"{float(invoice.amount):,.2f}",
+        "currency":        invoice.currency,
+        "due_date":        due_date_str,
+        "days_overdue":    days_overdue,
+        "sender_name":     sender_name,
+        "payment_section": _build_payment_section(invoice.payment_link),
+    }
+    language = getattr(current_user, "language", "en") or "en"
+    subject, body = _render_template(invoice.tone, stage, context, language=language)
+    return render_template("invoices/preview_email.html",
+        invoice=invoice, stage=stage, subject=subject, body=body)
+
+
+@invoices_bp.route("/report")
+@login_required
+def report():
+    from datetime import date
+    invoices = Invoice.query.filter_by(user_id=current_user.id).order_by(Invoice.created_at.desc()).all()
+
+    # Stats
+    total_invoiced  = sum(float(inv.amount) for inv in invoices)
+    total_collected = sum(float(inv.amount) for inv in invoices if inv.status == "paid")
+    total_pending   = sum(float(inv.amount) for inv in invoices if inv.status == "pending")
+    total_overdue   = sum(float(inv.amount) for inv in invoices if inv.status == "pending" and inv.due_date < date.today())
+    overdue_count   = sum(1 for inv in invoices if inv.status == "pending" and inv.due_date < date.today())
+
+    # Per-client breakdown
+    clients = {}
+    for inv in invoices:
+        if inv.client_name not in clients:
+            clients[inv.client_name] = {"invoiced": 0, "collected": 0, "count": 0}
+        clients[inv.client_name]["invoiced"]  += float(inv.amount)
+        clients[inv.client_name]["count"]     += 1
+        if inv.status == "paid":
+            clients[inv.client_name]["collected"] += float(inv.amount)
+
+    # Pick most used currency
+    from collections import Counter
+    currencies = [inv.currency for inv in invoices]
+    currency = Counter(currencies).most_common(1)[0][0] if currencies else "USD"
+
+    return render_template("invoices/report.html",
+        invoices=invoices,
+        total_invoiced=total_invoiced,
+        total_collected=total_collected,
+        total_pending=total_pending,
+        total_overdue=total_overdue,
+        overdue_count=overdue_count,
+        clients=clients,
+        currency=currency,
+        today=date.today(),
+    )
+
+
+@invoices_bp.route("/report/export/csv")
+@login_required
+def export_csv():
+    import csv, io
+    from datetime import date
+
+    if not current_user.can_export_csv:
+        flash("CSV export is available on the Starter plan and above. Upgrade to access this feature.", "warning")
+        return redirect(url_for("invoices.report"))
+
+    invoices = Invoice.query.filter_by(user_id=current_user.id).order_by(Invoice.created_at.desc()).all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Invoice #", "Client", "Client Email", "Amount", "Currency",
+                     "Due Date", "Status", "Days Overdue", "Payment Link", "Created At"])
+
+    for inv in invoices:
+        days_overdue = max((date.today() - inv.due_date).days, 0) if inv.status == "pending" and inv.due_date < date.today() else 0
+        writer.writerow([
+            inv.invoice_number or inv.id[:8].upper(),
+            inv.client_name,
+            inv.client_email,
+            float(inv.amount),
+            inv.currency,
+            inv.due_date.strftime("%Y-%m-%d"),
+            inv.status,
+            days_overdue,
+            inv.payment_link or "",
+            inv.created_at.strftime("%Y-%m-%d"),
+        ])
+
+    output.seek(0)
+    from flask import Response
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=invoices_{date.today()}.csv"}
+    )

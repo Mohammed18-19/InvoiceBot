@@ -49,9 +49,9 @@ class Config:
 
     # Plan limits
     PLAN_LIMITS = {
-        "free":    3,
-        "starter": 20,
-        "pro":     999999,
+        "free":    {"invoices": 3,       "csv_export": False, "pdf_report": False},
+        "starter": {"invoices": 20,      "csv_export": True,  "pdf_report": False},
+        "pro":     {"invoices": 999999,  "csv_export": True,  "pdf_report": True},
     }
 
 

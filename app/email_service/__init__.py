@@ -147,14 +147,295 @@ If payment is not received within 48 hours, I will be forced to consider formal 
 }
 
 
+
+TEMPLATES_FR = {
+    "polite": {
+        1: {
+            "subject": "Rappel amical : Facture #{invoice_number}",
+            "body": """Bonjour {client_name},
+
+J'espère que vous allez bien ! Je vous envoie un rappel amical concernant la facture #{invoice_number} d'un montant de {amount} {currency}, dont la date d'échéance était le {due_date}.
+
+Si vous avez déjà effectué le paiement, veuillez ignorer ce message — merci !
+
+Dans le cas contraire, je vous serais reconnaissant(e) de bien vouloir procéder au règlement dès que possible.
+
+{payment_section}
+
+N'hésitez pas à me contacter pour toute question.
+
+Cordialement,
+{sender_name}""",
+        },
+        2: {
+            "subject": "Suivi : Facture #{invoice_number} — {days_overdue} jours de retard",
+            "body": """Bonjour {client_name},
+
+Je fais suite à la facture #{invoice_number} d'un montant de {amount} {currency}, échue le {due_date}, qui accuse maintenant {days_overdue} jours de retard.
+
+Je voulais m'assurer que ce message n'avait pas été manqué.
+
+{payment_section}
+
+Pourriez-vous me tenir informé(e) de la situation ?
+
+Merci,
+{sender_name}""",
+        },
+        3: {
+            "subject": "Dernier rappel : Facture #{invoice_number} — action requise",
+            "body": """Bonjour {client_name},
+
+Ceci est mon dernier rappel concernant la facture #{invoice_number} d'un montant de {amount} {currency}, en retard de {days_overdue} jours (date d'échéance initiale : {due_date}).
+
+Je vous serais très reconnaissant(e) d'effectuer le paiement rapidement ou de m'informer de vos intentions.
+
+{payment_section}
+
+Si vous rencontrez un problème, n'hésitez pas à me contacter.
+
+Merci,
+{sender_name}""",
+        },
+    },
+    "professional": {
+        1: {
+            "subject": "Rappel de paiement : Facture #{invoice_number}",
+            "body": """Madame, Monsieur {client_name},
+
+Nous vous rappelons que la facture #{invoice_number} d'un montant de {amount} {currency} était due le {due_date}.
+
+Nous vous remercions de bien vouloir procéder au règlement dans les meilleurs délais.
+
+{payment_section}
+
+Pour toute question relative à cette facture, n'hésitez pas à répondre à cet e-mail.
+
+Cordialement,
+{sender_name}""",
+        },
+        2: {
+            "subject": "Deuxième avis : Facture #{invoice_number} — {days_overdue} jours de retard",
+            "body": """Madame, Monsieur {client_name},
+
+Nous vous contactons au sujet de la facture #{invoice_number} d'un montant de {amount} {currency}, qui reste impayée {days_overdue} jours après son échéance du {due_date}.
+
+Nous vous remercions de bien vouloir régulariser cette situation rapidement.
+
+{payment_section}
+
+Si vous rencontrez des difficultés, veuillez nous contacter directement.
+
+Cordialement,
+{sender_name}""",
+        },
+        3: {
+            "subject": "Urgent : Facture #{invoice_number} — paiement immédiat requis",
+            "body": """Madame, Monsieur {client_name},
+
+La facture #{invoice_number} d'un montant de {amount} {currency} accuse un retard important ({days_overdue} jours depuis le {due_date}).
+
+Il s'agit de notre dernier avis avant d'envisager des mesures supplémentaires.
+
+{payment_section}
+
+Veuillez nous contacter d'urgence si vous souhaitez discuter de cette situation.
+
+Cordialement,
+{sender_name}""",
+        },
+    },
+    "firm": {
+        1: {
+            "subject": "Facture #{invoice_number} — paiement dû",
+            "body": """Bonjour {client_name},
+
+La facture #{invoice_number} d'un montant de {amount} {currency} était due le {due_date} et n'a pas été réglée.
+
+Veuillez effectuer le paiement immédiatement.
+
+{payment_section}
+
+{sender_name}""",
+        },
+        2: {
+            "subject": "EN RETARD : Facture #{invoice_number} — {days_overdue} jours de retard",
+            "body": """Bonjour {client_name},
+
+La facture #{invoice_number} d'un montant de {amount} {currency} accuse {days_overdue} jours de retard.
+
+J'attends un paiement immédiat ou un engagement ferme avec une date de règlement.
+
+{payment_section}
+
+Cette situation requiert votre attention immédiate.
+
+{sender_name}""",
+        },
+        3: {
+            "subject": "DERNIER AVIS : Facture #{invoice_number} — {days_overdue} jours de retard",
+            "body": """Bonjour {client_name},
+
+Ceci est mon dernier avis concernant la facture #{invoice_number} d'un montant de {amount} {currency}, en retard de {days_overdue} jours.
+
+Si le paiement n'est pas reçu dans les 48 heures, je serai contraint(e) d'envisager un recouvrement formel.
+
+{payment_section}
+
+{sender_name}""",
+        },
+    },
+}
+
+TEMPLATES_AR = {
+    "polite": {
+        1: {
+            "subject": "تذكير ودي: الفاتورة #{invoice_number}",
+            "body": """مرحباً {client_name}،
+
+أتمنى أن تكون بخير! أرسل إليك هذا التذكير الودي بشأن الفاتورة #{invoice_number} بمبلغ {amount} {currency}، والتي كان موعد استحقاقها {due_date}.
+
+إذا كنت قد أرسلت الدفعة بالفعل، يُرجى تجاهل هذه الرسالة — وشكراً!
+
+وإن لم يكن كذلك، أتطلع إلى تسوية المبلغ في أقرب وقت ممكن.
+
+{payment_section}
+
+لا تتردد في التواصل معي إن كان لديك أي استفسار.
+
+مع أطيب التحيات،
+{sender_name}""",
+        },
+        2: {
+            "subject": "متابعة: الفاتورة #{invoice_number} — {days_overdue} يوم تأخير",
+            "body": """مرحباً {client_name}،
+
+أتابع معك بشأن الفاتورة #{invoice_number} بمبلغ {amount} {currency}، المستحقة منذ {due_date}، والتي تأخرت الآن {days_overdue} يوماً.
+
+أردت فقط التأكد من أن هذه الرسالة لم تفتك.
+
+{payment_section}
+
+هل يمكنك إعلامي بالوضع عندما تتاح لك الفرصة؟
+
+شكراً جزيلاً،
+{sender_name}""",
+        },
+        3: {
+            "subject": "آخر تذكير: الفاتورة #{invoice_number} — إجراء مطلوب",
+            "body": """مرحباً {client_name}،
+
+هذا هو آخر تذكير بشأن الفاتورة #{invoice_number} بمبلغ {amount} {currency}، المتأخرة {days_overdue} يوماً (تاريخ الاستحقاق الأصلي: {due_date}).
+
+أرجو منك سرعة الدفع أو إخباري بموعد متوقع للتسوية.
+
+{payment_section}
+
+إذا كانت هناك مشكلة لا أعلمها، فلا تتردد في التواصل معي.
+
+شكراً،
+{sender_name}""",
+        },
+    },
+    "professional": {
+        1: {
+            "subject": "تذكير بالدفع: الفاتورة #{invoice_number}",
+            "body": """عزيزي/عزيزتي {client_name}،
+
+نود تذكيركم بأن الفاتورة #{invoice_number} بمبلغ {amount} {currency} كانت مستحقة في {due_date}.
+
+نرجو منكم إتمام الدفع في أقرب وقت ممكن.
+
+{payment_section}
+
+لأي استفسار يتعلق بهذه الفاتورة، لا تترددوا في الرد على هذا البريد الإلكتروني.
+
+مع التقدير،
+{sender_name}""",
+        },
+        2: {
+            "subject": "إشعار ثانٍ: الفاتورة #{invoice_number} — {days_overdue} يوم تأخير",
+            "body": """عزيزي/عزيزتي {client_name}،
+
+نتواصل معكم بشأن الفاتورة #{invoice_number} بمبلغ {amount} {currency}، والتي لا تزال غير مسددة بعد {days_overdue} يوماً من تاريخ استحقاقها {due_date}.
+
+نقدر تعاونكم السريع في تسوية هذا المبلغ.
+
+{payment_section}
+
+إذا كنتم تواجهون أي صعوبات، يُرجى التواصل معنا مباشرة.
+
+مع التقدير،
+{sender_name}""",
+        },
+        3: {
+            "subject": "عاجل: الفاتورة #{invoice_number} — يُرجى الدفع الفوري",
+            "body": """عزيزي/عزيزتي {client_name}،
+
+الفاتورة #{invoice_number} بمبلغ {amount} {currency} متأخرة بشكل كبير ({days_overdue} يوماً منذ {due_date}).
+
+هذا هو إشعارنا الأخير قبل اتخاذ إجراءات إضافية.
+
+{payment_section}
+
+يُرجى التواصل معنا بشكل عاجل إذا كنتم ترغبون في مناقشة الأمر.
+
+مع التقدير،
+{sender_name}""",
+        },
+    },
+    "firm": {
+        1: {
+            "subject": "الفاتورة #{invoice_number} — مبلغ مستحق",
+            "body": """مرحباً {client_name}،
+
+الفاتورة #{invoice_number} بمبلغ {amount} {currency} كانت مستحقة في {due_date} ولم يتم سدادها.
+
+يُرجى الدفع فوراً.
+
+{payment_section}
+
+{sender_name}""",
+        },
+        2: {
+            "subject": "متأخر: الفاتورة #{invoice_number} — {days_overdue} يوم تأخير",
+            "body": """مرحباً {client_name}،
+
+الفاتورة #{invoice_number} بمبلغ {amount} {currency} متأخرة {days_overdue} يوماً.
+
+أنتظر الدفع الفوري أو التزاماً واضحاً بموعد السداد.
+
+{payment_section}
+
+هذا الأمر يستدعي اهتمامك الفوري.
+
+{sender_name}""",
+        },
+        3: {
+            "subject": "إشعار نهائي: الفاتورة #{invoice_number} — {days_overdue} يوم تأخير",
+            "body": """مرحباً {client_name}،
+
+هذا هو إشعاري النهائي بشأن الفاتورة #{invoice_number} بمبلغ {amount} {currency}، المتأخرة {days_overdue} يوماً.
+
+إذا لم يتم استلام الدفع خلال 48 ساعة، سأضطر إلى النظر في خيارات التحصيل الرسمية.
+
+{payment_section}
+
+{sender_name}""",
+        },
+    },
+}
+
 def _build_payment_section(payment_link):
     if payment_link:
         return f"Pay now: {payment_link}"
     return ""
 
 
-def _render_template(tone, stage, context):
-    template = TEMPLATES.get(tone, TEMPLATES["polite"]).get(stage, TEMPLATES["polite"][1])
+def _render_template(tone, stage, context, language="en"):
+    lang_map = {"fr": TEMPLATES_FR, "ar": TEMPLATES_AR}
+    template_set = lang_map.get(language, TEMPLATES)
+    template = template_set.get(tone, template_set["polite"]).get(stage, template_set["polite"][1])
     subject = template["subject"].format(**context)
     body = template["body"].format(**context)
     return subject, body
@@ -181,7 +462,8 @@ def send_invoice_reminder(invoice, stage):
         "payment_section": _build_payment_section(invoice.payment_link),
     }
 
-    subject, body = _render_template(invoice.tone, stage, context)
+    language = getattr(invoice.owner, "language", "en") or "en"
+    subject, body = _render_template(invoice.tone, stage, context, language=language)
 
     ok, provider_tag, err = send_mail(
         to_address=invoice.client_email,
@@ -319,3 +601,39 @@ def send_mail(
     msg = f"Unsupported EMAIL_MODE: {email_mode}"
     logger.error(msg)
     return False, None, msg
+
+def send_welcome_email(user):
+    """Send welcome email to newly registered user."""
+    mail_from = current_app.config.get("MAIL_FROM", "")
+    mail_name = current_app.config.get("MAIL_FROM_NAME", "InvoiceBot")
+
+    subject = "Welcome to InvoiceBot 🎉"
+    body = f"""Hi {user.name or "there"},
+
+Welcome to InvoiceBot — we're glad you're here!
+
+Here's what you can do right now:
+
+1. Add your first invoice at /invoices/new
+2. Set your company name and payment link at /auth/settings
+3. Sit back — we'll chase your clients automatically
+
+Your plan: {user.plan.title()} ({user.invoice_limit} active invoices)
+
+Questions? Just reply to this email.
+
+— Mohammed
+InvoiceBot · AINTORA SYSTEMS
+"""
+
+    ok, provider, err = send_mail(
+        to_address=user.email,
+        subject=subject,
+        body=body,
+        from_name=mail_name,
+        from_email=mail_from,
+        email_type="welcome",
+    )
+    if not ok:
+        logger.error(f"Welcome email failed for {user.email}: {err}")
+    return ok

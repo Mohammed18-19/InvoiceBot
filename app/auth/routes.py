@@ -75,6 +75,10 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
+        from app.email_service import send_welcome_email
+        send_welcome_email(user)
+        from app.email_service import send_welcome_email
+        send_welcome_email(user)
         login_user(user)
         flash("Welcome to InvoiceBot! Add your first invoice and let us do the chasing.", "success")
         return redirect(url_for("dashboard.index"))
@@ -182,10 +186,13 @@ def reset_password():
 def settings():
     from app.auth.forms import SettingsForm
     form = SettingsForm(obj=current_user)
+    if request.method == "GET":
+        form.language.data = current_user.language or "en"
     if form.validate_on_submit():
         current_user.name = form.name.data.strip()
         current_user.company = form.company.data.strip() if form.company.data else None
         current_user.default_payment_link = form.default_payment_link.data.strip() if form.default_payment_link.data else None
+        current_user.language = form.language.data
         db.session.commit()
         flash("Settings saved.", "success")
         return redirect(url_for("auth.settings"))

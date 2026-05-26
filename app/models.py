@@ -21,6 +21,7 @@ class User(UserMixin, db.Model):
     stripe_subscription_id = db.Column(db.String(100), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     is_blocked = db.Column(db.Boolean, default=False, nullable=False)
+    language = db.Column(db.String(10), default="en", nullable=False)  # en | fr | ar
     company = db.Column(db.String(255), nullable=True)
     default_payment_link = db.Column(db.String(500), nullable=True)
 
@@ -35,7 +36,20 @@ class User(UserMixin, db.Model):
     @property
     def invoice_limit(self):
         from config import Config
-        return Config.PLAN_LIMITS.get(self.plan, 3)
+        limits = Config.PLAN_LIMITS.get(self.plan, {"invoices": 3})
+        return limits["invoices"] if isinstance(limits, dict) else limits
+
+    @property
+    def can_export_csv(self):
+        from config import Config
+        limits = Config.PLAN_LIMITS.get(self.plan, {})
+        return limits.get("csv_export", False) if isinstance(limits, dict) else False
+
+    @property
+    def can_export_pdf(self):
+        from config import Config
+        limits = Config.PLAN_LIMITS.get(self.plan, {})
+        return limits.get("pdf_report", False) if isinstance(limits, dict) else False
 
     @property
     def active_invoice_count(self):

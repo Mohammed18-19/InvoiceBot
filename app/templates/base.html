@@ -93,6 +93,9 @@
     </a>
     <a href="{{ url_for('invoices.list_invoices') }}" class="nav-link {% if request.endpoint and 'invoices' in request.endpoint %}active{% endif %}">
       <i class="bi bi-file-earmark-text"></i> Invoices
+    <a href="{{ url_for('invoices.report') }}" class="nav-link {% if request.endpoint == 'invoices.report' %}active{% endif %}">
+      <i class="bi bi-bar-chart-line"></i> Reports
+    </a>
     </a>
     <a href="{{ url_for('invoices.new_invoice') }}" class="nav-link">
       <i class="bi bi-plus-circle"></i> New invoice

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Report — InvoiceBot{% endblock %}
+{% block page_title %}Invoice Report{% endblock %}
+
+{% block content %}
+<div style="max-width:860px;">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-warning mb-3" style="border-radius:10px;">{{ message }}
+        <a href="{{ url_for('billing.upgrade') }}" style="font-weight:600;">Upgrade →</a>
+      </div>
+    {% endfor %}
+  {% endwith %}
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+    <div>
+      <p style="margin:0;font-size:.75rem;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">As of {{ today.strftime("%B %d, %Y") }}</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      {% if current_user.can_export_csv %}
+        <a href="{{ url_for('invoices.export_csv') }}" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-download me-1"></i>Export CSV
+        </a>
+      {% else %}
+        <a href="{{ url_for('billing.upgrade') }}" class="btn btn-sm btn-outline-secondary" title="Starter plan required">
+          <i class="bi bi-lock me-1"></i>Export CSV
+        </a>
+      {% endif %}
+      {% if current_user.can_export_pdf %}
+        <a href="#" class="btn btn-sm btn-brand">
+          <i class="bi bi-file-earmark-pdf me-1"></i>Export PDF
+        </a>
+      {% else %}
+        <a href="{{ url_for('billing.upgrade') }}" class="btn btn-sm btn-brand" title="Pro plan required">
+          <i class="bi bi-lock me-1"></i>PDF Report
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="stat-card accent-pink">
+        <div class="label">Total Invoiced</div>
+        <div class="value">{{ currency }} {{ "%.0f"|format(total_invoiced) }}</div>
+        <div class="sub">{{ invoices|length }} invoices</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card accent-green">
+        <div class="label">Collected</div>
+        <div class="value">{{ currency }} {{ "%.0f"|format(total_collected) }}</div>
+        <div class="sub">{{ invoices|selectattr("status","equalto","paid")|list|length }} paid</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card accent-amber">
+        <div class="label">Pending</div>
+        <div class="value">{{ currency }} {{ "%.0f"|format(total_pending) }}</div>
+        <div class="sub">{{ invoices|selectattr("status","equalto","pending")|list|length }} invoices</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card accent-red">
+        <div class="label">Overdue</div>
+        <div class="value">{{ currency }} {{ "%.0f"|format(total_overdue) }}</div>
+        <div class="sub">{{ overdue_count }} overdue</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client Breakdown -->
+  {% if clients %}
+  <div class="card-section mb-4">
+    <h2 style="font-size:.9375rem;font-weight:700;margin-bottom:1rem;color:#0f172a;">
+      <i class="bi bi-people me-2" style="color:var(--brand);"></i>Per Client
+    </h2>
+    <table class="table invoice-table mb-0">
+      <thead>
+        <tr>
+          <th>Client</th>
+          <th>Invoices</th>
+          <th>Total Invoiced</th>
+          <th>Collected</th>
+          <th>Outstanding</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for name, data in clients.items() %}
+        <tr>
+          <td style="font-weight:500;">{{ name }}</td>
+          <td>{{ data.count }}</td>
+          <td>{{ currency }} {{ "%.2f"|format(data.invoiced) }}</td>
+          <td style="color:#166534;">{{ currency }} {{ "%.2f"|format(data.collected) }}</td>
+          <td style="color:{% if data.invoiced - data.collected > 0 %}#991b1b{% else %}#166534{% endif %};">
+            {{ currency }} {{ "%.2f"|format(data.invoiced - data.collected) }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- Invoice List -->
+  <div class="card-section">
+    <h2 style="font-size:.9375rem;font-weight:700;margin-bottom:1rem;color:#0f172a;">
+      <i class="bi bi-list-ul me-2" style="color:var(--brand);"></i>All Invoices
+    </h2>
+    <table class="table invoice-table mb-0">
+      <thead>
+        <tr>
+          <th>#</th><th>Client</th><th>Amount</th><th>Due</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inv in invoices %}
+        <tr>
+          <td style="font-family:monospace;font-size:.8rem;">{{ inv.invoice_number or inv.id[:8]|upper }}</td>
+          <td>{{ inv.client_name }}</td>
+          <td style="font-weight:500;">{{ inv.currency }} {{ "%.2f"|format(inv.amount|float) }}</td>
+          <td style="color:{% if inv.status == 'pending' and inv.due_date < today %}#991b1b{% else %}#64748b{% endif %};">
+            {{ inv.due_date.strftime("%b %d, %Y") }}
+          </td>
+          <td>
+            <span class="badge badge-{{ inv.status }}">{{ inv.status | title }}</span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}
