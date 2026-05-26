@@ -7,19 +7,30 @@ Automated invoice follow-up for freelancers and small businesses. Add invoices, 
 - User registration, login, and password reset
 - Create invoices with client email, amount, due date, tone, and payment link
 - Automatically schedule 3 reminder emails per invoice
-- Send reminder emails on a schedule using SMTP with TLS/SSL support
+- Send reminder emails on a schedule using SMTP or Brevo
 - Track email logs and delivery success/failure
 - Support pricing plans via Lemon Squeezy webhook billing
 - Show graceful custom error pages for `403`, `404`, and `500`
+- Multi-language email reminders (English, French, Arabic)
+- Welcome email on new user registration
+- Email preview per reminder stage before sending
+- Invoice report with per-client breakdown and CSV export
+- User settings: company name, default payment link, email language
 
 ## Features
 
 - Authenticated user dashboard with invoice status and payment tracking
-- Invoice creation and detail view
+- Onboarding checklist on dashboard for new users (company, payment link, first invoice)
+- Invoice creation and detail view with email preview per stage
 - Configurable follow-up tone: `polite`, `professional`, `firm`
+- Multi-language reminder emails: English, French, Arabic (set per user in Settings)
 - Automatic overdue email scheduling and sending
+- Welcome email sent on registration
 - Password reset email flow
 - Admin panel for managing blocked users and monitoring email logs
+- Invoice report page: total invoiced, collected, pending, overdue, per-client breakdown
+- CSV export of all invoices (Starter plan and above)
+- PDF report export (Pro plan)
 - Lemon Squeezy upgrade flow for paid plans
 - Production-ready Flask setup with Talisman security hardening
 
@@ -32,7 +43,7 @@ Automated invoice follow-up for freelancers and small businesses. Add invoices, 
 - Flask-Login
 - Flask-WTF + WTForms
 - APScheduler for background email processing
-- SMTP email delivery via Python `smtplib`
+- SMTP email delivery via Brevo (recommended) or any SMTP provider
 - Lemon Squeezy webhook billing
 - Bootstrap 5 for UI styling
 
@@ -43,15 +54,15 @@ invoicebot/
 ├── app/
 │   ├── __init__.py          # App factory, extensions, error handlers, scheduler bootstrap
 │   ├── models.py            # User, Invoice, EmailSchedule, EmailLog models
-│   ├── auth/                # Authentication: register, login, forgot/reset password
+│   ├── auth/                # Authentication: register, login, forgot/reset password, settings
 │   ├── billing/             # Lemon Squeezy upgrade and webhook handling
-│   ├── dashboard/           # Main authenticated dashboard
-│   ├── invoices/            # Invoice CRUD and validation
-│   ├── email_service/       # Email content and SMTP send logic
+│   ├── dashboard/           # Main authenticated dashboard with onboarding checklist
+│   ├── invoices/            # Invoice CRUD, email preview, report, CSV export
+│   ├── email_service/       # Email content (EN/FR/AR), SMTP send logic, welcome email
 │   ├── scheduler/           # APScheduler job for sending due emails
 │   ├── templates/           # Jinja views and error pages
 │   └── static/              # CSS/JS assets
-├── config.py                # App configuration and environment settings
+├── config.py                # App configuration, environment settings, plan limits
 ├── init_db.py               # Database initialization script
 ├── run.py                   # Local run entry point
 ├── seed.py                  # Seed development data
@@ -94,16 +105,15 @@ Then edit `.env` with your own settings.
 - `FLASK_ENV=development`
 - `SECRET_KEY` (strong random secret)
 - `DATABASE_URL=postgresql://localhost/invoicebot_dev`
-- `MAIL_SERVER` (e.g. `smtp.gmail.com`)
+- `MAIL_SERVER` (e.g. `smtp-relay.brevo.com`)
 - `MAIL_PORT` (e.g. `587`)
-- `MAIL_USE_TLS` (e.g. `True`)
-- `MAIL_USE_SSL` (e.g. `False`)
+- `MAIL_USE_TLS=True`
+- `MAIL_USE_SSL=False`
 - `MAIL_USERNAME`
 - `MAIL_PASSWORD`
 - `MAIL_FROM`
 - `MAIL_FROM_NAME`
-- `SENDGRID_API_KEY` (recommended for Railway deployments)
-- `SENDGRID_FROM_EMAIL`
+- `EMAIL_MODE=smtp`
 - `LS_WEBHOOK_SECRET`
 - `LS_STARTER_URL`
 - `LS_PRO_URL`
@@ -137,57 +147,123 @@ python run.py
 
 Open `http://localhost:5000` in your browser.
 
-## SMTP email configuration
+## Email configuration
 
-This project sends emails using SMTP directly through `smtplib` by default.
+### Brevo (recommended — free, inbox delivery)
 
-For Gmail SMTP, use the following settings:
+Brevo provides 300 free emails/day with proper SPF/DKIM authentication, meaning reminders land in inbox rather than spam. Sign up at [brevo.com](https://brevo.com) and use the SMTP credentials from your dashboard:
 
 ```env
-MAIL_SERVER=smtp.gmail.com
+MAIL_SERVER=smtp-relay.brevo.com
 MAIL_PORT=587
 MAIL_USE_TLS=True
 MAIL_USE_SSL=False
-MAIL_USERNAME=your@gmail.com
-MAIL_PASSWORD=your-app-password
-MAIL_FROM=your@gmail.com
-MAIL_FROM_NAME=Your Name
+MAIL_USERNAME=your_brevo_login@smtp-brevo.com
+MAIL_PASSWORD=your_brevo_smtp_key
+MAIL_FROM=yourapp@gmail.com
+MAIL_FROM_NAME=InvoiceBot by YourCompany
+EMAIL_MODE=smtp
 ```
 
-If your provider requires SSL on port `465`, set:
+### Gmail SMTP (development only)
+
+For Gmail SMTP, use an App Password (requires 2FA enabled on the account):
 
 ```env
+MAIL_SERVER=smtp.gmail.com
 MAIL_PORT=465
 MAIL_USE_SSL=True
 MAIL_USE_TLS=False
+MAIL_USERNAME=your@gmail.com
+MAIL_PASSWORD=your-16-char-app-password
+MAIL_FROM=your@gmail.com
+MAIL_FROM_NAME=Your Name
+EMAIL_MODE=smtp
 ```
 
-### SendGrid (recommended for Railway)
+> Note: Gmail SMTP is not recommended for production as reminder emails may land in spam for recipients. Use Brevo for production.
 
-If SMTP fails in Railway or your host blocks outbound SMTP, configure SendGrid and add:
+### Resend (alternative)
+
+Resend provides 3,000 free emails/month. The SDK is already installed:
 
 ```env
-EMAIL_MODE=sendgrid
-SENDGRID_API_KEY=your_sendgrid_api_key
-SENDGRID_FROM_EMAIL=your@domain.com
+EMAIL_MODE=resend
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxx
 ```
 
-When `EMAIL_MODE=sendgrid` is set, InvoiceBot will send emails through SendGrid instead of SMTP. If no SMTP credentials are configured and a `SENDGRID_API_KEY` is present, the app will also fall back to SendGrid automatically.
+### DB draft-only mode
 
-### DB draft-only mode (free preview)
-
-If you want to avoid any provider entirely and just store email content in the database, set:
+To store emails as database drafts without sending (useful for debugging):
 
 ```env
 EMAIL_MODE=db
 ```
 
-That mode saves invoice reminder and password-reset emails as drafts in the database so you can inspect them from the admin panel without actually sending mail.
+Drafts are viewable from the admin panel.
 
-### Gmail notes
+### Test mode
 
-- Use an App Password if you have 2FA enabled
-- Do not use your regular Gmail login password
+To log emails to the terminal without sending:
+
+```env
+EMAIL_MODE=test
+```
+
+## Multi-language email reminders
+
+Users can set their preferred reminder language in **Settings → Language**. Supported languages:
+
+- English (`en`) — default
+- French (`fr`) — Français
+- Arabic (`ar`) — العربية
+
+The language applies to all 3 reminder stages across all tones (polite, professional, firm). Clients receive reminders in the language the user has selected.
+
+## User settings
+
+Each user can configure the following from `/auth/settings`:
+
+- **Full name** — shown in email signatures
+- **Company name** — appended to sender name in reminders (e.g. "Issam — AINTORA Systems")
+- **Default payment link** — auto-filled on every new invoice (can be overridden per invoice)
+- **Email language** — language for all client-facing reminder emails
+
+## Plan limits
+
+| Feature | Free | Starter | Pro |
+|---|---|---|---|
+| Active invoices | 3 | 20 | Unlimited |
+| Email reminders | ✓ | ✓ | ✓ |
+| CSV export | ✗ | ✓ | ✓ |
+| PDF report | ✗ | ✗ | ✓ |
+
+Plans are managed via Lemon Squeezy webhooks. When a subscription event is received, the user's plan updates automatically.
+
+## Invoice report
+
+The report page (`/invoices/report`) shows:
+
+- Total invoiced, collected, pending, and overdue amounts
+- Per-client breakdown with invoice count and revenue
+- Full invoice list with status and due dates
+- CSV export button (Starter+) and PDF export button (Pro)
+
+Currency shown is automatically detected from the user's most-used invoice currency.
+
+## Onboarding checklist
+
+New users see a checklist on the dashboard until they complete the three setup steps:
+
+1. Add company name in Settings
+2. Set a default payment link in Settings
+3. Create their first invoice
+
+Each item shows a green checkmark once completed and the checklist disappears when all three are done.
+
+## Email preview
+
+From any invoice detail page, users can preview exactly what each reminder stage will look like before it sends — including subject line, body, sender, and recipient — across all 3 stages. The preview reflects the user's current language and tone settings.
 
 ## Lemon Squeezy billing setup
 
@@ -206,24 +282,46 @@ With the app running locally, test the custom error pages by visiting:
 - Add a temporary route that raises an exception to test `500`
 - Add a temporary route that calls `abort(403)` to test `403`
 
+## Testing email
+
+Hit the debug route while logged in to verify email delivery:
+
+```
+http://localhost:5000/debug/test-email
+```
+
+Returns a JSON response with `success`, `provider`, `error`, and config details.
+
 ## Testing password reset
 
 1. Go to `/auth/forgot-password`
 2. Enter a registered email
-3. Confirm the reset email is sent via SMTP
-
-If nothing is delivered, check logs and SMTP credentials.
+3. Confirm the reset email arrives via your configured provider
 
 ## Deployment notes
 
-This project includes a `Procfile` for deployment on Railway, Heroku, or any Gunicorn-compatible host.
+This project includes a `Procfile` for deployment on Railway, Render, Heroku, or any Gunicorn-compatible host.
 
 ### Recommended deployment workflow
 
 1. Push code to GitHub
-2. Connect the repo to Railway
-3. Add environment variables in Railway settings
-4. Deploy and run database migrations
+2. Connect the repo to your hosting provider
+3. Add all environment variables from `.env.example` in the dashboard
+4. Run database migrations via the provider's shell or a release command:
+   ```bash
+   flask db upgrade
+   ```
+5. Deploy
+
+### Environment variables for production
+
+All variables from the local `.env` file must be added to your hosting provider's environment settings. The most critical ones for production:
+
+- `FLASK_ENV=production`
+- `SECRET_KEY` (strong, random, never reuse the dev key)
+- `DATABASE_URL` (provided by your hosting PostgreSQL add-on)
+- `MAIL_*` (Brevo credentials recommended)
+- `APP_URL` (your public domain, e.g. `https://invoicebot.yourcompany.com`)
 
 ## Useful commands
 
@@ -232,23 +330,10 @@ source venv/bin/activate
 python run.py
 python init_db.py
 python seed.py
+flask db migrate -m "description"
+flask db upgrade
+flask routes
 ```
-
-## Project improvements already included
-
-- Error handlers for `403`, `404`, and `500`
-- Password reset email sending with robust TLS/SSL support
-- Background scheduler using APScheduler for due email processing
-- Config-driven Lemon Squeezy billing integration
-
-## Contributing
-
-If you want to extend the app, consider:
-
-- Adding more email templates or custom reminder copy
-- Supporting file uploads or invoice PDF generation
-- Adding analytics for email opens and clicks
-- Adding a user-facing settings page for reminder intervals
 
 ## License
 
