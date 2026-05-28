@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Subscription Cancelled — InvoiceBot{% endblock %}
+{% block page_title %}Subscription Cancelled{% endblock %}
+
+{% block content %}
+<div style="max-width:520px;">
+  <div class="card-section" style="text-align:center;padding:2.5rem 2rem;">
+
+    <div style="width:56px;height:56px;background:#f1f5f9;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;">
+      <i class="bi bi-check-lg" style="font-size:1.5rem;color:#64748b;"></i>
+    </div>
+
+    <h2 style="font-size:1.125rem;font-weight:700;color:#0f172a;margin-bottom:.5rem;">Your subscription has been cancelled</h2>
+    <p style="font-size:.875rem;color:#64748b;margin-bottom:1.75rem;line-height:1.6;">
+      You are now on the <strong>free plan</strong>. Your invoices and data are safe.<br>
+      A confirmation email has been sent to <strong>{{ current_user.email }}</strong>.
+    </p>
+
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.75rem;text-align:left;">
+      <p style="font-size:.78rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.625rem;">Free plan limits</p>
+      <div style="font-size:.8375rem;color:#475569;display:flex;flex-direction:column;gap:.375rem;">
+        <span>✓ Up to 3 active invoices</span>
+        <span>✓ All reminder email features</span>
+        <span>✗ CSV export (Starter+)</span>
+        <span>✗ PDF reports (Pro)</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:.625rem;">
+      <a href="{{ starter_url }}" class="btn btn-brand" style="font-size:.875rem;">
+        Resubscribe to Starter — $9/mo
+      </a>
+      <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary" style="font-size:.875rem;">
+        Go to dashboard
+      </a>
+    </div>
+
+    <p style="font-size:.75rem;color:#94a3b8;margin-top:1.25rem;">
+      Changed your mind? You can resubscribe anytime with no penalty.
+    </p>
+
+  </div>
+</div>
+{% endblock %}

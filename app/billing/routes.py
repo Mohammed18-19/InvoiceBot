@@ -85,3 +85,87 @@ def _handle_subscription_downgrade(attrs, meta):
         user.stripe_subscription_id = None
         db.session.commit()
         logger.info(f"User {user.email} → free (subscription ended)")
+
+
+@billing_bp.route("/cancel")
+@login_required
+def cancel():
+    if current_user.plan == "free":
+        flash("You are already on the free plan.", "info")
+        return redirect(url_for("billing.upgrade"))
+    return render_template("billing/cancel.html")
+
+
+@billing_bp.route("/cancel/confirm", methods=["POST"])
+@login_required
+def cancel_confirm():
+    import requests
+    reason = request.form.get("reason", "").strip()
+    sub_id = current_user.stripe_subscription_id
+    ls_api_key = current_app.config.get("LS_API_KEY", "")
+
+    if sub_id and ls_api_key:
+        try:
+            resp = requests.delete(
+                f"https://api.lemonsqueezy.com/v1/subscriptions/{sub_id}",
+                headers={
+                    "Authorization": f"Bearer {ls_api_key}",
+                    "Accept": "application/vnd.api+json",
+                    "Content-Type": "application/vnd.api+json",
+                },
+                timeout=10,
+            )
+            logger.info(f"LS cancel status: {resp.status_code} for {current_user.email}")
+        except Exception as e:
+            logger.error(f"LS cancel API error: {e}")
+
+    current_user.plan = "free"
+    current_user.stripe_subscription_id = None
+    db.session.commit()
+    _send_cancellation_email(current_user)
+    logger.info(f"User {current_user.email} cancelled. Reason: {reason}")
+    flash("Your subscription has been cancelled.", "info")
+    return redirect(url_for("billing.cancelled"))
+
+
+@billing_bp.route("/cancelled")
+@login_required
+def cancelled():
+    return render_template("billing/cancelled.html",
+        starter_url=current_app.config.get("LS_STARTER_URL", "#"),
+        pro_url=current_app.config.get("LS_PRO_URL", "#"),
+    )
+
+
+def _send_cancellation_email(user):
+    from app.email_service import send_mail
+    mail_from = current_app.config.get("MAIL_FROM", "")
+    mail_name = current_app.config.get("MAIL_FROM_NAME", "InvoiceBot")
+    subject = "Your InvoiceBot subscription has been cancelled"
+    body = f"""Hi {user.name or "there"},
+
+Your InvoiceBot subscription has been cancelled. You are now on the free plan.
+
+What changes:
+— Maximum 3 active invoices
+— CSV export unavailable
+— PDF reports unavailable
+
+Your existing data is safe and untouched.
+
+Changed your mind? Resubscribe anytime:
+{current_app.config.get("APP_URL", "http://localhost:5000")}/billing/upgrade
+
+If there is anything we could have done better, just reply to this email.
+
+— Mohammed
+InvoiceBot · AINTORA SYSTEMS
+"""
+    send_mail(
+        to_address=user.email,
+        subject=subject,
+        body=body,
+        from_name=mail_name,
+        from_email=mail_from,
+        email_type="cancellation",
+    )

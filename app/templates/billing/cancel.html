@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Cancel Subscription — InvoiceBot{% endblock %}
+{% block page_title %}Cancel Subscription{% endblock %}
+
+{% block content %}
+<div style="max-width:580px;">
+
+  <!-- Header -->
+  <div class="card-section mb-3" style="border-left:3px solid #ef4444;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:.5rem;">
+      <i class="bi bi-exclamation-triangle" style="color:#ef4444;font-size:1.1rem;"></i>
+      <span style="font-weight:700;font-size:.9375rem;color:#0f172a;">Before you cancel</span>
+    </div>
+    <p style="font-size:.875rem;color:#64748b;margin:0;">
+      You are on the <strong>{{ current_user.plan | title }}</strong> plan.
+      Cancelling will move you to the free plan immediately.
+    </p>
+  </div>
+
+  <!-- What you lose -->
+  <div class="card-section mb-3">
+    <p style="font-size:.8rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.875rem;">What you will lose</p>
+    <div style="display:flex;flex-direction:column;gap:.625rem;">
+      <div style="display:flex;align-items:center;gap:10px;font-size:.875rem;">
+        <i class="bi bi-x-circle-fill" style="color:#ef4444;"></i>
+        <span>Up to <strong>20 active invoices</strong> (free limit: 3)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:.875rem;">
+        <i class="bi bi-x-circle-fill" style="color:#ef4444;"></i>
+        <span><strong>CSV export</strong> of all invoices</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:.875rem;">
+        <i class="bi bi-x-circle-fill" style="color:#ef4444;"></i>
+        <span><strong>Multi-language</strong> reminder emails</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:.875rem;">
+        <i class="bi bi-x-circle-fill" style="color:#ef4444;"></i>
+        <span><strong>Priority support</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 Options -->
+  <div class="card-section mb-3">
+    <p style="font-size:.8rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.875rem;">We'd rather keep you</p>
+    <div style="display:flex;flex-direction:column;gap:.625rem;">
+
+      <!-- Option 1: Pause -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:.875rem 1rem;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;">
+        <div>
+          <p style="margin:0;font-weight:600;font-size:.875rem;color:#0f172a;">⏸ Pause your subscription</p>
+          <p style="margin:.2rem 0 0;font-size:.78rem;color:#64748b;">Take a break — pause for 1 or 2 months, then resume.</p>
+        </div>
+        <a href="mailto:support@aintora.com?subject=Pause my InvoiceBot subscription" class="btn btn-sm btn-outline-secondary" style="white-space:nowrap;font-size:.78rem;">Contact us</a>
+      </div>
+      </div>
+
+  <!-- Cancel form -->
+  <div class="card-section" style="border:1px solid #fee2e2;background:#fff5f5;">
+    <p style="font-size:.8rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.875rem;">Cancel anyway</p>
+
+    <form method="POST" action="{{ url_for('billing.cancel_confirm') }}">
+      {{ csrf_field() if csrf_field is defined else "" }}
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="mb-3">
+        <label class="form-label" style="font-size:.8rem;">Help us improve — why are you leaving? <span style="color:#94a3b8;">(optional)</span></label>
+        <select name="reason" class="form-select" style="font-size:.875rem;">
+          <option value="">Select a reason...</option>
+          <option value="too_expensive">Too expensive</option>
+          <option value="not_using">Not using it enough</option>
+          <option value="missing_features">Missing features I need</option>
+          <option value="switching">Switching to another tool</option>
+          <option value="temporary">Temporary — I'll be back</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:.75rem;">
+        <button type="submit" class="btn btn-sm" style="background:#ef4444;color:#fff;font-weight:600;border:none;border-radius:8px;padding:.5rem 1.25rem;font-size:.8375rem;">
+          Yes, cancel my subscription
+        </button>
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-sm btn-outline-secondary">
+          Keep my plan
+        </a>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

@@ -40,6 +40,7 @@ class Config:
     EMAIL_MODE = env("EMAIL_MODE", "smtp")
 
     # Lemon Squeezy
+    LS_API_KEY         = env("LS_API_KEY", "")
     LS_WEBHOOK_SECRET = env("LS_WEBHOOK_SECRET", "")
     LS_STARTER_URL    = env("LS_STARTER_URL", "")
     LS_PRO_URL        = env("LS_PRO_URL", "")

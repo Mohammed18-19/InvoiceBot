@@ -1,40 +1,81 @@
 {% extends "base.html" %}
+
 {% block title %}Upgrade — InvoiceBot{% endblock %}
 {% block page_title %}Upgrade your plan{% endblock %}
 
 {% block content %}
+
 <div style="max-width:760px;">
+
   <p style="font-size:.875rem;color:#64748b;margin-bottom:2rem;">
     You're on the <strong style="color:#0f172a;">{{ current_user.plan.title() }}</strong> plan. Upgrade to unlock more invoices and get paid faster.
   </p>
 
   <div class="row g-3 mb-4">
 
+    <!-- FREE PLAN -->
     <div class="col-md-4">
       <div class="card-section h-100">
-        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:.5rem;">Free</div>
+
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:.5rem;">
+          Free
+        </div>
+
         <div style="font-size:2rem;font-weight:800;color:#0f172a;line-height:1;">$0</div>
-        <div style="font-size:.78rem;color:#94a3b8;margin-bottom:1.25rem;">forever</div>
+
+        <div style="font-size:.78rem;color:#94a3b8;margin-bottom:1.25rem;">
+          forever
+        </div>
+
         <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;color:#475569;">
           <li class="mb-2">✓ 3 active invoices</li>
           <li class="mb-2">✓ 3-stage email sequence</li>
           <li class="mb-2" style="color:#cbd5e1;">✗ Tone control</li>
           <li class="mb-2" style="color:#cbd5e1;">✗ Remove branding</li>
         </ul>
+
         {% if current_user.plan == 'free' %}
-        <div class="mt-4 text-center"><span class="badge px-3 py-2" style="background:rgba(233,30,140,.1);color:var(--brand);font-size:.75rem;border-radius:20px;">✓ Current plan</span></div>
+        <div class="mt-4 text-center">
+          <span class="badge px-3 py-2"
+                style="background:rgba(233,30,140,.1);color:var(--brand);font-size:.75rem;border-radius:20px;">
+            ✓ Current plan
+          </span>
+        </div>
         {% endif %}
+
       </div>
     </div>
 
+    <!-- STARTER -->
     <div class="col-md-4">
       <div class="card-section h-100" style="border:2px solid #E91E8C;position:relative;">
+
         <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);">
-          <span style="background:var(--brand);color:#fff;font-size:.68rem;font-weight:700;padding:3px 12px;border-radius:20px;">MOST POPULAR</span>
+          <span style="background:var(--brand);color:#fff;font-size:.68rem;font-weight:700;padding:3px 12px;border-radius:20px;">
+            MOST POPULAR
+          </span>
         </div>
-        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.5rem;">Starter</div>
+
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.5rem;">
+          Starter
+        </div>
+
         <div style="font-size:2rem;font-weight:800;color:#0f172a;line-height:1;">$9</div>
-        <div style="font-size:.78rem;color:#94a3b8;margin-bottom:1.25rem;">/ month · cancel anytime</div>
+
+        <div style="font-size:.78rem;color:#94a3b8;margin-bottom:.75rem;">
+          / month · cancel anytime
+        </div>
+
+        <!-- ✅ CANCEL BUTTON (FIXED) -->
+        {% if current_user.plan == 'starter' %}
+        <div style="margin-bottom:1rem;">
+          <a href="{{ url_for('billing.cancel') }}"
+             style="display:inline-block;padding:6px 10px;border:1px solid #fecaca;background:#fff1f2;color:#b91c1c;font-size:.75rem;font-weight:700;border-radius:8px;text-decoration:none;">
+            Cancel subscription
+          </a>
+        </div>
+        {% endif %}
+
         <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;color:#475569;">
           <li class="mb-2">✓ <strong>20 active invoices</strong></li>
           <li class="mb-2">✓ Full tone control</li>
@@ -42,24 +83,53 @@
           <li class="mb-2">✓ Remove branding</li>
           <li>✓ Payment link embedding</li>
         </ul>
+
         <div class="mt-4">
+
           {% if current_user.plan == 'starter' %}
-          <div class="text-center"><span class="badge px-3 py-2" style="background:rgba(233,30,140,.1);color:var(--brand);font-size:.75rem;border-radius:20px;">✓ Current plan</span></div>
+          <div class="text-center">
+            <span class="badge px-3 py-2"
+                  style="background:rgba(233,30,140,.1);color:var(--brand);font-size:.75rem;border-radius:20px;">
+              ✓ Current plan
+            </span>
+          </div>
+
           {% elif starter_url %}
-          <a href="{{ starter_url }}?checkout[custom][user_id]={{ current_user.id }}&checkout[custom][user_email]={{ current_user.email }}" class="btn btn-brand w-100 py-2" target="_blank" style="font-weight:700;">Upgrade to Starter →</a>
-          <p style="font-size:.72rem;color:#94a3b8;text-align:center;margin-top:.5rem;">Secure payment by Lemon Squeezy</p>
+          <a href="{{ starter_url }}?checkout[custom][user_id]={{ current_user.id }}&checkout[custom][user_email]={{ current_user.email }}"
+             class="btn btn-brand w-100 py-2"
+             target="_blank"
+             style="font-weight:700;">
+            Upgrade to Starter →
+          </a>
+
+          <p style="font-size:.72rem;color:#94a3b8;text-align:center;margin-top:.5rem;">
+            Secure payment by Lemon Squeezy
+          </p>
+
           {% else %}
-          <div class="text-center text-muted" style="font-size:.8rem;">Coming soon</div>
+          <div class="text-center text-muted" style="font-size:.8rem;">
+            Coming soon
+          </div>
           {% endif %}
+
         </div>
       </div>
     </div>
 
+    <!-- PRO -->
     <div class="col-md-4">
       <div class="card-section h-100">
-        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#7c3aed;margin-bottom:.5rem;">Pro</div>
+
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#7c3aed;margin-bottom:.5rem;">
+          Pro
+        </div>
+
         <div style="font-size:2rem;font-weight:800;color:#0f172a;line-height:1;">$19</div>
-        <div style="font-size:.78rem;color:#94a3b8;margin-bottom:1.25rem;">/ month · cancel anytime</div>
+
+        <div style="font-size:.78rem;color:#94a3b8;margin-bottom:1.25rem;">
+          / month · cancel anytime
+        </div>
+
         <ul style="list-style:none;padding:0;margin:0;font-size:.8rem;color:#475569;">
           <li class="mb-2">✓ <strong>Unlimited invoices</strong></li>
           <li class="mb-2">✓ Everything in Starter</li>
@@ -67,39 +137,71 @@
           <li class="mb-2">✓ Priority support</li>
           <li>✓ WhatsApp reminders <span class="badge ms-1" style="background:#fef9c3;color:#854d0e;font-size:.62rem;border-radius:4px;">Soon</span></li>
         </ul>
+
         <div class="mt-4">
-          {% if current_user.plan == 'pro' %}
-          <div class="text-center"><span class="badge px-3 py-2" style="background:rgba(124,58,237,.1);color:#7c3aed;font-size:.75rem;border-radius:20px;">✓ Current plan</span></div>
+
+          {% if current_user.plan == "pro" %}
+          <div class="text-center">
+            <span class="badge px-3 py-2 d-block mb-3"
+                  style="background:rgba(124,58,237,.1);color:#7c3aed;font-size:.75rem;border-radius:20px;">
+              ✓ Current plan
+            </span>
+            <a href="{{ url_for('billing.cancel') }}"
+               class="btn w-100"
+               style="background:#fff1f2;color:#b91c1c;border:1.5px solid #fecaca;font-weight:600;font-size:.8rem;border-radius:8px;padding:.5rem;">
+              Cancel subscription
+            </a>
+          </div>
+
           {% elif pro_url %}
-          <a href="{{ pro_url }}?checkout[custom][user_id]={{ current_user.id }}&checkout[custom][user_email]={{ current_user.email }}" class="btn w-100 py-2" target="_blank" style="background:#7c3aed;color:#fff;font-weight:700;border:none;border-radius:8px;">Upgrade to Pro →</a>
-          <p style="font-size:.72rem;color:#94a3b8;text-align:center;margin-top:.5rem;">Secure payment by Lemon Squeezy</p>
+          <a href="{{ pro_url }}?checkout[custom][user_id]={{ current_user.id }}&checkout[custom][user_email]={{ current_user.email }}"
+             class="btn w-100 py-2"
+             target="_blank"
+             style="background:#7c3aed;color:#fff;font-weight:700;border:none;border-radius:8px;">
+            Upgrade to Pro →
+          </a>
+
+          <p style="font-size:.72rem;color:#94a3b8;text-align:center;margin-top:.5rem;">
+            Secure payment by Lemon Squeezy
+          </p>
+
           {% else %}
-          <div class="text-center text-muted" style="font-size:.8rem;">Coming soon</div>
+          <div class="text-center text-muted" style="font-size:.8rem;">
+            Coming soon
+          </div>
           {% endif %}
+
         </div>
       </div>
     </div>
 
   </div>
 
+  <!-- TRUST SECTION -->
   <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:1.25rem;">
     <div class="row g-3 text-center">
+
       <div class="col-4">
         <div style="font-size:1.25rem;margin-bottom:.25rem;">🔒</div>
         <div style="font-size:.75rem;color:#64748b;font-weight:600;">Secure payments</div>
         <div style="font-size:.7rem;color:#94a3b8;">Via Lemon Squeezy</div>
       </div>
+
       <div class="col-4">
         <div style="font-size:1.25rem;margin-bottom:.25rem;">↩️</div>
         <div style="font-size:.75rem;color:#64748b;font-weight:600;">Cancel anytime</div>
         <div style="font-size:.7rem;color:#94a3b8;">No contracts</div>
       </div>
+
       <div class="col-4">
         <div style="font-size:1.25rem;margin-bottom:.25rem;">🌍</div>
         <div style="font-size:.75rem;color:#64748b;font-weight:600;">Worldwide</div>
         <div style="font-size:.7rem;color:#94a3b8;">All cards + PayPal</div>
       </div>
+
     </div>
   </div>
+
 </div>
+
 {% endblock %}
