@@ -82,13 +82,13 @@
 {% if current_user.is_authenticated %}
 <div class="sidebar">
   <div class="sidebar-brand">
-    <a href="{{ url_for('dashboard.index') }}">Invoice<span>Bot</span></a>
+    <a href="{{ url_for('dashboard.home') }}">Invoice<span>Bot</span></a>
     <div class="sidebar-company">AINTORA SYSTEMS</div>
     <div><span class="sidebar-plan plan-{{ current_user.plan }}">{{ current_user.plan }} plan</span></div>
   </div>
   <nav>
     <div class="nav-section-label">Main</div>
-    <a href="{{ url_for('dashboard.index') }}" class="nav-link {% if request.endpoint == 'dashboard.index' %}active{% endif %}">
+    <a href="{{ url_for('dashboard.home') }}" class="nav-link {% if request.endpoint == 'dashboard.home' %}active{% endif %}">
       <i class="bi bi-grid-1x2"></i> Dashboard
     </a>
     <a href="{{ url_for('invoices.list_invoices') }}" class="nav-link {% if request.endpoint and 'invoices' in request.endpoint %}active{% endif %}">

@@ -65,7 +65,7 @@ If you didn't request this, ignore this email.
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("dashboard.index"))
+        return redirect(url_for("dashboard.home"))
     form = RegisterForm()
     if form.validate_on_submit():
         user = User(
@@ -81,7 +81,7 @@ def register():
         send_welcome_email(user)
         login_user(user)
         flash("Welcome to InvoiceBot! Add your first invoice and let us do the chasing.", "success")
-        return redirect(url_for("dashboard.index"))
+        return redirect(url_for("dashboard.home"))
     return render_template("auth/register.html", form=form)
 
 
@@ -89,7 +89,7 @@ def register():
 @limiter.limit("10 per minute")
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("dashboard.index"))
+        return redirect(url_for("dashboard.home"))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower().strip()).first()
@@ -99,7 +99,7 @@ def login():
                 return render_template("auth/login.html", form=form)
             login_user(user, remember=form.remember.data)
             next_page = request.args.get("next")
-            return redirect(next_page or url_for("dashboard.index"))
+            return redirect(next_page or url_for("dashboard.home"))
         flash("Invalid email or password. Please try again.", "danger")
     return render_template("auth/login.html", form=form)
 
