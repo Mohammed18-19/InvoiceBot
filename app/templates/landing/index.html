@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvoiceBot — Stop chasing invoices. Start getting paid.</title>
+<meta name="description" content="Automated invoice reminders in Arabic, French and English. Built for freelancers in Morocco, Algeria, and across MENA. Set up in 2 minutes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#080C18;
+  --navy2:#0D1220;
+  --navy3:#131929;
+  --brand:#E91E8C;
+  --brand-dark:#c4166f;
+  --brand-glow:rgba(233,30,140,0.15);
+  --text:#F1F5F9;
+  --text2:#94A3B8;
+  --text3:#64748B;
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.12);
+  --surface:#0F1624;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --radius:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);color:var(--text);background:var(--navy);line-height:1.6;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,12,24,0.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-icon{width:32px;height:32px;background:var(--brand);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.nav-logo-icon svg{width:18px;height:18px;stroke:white;fill:none;stroke-width:1.8}
+.nav-logo span{font-weight:600;font-size:1rem;color:var(--text)}
+.nav-links{display:flex;align-items:center;gap:2rem}
+.nav-links a{text-decoration:none;font-size:.875rem;color:var(--text2);font-weight:500;transition:color .15s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--brand) !important;color:#fff !important;padding:.5rem 1.25rem !important;border-radius:8px;font-weight:600 !important;transition:background .15s !important}
+.nav-cta:hover{background:var(--brand-dark) !important}
+
+.hero{padding:140px 2rem 100px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(circle,rgba(233,30,140,0.1) 0%,transparent 65%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(233,30,140,0.1);color:var(--brand);font-size:.72rem;font-weight:600;padding:.375rem .875rem;border-radius:999px;border:1px solid rgba(233,30,140,.25);margin-bottom:1.5rem;letter-spacing:.05em;text-transform:uppercase}
+.hero-badge span{width:6px;height:6px;border-radius:50%;background:var(--brand);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:var(--serif);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:400;line-height:1.1;max-width:800px;margin:0 auto 1.25rem;color:var(--text)}
+.hero h1 em{font-style:italic;color:var(--brand)}
+.hero-sub{font-size:clamp(1rem,2vw,1.15rem);color:var(--text2);max-width:520px;margin:0 auto 2.5rem;font-weight:300;line-height:1.75}
+.hero-actions{display:flex;align-items:center;justify-content:center;gap:.875rem;flex-wrap:wrap;margin-bottom:3.5rem}
+.btn-primary{background:var(--brand);color:#fff;padding:.875rem 2rem;border-radius:10px;font-weight:600;font-size:1rem;text-decoration:none;transition:all .2s;border:none;cursor:pointer;display:inline-block}
+.btn-primary:hover{background:var(--brand-dark);transform:translateY(-1px)}
+.btn-secondary{background:transparent;color:var(--text);padding:.875rem 2rem;border-radius:10px;font-weight:500;font-size:1rem;text-decoration:none;transition:all .2s;border:1px solid var(--border2)}
+.btn-secondary:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.04)}
+.hero-flags{font-size:.8rem;color:var(--text3);display:flex;align-items:center;justify-content:center;gap:.5rem}
+.hero-flags strong{color:var(--text2)}
+
+.hero-mockup{max-width:900px;margin:0 auto;border-radius:16px;border:1px solid var(--border2);overflow:hidden;box-shadow:0 32px 100px rgba(0,0,0,.5)}
+.mockup-bar{background:#0d1220;padding:.625rem 1rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid var(--border)}
+.mockup-dot{width:10px;height:10px;border-radius:50%}
+.mockup-url{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:.25rem .75rem;font-size:.72rem;color:var(--text3);margin:0 .75rem;text-align:center}
+.mockup-body{background:var(--surface);display:grid;grid-template-columns:220px 1fr;min-height:400px}
+.mockup-sidebar{background:var(--navy2);padding:1.25rem 1rem;display:flex;flex-direction:column;gap:.25rem;border-right:1px solid var(--border)}
+.mockup-sb-brand{display:flex;align-items:center;gap:8px;padding:.5rem .75rem;margin-bottom:.75rem;border-bottom:1px solid var(--border);padding-bottom:1rem}
+.mockup-sb-brand-icon{width:28px;height:28px;background:var(--brand);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mockup-sb-brand span{font-size:.8rem;font-weight:600;color:#fff}
+.mockup-sb-item{padding:.5rem .75rem;border-radius:7px;font-size:.73rem;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:8px}
+.mockup-sb-item.active{background:rgba(233,30,140,.1);color:#fff;border-left:2px solid var(--brand);padding-left:calc(.75rem - 2px)}
+.mockup-sb-section{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:.875rem .75rem .375rem}
+.mockup-main{padding:1.5rem;background:#0f1624}
+.mockup-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.mockup-topbar-title{font-size:.875rem;font-weight:600;color:var(--text)}
+.mockup-topbar-user{font-size:.7rem;color:var(--text2);background:rgba(255,255,255,.05);border:1px solid var(--border);padding:.25rem .625rem;border-radius:20px}
+.mockup-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.625rem;margin-bottom:1.25rem}
+.mockup-stat{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:.875rem;border-left:3px solid}
+.mockup-stat-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--text3);margin-bottom:.25rem}
+.mockup-stat-value{font-size:1.375rem;font-weight:700;color:var(--text)}
+.mockup-stat-sub{font-size:.65rem;color:var(--text3);margin-top:.125rem}
+.mockup-table-wrap{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.mockup-table-header{display:grid;grid-template-columns:1fr 1.2fr .8fr .8fr;padding:.5rem .875rem;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+.mockup-table-header span{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)}
+.mockup-table-row{display:grid;grid-template-columns:1fr 1.2fr .8fr .8fr;padding:.625rem .875rem;border-bottom:1px solid rgba(255,255,255,.04);align-items:center}
+.mockup-table-row:last-child{border-bottom:none}
+.mockup-table-row span{font-size:.72rem;color:var(--text)}
+.mockup-table-row .num{font-family:monospace;font-size:.66rem;color:var(--text2)}
+.badge{display:inline-block;font-size:.6rem;font-weight:600;padding:2px 8px;border-radius:99px}
+.badge-paid{background:rgba(16,185,129,.15);color:#34d399}
+.badge-sent{background:rgba(59,130,246,.15);color:#60a5fa}
+.badge-overdue{background:rgba(239,68,68,.15);color:#f87171}
+
+section{padding:100px 2rem}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-label{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);margin-bottom:.875rem}
+.section-title{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;line-height:1.15;margin-bottom:1rem;color:var(--text)}
+.section-sub{font-size:1.05rem;color:var(--text2);max-width:520px;line-height:1.75;font-weight:300}
+
+.how-section{background:var(--navy2)}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2rem;margin-top:4rem}
+.how-card{position:relative}
+.how-number{font-family:var(--serif);font-size:4rem;font-weight:400;color:rgba(233,30,140,.15);line-height:1;margin-bottom:.75rem}
+.how-title{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--text)}
+.how-desc{font-size:.9rem;color:var(--text2);line-height:1.7}
+.how-connector{position:absolute;top:2.5rem;right:-1rem;width:2rem;height:1px;background:var(--border)}
+
+.lang-wrap{padding:0 2rem;margin-bottom:100px}
+.lang-section{background:var(--navy3);border:1px solid var(--border2);border-radius:24px;padding:4rem}
+.lang-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:3rem}
+.lang-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:border-color .2s}
+.lang-card:hover{border-color:var(--border2)}
+.lang-flag{font-size:2rem;margin-bottom:.875rem}
+.lang-name{font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:.25rem}
+.lang-desc{font-size:.83rem;color:var(--text2);margin-bottom:1.25rem}
+.lang-preview{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:1rem;font-size:.74rem;color:rgba(255,255,255,.65);line-height:1.75}
+.lang-preview.rtl{direction:rtl;text-align:right;font-family:'Segoe UI',Tahoma,Arial,sans-serif}
+
+.pricing-section{background:var(--navy)}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3.5rem}
+.pricing-card{background:var(--navy3);border:1px solid var(--border);border-radius:16px;padding:2rem;position:relative;transition:all .2s}
+.pricing-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.pricing-card.featured{border-color:var(--brand)}
+.pricing-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--brand);color:#fff;font-size:.66rem;font-weight:700;padding:.25rem .875rem;border-radius:999px;white-space:nowrap;letter-spacing:.05em;text-transform:uppercase}
+.pricing-plan{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+.pricing-plan.free{color:var(--text2)}
+.pricing-plan.starter{color:var(--brand)}
+.pricing-plan.pro{color:#a78bfa}
+.pricing-price{font-family:var(--serif);font-size:3.25rem;font-weight:400;line-height:1;margin-bottom:.25rem;color:var(--text)}
+.pricing-period{font-size:.8rem;color:var(--text3);margin-bottom:1.5rem}
+.pricing-features{list-style:none;display:flex;flex-direction:column;gap:.625rem;margin-bottom:2rem}
+.pricing-features li{font-size:.875rem;display:flex;align-items:center;gap:.625rem;color:var(--text2)}
+.pricing-features li::before{content:'✓';font-weight:600;color:#34d399;flex-shrink:0;font-size:.8rem}
+.pricing-features li.no::before{content:'✗';color:var(--text3)}
+.pricing-features li.no{color:var(--text3)}
+.pricing-btn{display:block;width:100%;text-align:center;padding:.75rem;border-radius:8px;font-weight:600;font-size:.9rem;text-decoration:none;transition:all .2s}
+.pricing-btn.free-btn{border:1px solid var(--border2);color:var(--text2)}
+.pricing-btn.free-btn:hover{background:rgba(255,255,255,.05)}
+.pricing-btn.starter-btn{background:var(--brand);color:#fff}
+.pricing-btn.starter-btn:hover{background:var(--brand-dark)}
+.pricing-btn.pro-btn{background:#7c3aed;color:#fff}
+.pricing-btn.pro-btn:hover{background:#6d28d9}
+
+.faq-section{background:var(--navy2)}
+.faq-list{margin-top:3rem;max-width:680px}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-item:first-child{border-top:1px solid var(--border)}
+.faq-q{padding:1.25rem 0;font-size:1rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:1rem;color:var(--text)}
+.faq-q::after{content:'+';font-size:1.4rem;font-weight:300;color:var(--text3);flex-shrink:0;transition:transform .2s}
+.faq-a{font-size:.9rem;color:var(--text2);line-height:1.75;padding-bottom:1.25rem;display:none}
+.faq-item.open .faq-q::after{content:'−'}
+.faq-item.open .faq-a{display:block}
+
+.cta-wrap{padding:60px 2rem 100px}
+.cta-banner{background:var(--navy3);border:1px solid var(--border2);border-radius:24px;padding:5rem 3rem;text-align:center;position:relative;overflow:hidden}
+.cta-banner::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(233,30,140,0.12) 0%,transparent 70%);pointer-events:none}
+.cta-banner h2{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;color:var(--text);margin-bottom:1rem;position:relative}
+.cta-banner p{font-size:1.05rem;color:var(--text2);margin-bottom:2.5rem;font-weight:300;position:relative}
+.cta-banner .btn-primary{font-size:1.05rem;padding:1rem 2.5rem;position:relative}
+
+footer{padding:3rem 2rem;border-top:1px solid var(--border)}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-logo{font-size:.875rem;font-weight:600;color:var(--text2)}
+.footer-logo strong{color:var(--brand)}
+.footer-links{display:flex;gap:1.5rem}
+.footer-links a{font-size:.8rem;color:var(--text3);text-decoration:none;transition:color .15s}
+.footer-links a:hover{color:var(--text2)}
+.footer-copy{font-size:.75rem;color:var(--text3)}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .mockup-sidebar{display:none}
+  .mockup-body{grid-template-columns:1fr}
+  .lang-cards{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .lang-wrap{padding:0 0 80px}
+  .lang-section{border-radius:0;padding:2.5rem 1.5rem;border-left:none;border-right:none}
+  .cta-wrap{padding:0 0 60px}
+  .cta-banner{border-radius:0;border-left:none;border-right:none;padding:3rem 1.5rem}
+  .hero-actions{flex-direction:column;align-items:stretch;max-width:280px;margin:0 auto 3rem}
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.hero-badge{animation:fadeUp .5s ease both}
+.hero h1{animation:fadeUp .6s .1s ease both}
+.hero-sub{animation:fadeUp .6s .2s ease both}
+.hero-actions{animation:fadeUp .6s .3s ease both}
+.hero-mockup{animation:fadeUp .9s .4s ease both}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/></svg>
+      </div>
+      <span>InvoiceBot</span>
+    </a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://web-production-af74.up.railway.app/auth/login">Sign in</a>
+      <a href="https://web-production-af74.up.railway.app/auth/register" class="nav-cta">Get started free</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge"><span></span> Built for MENA freelancers</div>
+  <h1>Stop chasing invoices.<br><em>Start getting paid.</em></h1>
+  <p class="hero-sub">Automated overdue reminders in Arabic, French, and English. Add an invoice, set a tone, and let InvoiceBot do the awkward follow-ups.</p>
+  <div class="hero-actions">
+    <a href="https://web-production-af74.up.railway.app/auth/register" class="btn-primary">Start free — no credit card</a>
+    <a href="#how" class="btn-secondary">See how it works</a>
+  </div>
+  <p class="hero-flags">For freelancers in 🇲🇦 🇩🇿 🇹🇳 🇪🇬 &nbsp;·&nbsp; <strong>Free plan always available</strong></p>
+
+  <div style="margin-top:3rem"></div>
+
+  <div class="hero-mockup">
+    <div class="mockup-bar">
+      <div class="mockup-dot" style="background:#ff5f57"></div>
+      <div class="mockup-dot" style="background:#ffbd2e"></div>
+      <div class="mockup-dot" style="background:#28c840"></div>
+      <div class="mockup-url">app.invoicebot.aintora.com</div>
+    </div>
+    <div class="mockup-body">
+      <div class="mockup-sidebar">
+        <div class="mockup-sb-brand">
+          <div class="mockup-sb-brand-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/></svg>
+          </div>
+          <span>InvoiceBot</span>
+        </div>
+        <div class="mockup-sb-item active">📊 Dashboard</div>
+        <div class="mockup-sb-item">📄 Invoices</div>
+        <div class="mockup-sb-item">📈 Reports</div>
+        <div class="mockup-sb-item">➕ New invoice</div>
+        <div class="mockup-sb-section">Account</div>
+        <div class="mockup-sb-item">💳 Billing</div>
+        <div class="mockup-sb-item">⚙️ Settings</div>
+      </div>
+      <div class="mockup-main">
+        <div class="mockup-topbar">
+          <span class="mockup-topbar-title">Dashboard</span>
+          <span class="mockup-topbar-user">Youssef B. · Starter</span>
+        </div>
+        <div class="mockup-stats">
+          <div class="mockup-stat" style="border-left-color:#34d399">
+            <div class="mockup-stat-label">Collected</div>
+            <div class="mockup-stat-value">$4,200</div>
+            <div class="mockup-stat-sub">3 paid invoices</div>
+          </div>
+          <div class="mockup-stat" style="border-left-color:#60a5fa">
+            <div class="mockup-stat-label">Outstanding</div>
+            <div class="mockup-stat-value">$1,800</div>
+            <div class="mockup-stat-sub">2 invoices sent</div>
+          </div>
+          <div class="mockup-stat" style="border-left-color:#f87171">
+            <div class="mockup-stat-label">Overdue</div>
+            <div class="mockup-stat-value">1</div>
+            <div class="mockup-stat-sub">Reminder sent</div>
+          </div>
+        </div>
+        <div class="mockup-table-wrap">
+          <div class="mockup-table-header">
+            <span>Client</span><span>Invoice #</span><span>Amount</span><span>Status</span>
+          </div>
+          <div class="mockup-table-row">
+            <span style="font-weight:500">Acme Corp</span>
+            <span class="num">INV-004</span>
+            <span style="font-weight:600">$1,200</span>
+            <span><span class="badge badge-paid">Paid</span></span>
+          </div>
+          <div class="mockup-table-row">
+            <span style="font-weight:500">Studio Design</span>
+            <span class="num">INV-005</span>
+            <span style="font-weight:600">$800</span>
+            <span><span class="badge badge-sent">Sent</span></span>
+          </div>
+          <div class="mockup-table-row">
+            <span style="font-weight:500;color:#f87171">Iron Bars Co.</span>
+            <span class="num">INV-006</span>
+            <span style="font-weight:600">$1,000</span>
+            <span><span class="badge badge-overdue">Overdue</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="how-section">
+  <div class="section-inner">
+    <p class="section-label">How it works</p>
+    <h2 class="section-title">Set up in under 2 minutes</h2>
+    <p class="section-sub">No complex onboarding. No accounting degree required. Just add your invoice and we handle the rest.</p>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-number">01</div>
+        <div class="how-title">Add your invoice</div>
+        <p class="how-desc">Enter the client name, email, amount, due date, and your payment link. Takes 30 seconds.</p>
+        <div class="how-connector"></div>
+      </div>
+      <div class="how-card">
+        <div class="how-number">02</div>
+        <div class="how-title">Choose your tone</div>
+        <p class="how-desc">Polite for valued clients. Professional for corporate. Firm for the ones who have been ghosting you.</p>
+        <div class="how-connector"></div>
+      </div>
+      <div class="how-card">
+        <div class="how-number">03</div>
+        <div class="how-title">Pick a language</div>
+        <p class="how-desc">Send reminders in Arabic, French, or English — whatever your client prefers and responds to faster.</p>
+        <div class="how-connector"></div>
+      </div>
+      <div class="how-card">
+        <div class="how-number">04</div>
+        <div class="how-title">Get paid. Automatically.</div>
+        <p class="how-desc">InvoiceBot sends 3 timed reminders on your behalf. You get notified when the client pays.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="lang-wrap">
+  <div class="lang-section">
+    <p class="section-label">The MENA advantage</p>
+    <h2 class="section-title">The only reminder tool<br>that speaks your client's language</h2>
+    <p class="section-sub">Zoho, FreshBooks, Wave — all English-first. Your Moroccan client reads Arabic. Your Parisian client reads French. InvoiceBot knows the difference.</p>
+    <div class="lang-cards">
+      <div class="lang-card">
+        <div class="lang-flag">🇬🇧</div>
+        <div class="lang-name">English</div>
+        <div class="lang-desc">For international clients and global projects</div>
+        <div class="lang-preview">"Hi Sarah, this is a friendly reminder that Invoice #INV-012 for $1,200 was due on May 1st. If you've already sent payment, please ignore this..."</div>
+      </div>
+      <div class="lang-card">
+        <div class="lang-flag">🇫🇷</div>
+        <div class="lang-name">Français</div>
+        <div class="lang-desc">Pour vos clients francophones au Maghreb et en Europe</div>
+        <div class="lang-preview">"Bonjour Ahmed, je vous envoie un rappel amical concernant la facture #INV-012 d'un montant de 1 200 $. Si vous avez déjà effectué le paiement..."</div>
+      </div>
+      <div class="lang-card">
+        <div class="lang-flag">🇸🇦</div>
+        <div class="lang-name">العربية</div>
+        <div class="lang-desc">للعملاء الناطقين بالعربية في المغرب والجزائر ومصر</div>
+        <div class="lang-preview rtl">"مرحباً يوسف، أرسل إليك هذا التذكير الودي بشأن الفاتورة رقم #INV-012 بمبلغ 1200 دولار. إذا كنت قد أرسلت الدفعة بالفعل..."</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="pricing" class="pricing-section">
+  <div class="section-inner">
+    <p class="section-label">Pricing</p>
+    <h2 class="section-title">Pay less than a coffee per week</h2>
+    <p class="section-sub">Start free. Upgrade when you're ready. Cancel anytime — no questions, no dark patterns.</p>
+    <div class="pricing-grid">
+
+      <div class="pricing-card">
+        <div class="pricing-plan free">Free</div>
+        <div class="pricing-price">$0</div>
+        <div class="pricing-period">forever · no credit card</div>
+        <ul class="pricing-features">
+          <li>3 active invoices</li>
+          <li>3-stage email reminders</li>
+          <li>Arabic, French, English</li>
+          <li>Email preview per stage</li>
+          <li class="no">CSV export</li>
+          <li class="no">PDF reports</li>
+          <li class="no">Unlimited invoices</li>
+        </ul>
+        <a href="https://web-production-af74.up.railway.app/auth/register" class="pricing-btn free-btn">Get started free</a>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most popular</div>
+        <div class="pricing-plan starter">Starter</div>
+        <div class="pricing-price">$10</div>
+        <div class="pricing-period">/ month · cancel anytime</div>
+        <ul class="pricing-features">
+          <li>20 active invoices</li>
+          <li>3-stage email reminders</li>
+          <li>Arabic, French, English</li>
+          <li>Email preview per stage</li>
+          <li>CSV export</li>
+          <li>Custom reminder schedule</li>
+          <li class="no">PDF reports</li>
+        </ul>
+        <a href="https://web-production-af74.up.railway.app/auth/register" class="pricing-btn starter-btn">Start with Starter →</a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-plan pro">Pro</div>
+        <div class="pricing-price">$20</div>
+        <div class="pricing-period">/ month · cancel anytime</div>
+        <ul class="pricing-features">
+          <li>Unlimited invoices</li>
+          <li>Everything in Starter</li>
+          <li>PDF invoice reports</li>
+          <li>Priority support</li>
+          <li>WhatsApp reminders <span style="background:rgba(245,158,11,.15);color:#fbbf24;font-size:.62rem;padding:1px 6px;border-radius:4px;font-weight:600">Soon</span></li>
+          <li>Custom email templates</li>
+          <li>Advanced analytics</li>
+        </ul>
+        <a href="https://web-production-af74.up.railway.app/auth/register" class="pricing-btn pro-btn">Go Pro →</a>
+      </div>
+
+    </div>
+    <p style="text-align:center;margin-top:2rem;font-size:.83rem;color:var(--text3)">🔒 Secure payments via Lemon Squeezy · All major cards + PayPal · Cancel anytime</p>
+  </div>
+</section>
+
+<section id="faq" class="faq-section">
+  <div class="section-inner">
+    <p class="section-label">FAQ</p>
+    <h2 class="section-title">Common questions</h2>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="faq-q">Does it actually send emails, or just schedule them?</div>
+        <div class="faq-a">It actually sends them — via Brevo's email infrastructure, which means they land in inbox, not spam. You can preview exactly what your client will receive before it goes out.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can I customize the email content?</div>
+        <div class="faq-a">You choose the tone (polite, professional, firm) and the language (Arabic, French, English). The reminders are pre-written and optimized to get responses. Custom templates are available on the Pro plan.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What happens when a client pays?</div>
+        <div class="faq-a">You mark the invoice as paid in InvoiceBot. Once marked paid, all remaining scheduled reminders are cancelled immediately — no awkward follow-ups after payment.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is my data safe?</div>
+        <div class="faq-a">Yes. Your data is stored in a private PostgreSQL database. We never share or sell client information. All connections are HTTPS encrypted.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can I cancel anytime?</div>
+        <div class="faq-a">Absolutely. No contracts, no lock-ins. You can cancel from your billing page in one click. Your data stays accessible on the free plan with no expiry.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do my clients need to sign up for anything?</div>
+        <div class="faq-a">No. Your clients just receive a normal email in their inbox. They need no account, no app, nothing. It works exactly like an email you sent yourself.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-wrap">
+  <div class="cta-banner">
+    <h2>Your next invoice is overdue.<br>Let InvoiceBot chase it.</h2>
+    <p>Free to start. 2 minutes to set up. Works in Arabic, French, and English.</p>
+    <a href="https://web-production-af74.up.railway.app/auth/register" class="btn-primary">Start for free →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Invoice<strong>Bot</strong> by AINTORA SYSTEMS</div>
+    <div class="footer-links">
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="mailto:invoicebotaintora@gmail.com">Contact</a>
+      <a href="https://web-production-af74.up.railway.app/auth/register">Sign up</a>
+    </div>
+    <div class="footer-copy">© 2026 AINTORA SYSTEMS · All rights reserved</div>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.faq-q').forEach(q=>{
+  q.addEventListener('click',()=>{
+    const item=q.parentElement;
+    const wasOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+    if(!wasOpen)item.classList.add('open');
+  });
+});
+</script>
+</body>
+</html>

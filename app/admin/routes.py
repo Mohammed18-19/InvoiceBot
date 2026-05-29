@@ -17,8 +17,10 @@ def admin_required(f):
             return redirect(url_for("auth.login"))
         if current_user.email != ADMIN_EMAIL:
             flash("Access denied.", "danger")
-            return redirect(url_for("dashboard.index"))
+            return redirect(url_for("dashboard.home"))
+
         return f(*args, **kwargs)
+
     return decorated
 
 

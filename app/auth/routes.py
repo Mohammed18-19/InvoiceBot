@@ -64,8 +64,6 @@ If you didn't request this, ignore this email.
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for("dashboard.home"))
     form = RegisterForm()
     if form.validate_on_submit():
         user = User(
@@ -81,15 +79,17 @@ def register():
         send_welcome_email(user)
         login_user(user)
         flash("Welcome to InvoiceBot! Add your first invoice and let us do the chasing.", "success")
-        return redirect(url_for("dashboard.home"))
     return render_template("auth/register.html", form=form)
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 @limiter.limit("10 per minute")
 def login():
+    from flask_login import current_user
+    from flask import redirect, url_for
     if current_user.is_authenticated:
-        return redirect(url_for("dashboard.home"))
+        return redirect(url_for("dashboard.landing"))
+
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower().strip()).first()
@@ -108,8 +108,17 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash("You've been logged out. See you soon!", "info")
+    flash("You have been logged out. See you soon!", "info")
+    return redirect("/landing")
+
+    logout_user()
+    flash("You have been logged out. See you soon!", "info")
+    return redirect(url_for("dashboard.landing"))
+
+    logout_user()
     return redirect(url_for("auth.login"))
+    logout_user()
+    flash("You've been logged out. See you soon!", "info")
 
 
 @auth_bp.route("/forgot-password", methods=["GET", "POST"])
@@ -135,7 +144,6 @@ def forgot_password():
                 logger.warning("Reset email could not be sent; link still logged for manual use")
 
         flash("If that email exists, a reset link has been sent. Check your inbox and spam.", "info")
-        return redirect(url_for("auth.login"))
     return render_template("auth/forgot_password.html", form=form)
 
 
@@ -176,7 +184,6 @@ def reset_password():
         db.session.commit()
         logout_user()
         flash("Password updated. Sign in with your new password.", "success")
-        return redirect(url_for("auth.login"))
 
     return render_template("auth/reset_password.html", form=form, email=email, token=token)
 
