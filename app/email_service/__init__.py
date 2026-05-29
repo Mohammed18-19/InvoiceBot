@@ -10,48 +10,49 @@ logger = logging.getLogger(__name__)
 TEMPLATES = {
     "polite": {
         1: {
-            "subject": "Friendly reminder: Invoice #{invoice_number} is due",
+            "subject": "Quick note about invoice #{invoice_number}",
             "body": """Hi {client_name},
 
-I hope you're doing well! I wanted to send a quick friendly reminder that invoice #{invoice_number} for {amount} {currency} was due on {due_date}.
+Hope you're having a good week.
 
-If you've already sent the payment, please ignore this — and thank you!
+I wanted to follow up on invoice #{invoice_number} for {amount} {currency} — the due date was {due_date} and I haven't seen the payment come through yet.
 
-If not, I'd appreciate it if you could process it at your earliest convenience.
+Totally understand things get busy. If you've already sent it, just ignore this — and thank you!
 
+If not, you can settle it here:
 {payment_section}
 
-Please let me know if you have any questions.
+Let me know if anything looks off on the invoice or if you have any questions at all.
 
-Warm regards,
+Thanks,
 {sender_name}""",
         },
         2: {
-            "subject": "Following up: Invoice #{invoice_number} — {days_overdue} days overdue",
+            "subject": "Following up — invoice #{invoice_number} is {days_overdue} days overdue",
             "body": """Hi {client_name},
 
-I'm following up on invoice #{invoice_number} for {amount} {currency}, which was due on {due_date} and is now {days_overdue} days past due.
+I'm checking in again on invoice #{invoice_number} for {amount} {currency}, originally due {due_date}.
 
-I just want to make sure this hasn't slipped through the cracks.
+It's now {days_overdue} days past due and I still haven't received payment. I want to make sure this didn't get lost in the shuffle.
 
 {payment_section}
 
-Could you let me know the status when you get a chance?
+Could you let me know where things stand? Even a quick reply helps me plan my end.
 
-Thanks so much,
+I appreciate your time,
 {sender_name}""",
         },
         3: {
-            "subject": "Final reminder: Invoice #{invoice_number} — action required",
+            "subject": "Final follow-up — invoice #{invoice_number}",
             "body": """Hi {client_name},
 
-This is my final reminder regarding invoice #{invoice_number} for {amount} {currency}, now {days_overdue} days overdue (original due date: {due_date}).
+This is my third and final follow-up on invoice #{invoice_number} for {amount} {currency}, now {days_overdue} days overdue (due date was {due_date}).
 
-I'd really appreciate prompt payment or a brief message about when I can expect it.
+I've reached out a couple of times now without a response. I'd genuinely like to resolve this without any further escalation.
 
 {payment_section}
 
-If there's an issue I'm not aware of, please reach out.
+If there's an issue with the work or the amount, please just reply and let me know — I'm happy to talk through it. But if there isn't, I'd appreciate payment or a confirmed payment date by end of week.
 
 Thank you,
 {sender_name}""",
@@ -59,46 +60,49 @@ Thank you,
     },
     "professional": {
         1: {
-            "subject": "Payment reminder: Invoice #{invoice_number}",
+            "subject": "Payment reminder — invoice #{invoice_number}",
             "body": """Dear {client_name},
 
-This is a reminder that invoice #{invoice_number} for {amount} {currency} was due on {due_date}.
+I hope this message finds you well.
 
-Please process your payment at your earliest convenience.
+This is a courtesy reminder that invoice #{invoice_number} for {amount} {currency} was due on {due_date} and has not yet been received.
 
+Please arrange payment at your earliest convenience using the details below:
 {payment_section}
 
-If you have questions about the invoice, feel free to reply to this email.
+If you have any questions regarding this invoice, please don't hesitate to reply directly to this email.
 
 Best regards,
 {sender_name}""",
         },
         2: {
-            "subject": "Second notice: Invoice #{invoice_number} — {days_overdue} days past due",
+            "subject": "Second notice — invoice #{invoice_number} ({days_overdue} days overdue)",
             "body": """Dear {client_name},
 
-I am following up on invoice #{invoice_number} for {amount} {currency}, which remains unpaid {days_overdue} days past its due date of {due_date}.
+I am writing to follow up on invoice #{invoice_number} for {amount} {currency}, which was due on {due_date} and remains unpaid after {days_overdue} days.
 
-Prompt payment would be greatly appreciated.
+I would appreciate your prompt attention to this matter.
 
 {payment_section}
 
-If you are experiencing difficulties, please contact me directly.
+If you are experiencing any difficulties or have a query about this invoice, please contact me directly and I will do my best to assist.
 
 Regards,
 {sender_name}""",
         },
         3: {
-            "subject": "Urgent: Invoice #{invoice_number} — immediate payment required",
+            "subject": "Final notice — invoice #{invoice_number} requires immediate attention",
             "body": """Dear {client_name},
 
-Invoice #{invoice_number} for {amount} {currency} is now seriously overdue ({days_overdue} days past {due_date}).
+I regret that I must send this final notice regarding invoice #{invoice_number} for {amount} {currency}.
 
-This is my final notice before I consider further action.
+This invoice is now {days_overdue} days past its due date of {due_date} and remains unpaid despite previous reminders.
 
 {payment_section}
 
-Please contact me urgently if you need to discuss this.
+Please settle this invoice within 5 business days. If I do not receive payment or hear from you by then, I will have no choice but to consider formal recovery options.
+
+I would prefer to resolve this directly and professionally. Please reply if you wish to discuss.
 
 Regards,
 {sender_name}""",
@@ -106,40 +110,43 @@ Regards,
     },
     "firm": {
         1: {
-            "subject": "Invoice #{invoice_number} — payment due",
+            "subject": "Invoice #{invoice_number} — payment overdue",
             "body": """Hi {client_name},
 
 Invoice #{invoice_number} for {amount} {currency} was due on {due_date} and has not been paid.
 
-Please arrange payment immediately.
-
+Please arrange payment immediately:
 {payment_section}
 
 {sender_name}""",
         },
         2: {
-            "subject": "OVERDUE: Invoice #{invoice_number} — {days_overdue} days past due",
+            "subject": "Invoice #{invoice_number} — {days_overdue} days overdue, response required",
             "body": """Hi {client_name},
 
-Invoice #{invoice_number} for {amount} {currency} is {days_overdue} days overdue.
+Invoice #{invoice_number} for {amount} {currency} is now {days_overdue} days overdue with no payment received.
 
-I expect immediate payment or a clear commitment with a payment date.
+I require either immediate payment or a written commitment with a specific payment date.
 
 {payment_section}
 
-This matter requires your immediate attention.
+Please respond to this email today.
 
 {sender_name}""",
         },
         3: {
-            "subject": "FINAL NOTICE: Invoice #{invoice_number} — {days_overdue} days past due",
+            "subject": "FINAL NOTICE — invoice #{invoice_number} ({days_overdue} days overdue)",
             "body": """Hi {client_name},
 
-This is my final notice for invoice #{invoice_number} for {amount} {currency}, now {days_overdue} days past due.
+This is my final notice.
 
-If payment is not received within 48 hours, I will be forced to consider formal debt recovery options.
+Invoice #{invoice_number} for {amount} {currency} is {days_overdue} days past its due date of {due_date}. I have sent multiple reminders without response or payment.
+
+If full payment is not received within 48 hours, I will proceed with formal debt recovery.
 
 {payment_section}
+
+To avoid this, please pay now or contact me immediately to make arrangements.
 
 {sender_name}""",
         },
@@ -607,23 +614,47 @@ def send_welcome_email(user):
     mail_from = current_app.config.get("MAIL_FROM", "")
     mail_name = current_app.config.get("MAIL_FROM_NAME", "InvoiceBot")
 
-    subject = "Welcome to InvoiceBot 🎉"
+    subject = "You're in — here's how InvoiceBot works"
+    app_url = current_app.config.get("APP_URL", "http://localhost:5000")
     body = f"""Hi {user.name or "there"},
 
-Welcome to InvoiceBot — we're glad you're here!
+Welcome to InvoiceBot. You just made a smart decision.
 
-Here's what you can do right now:
+Here is exactly what happens next:
 
-1. Add your first invoice at /invoices/new
-2. Set your company name and payment link at /auth/settings
-3. Sit back — we'll chase your clients automatically
+STEP 1 — Set up your profile (2 minutes)
+Go to Settings and add your company name and payment link.
+Every invoice you create will auto-fill your payment link.
+→ {app_url}/auth/settings
 
-Your plan: {user.plan.title()} ({user.invoice_limit} active invoices)
+STEP 2 — Add your first overdue invoice
+Enter the client name, email, amount, and due date.
+Choose your tone: Polite, Professional, or Firm.
+Pick the language your client reads: Arabic, French, or English.
+→ {app_url}/invoices/new
 
-Questions? Just reply to this email.
+STEP 3 — Let us handle the awkward part
+InvoiceBot sends 3 professionally written reminders on your schedule.
+Stage 1: gentle nudge after due date
+Stage 2: follow-up a few days later
+Stage 3: firm final notice
+You do nothing. We do the chasing.
+
+——
+
+A few things worth knowing:
+
+— You are on the {user.plan.title()} plan ({user.invoice_limit} active invoices)
+— Emails go out from our servers, not yours — your clients won't know it's automated
+— You can preview every email before it sends
+— Mark an invoice as paid and all reminders stop instantly
+
+If you have a question at any point, reply to this email.
+I read every message personally.
 
 — Mohammed
-InvoiceBot · AINTORA SYSTEMS
+Founder, InvoiceBot · AINTORA SYSTEMS
+{app_url}
 """
 
     ok, provider, err = send_mail(
