@@ -3,7 +3,6 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask import current_app
-import resend as resend_client
 
 logger = logging.getLogger(__name__)
 

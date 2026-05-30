@@ -6,7 +6,6 @@ from flask_wtf.csrf import CSRFProtect
 from config import config
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from flask_talisman import Talisman
 
 
 limiter = Limiter(
@@ -38,8 +37,10 @@ def create_app(config_name="default"):
         if current_user.is_authenticated and getattr(current_user, "is_blocked", False):
             logout_user()
             flash("Your account has been blocked. Contact the admin.", "danger")
+            return redirect(url_for("auth.login"))
 
     if config_name == "production":
+        from flask_talisman import Talisman
         Talisman(
             app,
             force_https=True,
@@ -54,7 +55,6 @@ def create_app(config_name="default"):
     from app.invoices.routes import invoices_bp
     from app.billing.routes import billing_bp
     from app.admin.routes import admin_bp
-    from app.debug_routes import debug_bp
     from app.routes import main_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
@@ -62,7 +62,6 @@ def create_app(config_name="default"):
     app.register_blueprint(invoices_bp, url_prefix="/invoices")
     app.register_blueprint(billing_bp, url_prefix="/billing")
     app.register_blueprint(admin_bp, url_prefix="/admin")
-    app.register_blueprint(debug_bp)
     app.register_blueprint(main_bp)
 
     # Start background scheduler

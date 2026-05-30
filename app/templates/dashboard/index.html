@@ -3,6 +3,12 @@
 {% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
+{% if not current_user.email_verified %}
+<div style="background:rgba(233,30,140,.08);border:1px solid rgba(233,30,140,.25);border-radius:10px;padding:.875rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+  <span style="font-size:.85rem;color:#F1F5F9;">⚠️ Please verify your email to ensure reminders are delivered reliably.</span>
+  <a href="{{ url_for('auth.resend_verification') }}" style="font-size:.8rem;font-weight:600;color:#E91E8C;white-space:nowrap;">Resend email →</a>
+</div>
+{% endif %}
 
 {% if current_user.plan == 'free' %}
 <div class="upgrade-banner">

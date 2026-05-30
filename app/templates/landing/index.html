@@ -41,6 +41,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,12,24,0.88
 .nav-links a:hover{color:var(--text)}
 .nav-cta{background:var(--brand) !important;color:#fff !important;padding:.5rem 1.25rem !important;border-radius:8px;font-weight:600 !important;transition:background .15s !important}
 .nav-cta:hover{background:var(--brand-dark) !important}
+.nav-auth{display:flex;align-items:center;gap:.75rem}
 
 .hero{padding:140px 2rem 100px;text-align:center;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(circle,rgba(233,30,140,0.1) 0%,transparent 65%);pointer-events:none}
@@ -169,6 +170,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
 
 @media(max-width:768px){
   .nav-links{display:none}
+  .nav-auth{display:flex !important}
   .mockup-sidebar{display:none}
   .mockup-body{grid-template-columns:1fr}
   .lang-cards{grid-template-columns:1fr}
@@ -202,8 +204,14 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
-      <a href="https://web-production-af74.up.railway.app/auth/login">Sign in</a>
-      <a href="https://web-production-af74.up.railway.app/auth/register" class="nav-cta">Get started free</a>
+    </div>
+    <div class="nav-auth">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('dashboard.home') }}" class="nav-cta">Go to dashboard →</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" style="font-size:.875rem;color:rgba(255,255,255,.6);font-weight:500;text-decoration:none;">Sign in</a>
+        <a href="{{ url_for('auth.register') }}" class="nav-cta">Get started free →</a>
+      {% endif %}
     </div>
   </div>
 </nav>
@@ -213,7 +221,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
   <h1>Stop chasing invoices.<br><em>Start getting paid.</em></h1>
   <p class="hero-sub">Automated overdue reminders in Arabic, French, and English. Add an invoice, set a tone, and let InvoiceBot do the awkward follow-ups.</p>
   <div class="hero-actions">
-    <a href="https://web-production-af74.up.railway.app/auth/register" class="btn-primary">Start free — no credit card</a>
+    <a href="{{ url_for('auth.register') }}" class="btn-primary">Start free — no credit card</a>
     <a href="#how" class="btn-secondary">See how it works</a>
   </div>
   <p class="hero-flags">For freelancers in 🇲🇦 🇩🇿 🇹🇳 🇪🇬 &nbsp;·&nbsp; <strong>Free plan always available</strong></p>
@@ -336,8 +344,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
         <div class="lang-flag">🇬🇧</div>
         <div class="lang-name">English</div>
         <div class="lang-desc">For international clients and global projects</div>
-        <div class="lang-preview">"Hi Sarah, this is a friendly reminder that Invoice #INV-012 for $1,200 was due on May 1st. If you've already sent payment, please ignore this..."</div>
-      </div>
+        </div>
       <div class="lang-card">
         <div class="lang-flag">🇫🇷</div>
         <div class="lang-name">Français</div>
@@ -374,7 +381,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
           <li class="no">PDF reports</li>
           <li class="no">Unlimited invoices</li>
         </ul>
-        <a href="https://web-production-af74.up.railway.app/auth/register" class="pricing-btn free-btn">Get started free</a>
+        <a href="{{ url_for('auth.register') }}" class="pricing-btn free-btn">Get started free</a>
       </div>
 
       <div class="pricing-card featured">
@@ -391,7 +398,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
           <li>Custom reminder schedule</li>
           <li class="no">PDF reports</li>
         </ul>
-        <a href="https://web-production-af74.up.railway.app/auth/register" class="pricing-btn starter-btn">Start with Starter →</a>
+        <a href="{{ url_for('auth.register') }}" class="pricing-btn starter-btn">Start with Starter →</a>
       </div>
 
       <div class="pricing-card">
@@ -407,7 +414,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
           <li>Custom email templates</li>
           <li>Advanced analytics</li>
         </ul>
-        <a href="https://web-production-af74.up.railway.app/auth/register" class="pricing-btn pro-btn">Go Pro →</a>
+        <a href="{{ url_for('auth.register') }}" class="pricing-btn pro-btn">Go Pro →</a>
       </div>
 
     </div>
@@ -452,7 +459,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
   <div class="cta-banner">
     <h2>Your next invoice is overdue.<br>Let InvoiceBot chase it.</h2>
     <p>Free to start. 2 minutes to set up. Works in Arabic, French, and English.</p>
-    <a href="https://web-production-af74.up.railway.app/auth/register" class="btn-primary">Start for free →</a>
+    <a href="{{ url_for('auth.register') }}" class="btn-primary">Start for free →</a>
   </div>
 </div>
 
@@ -462,8 +469,10 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
     <div class="footer-links">
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
-      <a href="mailto:invoicebotaintora@gmail.com">Contact</a>
-      <a href="https://web-production-af74.up.railway.app/auth/register">Sign up</a>
+      <a href="{{ url_for('main.terms') }}">Terms</a>
+      <a href="{{ url_for('main.privacy') }}">Privacy</a>
+      <a href="{{ url_for('main.contact') }}">Contact</a>
+      <a href="{{ url_for('auth.register') }}">Sign up</a>
     </div>
     <div class="footer-copy">© 2026 AINTORA SYSTEMS · All rights reserved</div>
   </div>

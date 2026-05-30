@@ -1,4 +1,4 @@
-import hmac
+import hmac as hmac_module
 import hashlib
 import logging
 import json
@@ -23,14 +23,13 @@ def upgrade():
 
 @billing_bp.route("/webhook", methods=["POST"])
 def webhook():
-    """Lemon Squeezy webhook — verify signature, update user plan."""
     secret    = current_app.config.get("LS_WEBHOOK_SECRET", "")
     signature = request.headers.get("X-Signature", "")
     payload   = request.data
 
     if secret:
-        expected = hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
-        if not hmac.compare_digest(expected, signature):
+        expected = hmac_module.new(secret.encode(), payload, hashlib.sha256).hexdigest()
+        if not hmac_module.compare_digest(expected, signature):
             logger.warning("Lemon Squeezy webhook: invalid signature")
             return jsonify({"error": "Invalid signature"}), 400
 
@@ -75,7 +74,7 @@ def _handle_subscription_active(attrs, meta):
         user.plan = "pro" if "pro" in variant_name else "starter"
         user.stripe_subscription_id = sub_id
         db.session.commit()
-        logger.info(f"User {user.email} → plan: {user.plan}")
+        logger.info(f"User {user.email} -> plan: {user.plan}")
 
 
 def _handle_subscription_downgrade(attrs, meta):
@@ -84,7 +83,7 @@ def _handle_subscription_downgrade(attrs, meta):
         user.plan = "free"
         user.stripe_subscription_id = None
         db.session.commit()
-        logger.info(f"User {user.email} → free (subscription ended)")
+        logger.info(f"User {user.email} -> free (subscription ended)")
 
 
 @billing_bp.route("/cancel")
@@ -139,28 +138,21 @@ def cancelled():
 
 def _send_cancellation_email(user):
     from app.email_service import send_mail
+    from flask import current_app
     mail_from = current_app.config.get("MAIL_FROM", "")
     mail_name = current_app.config.get("MAIL_FROM_NAME", "InvoiceBot")
     subject = "Your InvoiceBot subscription has been cancelled"
-    body = f"""Hi {user.name or "there"},
-
-Your InvoiceBot subscription has been cancelled. You are now on the free plan.
-
-What changes:
-— Maximum 3 active invoices
-— CSV export unavailable
-— PDF reports unavailable
-
-Your existing data is safe and untouched.
-
-Changed your mind? Resubscribe anytime:
-{current_app.config.get("APP_URL", "http://localhost:5000")}/billing/upgrade
-
-If there is anything we could have done better, just reply to this email.
-
-— Mohammed
-InvoiceBot · AINTORA SYSTEMS
-"""
+    body = (
+        f"Hi {user.name or 'there'},\n\n"
+        "Your InvoiceBot subscription has been cancelled. You are now on the free plan.\n\n"
+        "What changes:\n"
+        "- Maximum 3 active invoices\n"
+        "- CSV export unavailable\n"
+        "- PDF reports unavailable\n\n"
+        "Your existing data is safe and untouched.\n\n"
+        f"Resubscribe anytime: {current_app.config.get('APP_URL', 'http://localhost:5000')}/billing/upgrade\n\n"
+        "- Mohammed\nInvoiceBot · AINTORA SYSTEMS"
+    )
     send_mail(
         to_address=user.email,
         subject=subject,

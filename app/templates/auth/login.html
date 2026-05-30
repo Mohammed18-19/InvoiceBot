@@ -1,5 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Sign in — InvoiceBot{% endblock %}
+{% block title %}Sign in — InvoiceBot
+    <p class="text-center mt-2" style="font-size:.8rem;">
+      <a href="{{ url_for('main.landing') }}" style="color:rgba(255,255,255,.3);">← Back to home</a>
+    </p>
+{% endblock %}
 
 {% block auth_content %}
 <div class="min-vh-100 d-flex align-items-center justify-content-center" style="background:#0A0F1E;padding:1rem;">
@@ -46,4 +50,8 @@
     </p>
   </div>
 </div>
+
+    <p class="text-center mt-2" style="font-size:.8rem;">
+      <a href="{{ url_for('main.landing') }}" style="color:rgba(255,255,255,.3);">← Back to home</a>
+    </p>
 {% endblock %}

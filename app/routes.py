@@ -1,7 +1,26 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for
+from flask_login import current_user
 
 main_bp = Blueprint("main", __name__)
 
 @main_bp.route("/")
 def landing():
+    if current_user.is_authenticated:
+        return redirect(url_for("dashboard.home"))
     return render_template("landing/index.html")
+
+@main_bp.route("/home")
+def home_page():
+    return render_template("landing/index.html")
+
+@main_bp.route("/terms")
+def terms():
+    return render_template("legal/terms.html")
+
+@main_bp.route("/privacy")
+def privacy():
+    return render_template("legal/privacy.html")
+
+@main_bp.route("/contact")
+def contact():
+    return render_template("legal/contact.html")

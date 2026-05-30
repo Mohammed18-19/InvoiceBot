@@ -21,6 +21,7 @@ class User(UserMixin, db.Model):
     stripe_subscription_id = db.Column(db.String(100), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     is_blocked = db.Column(db.Boolean, default=False, nullable=False)
+    email_verified = db.Column(db.Boolean, default=False, nullable=False)
     language = db.Column(db.String(10), default="en", nullable=False)  # en | fr | ar
     company = db.Column(db.String(255), nullable=True)
     default_payment_link = db.Column(db.String(500), nullable=True)
