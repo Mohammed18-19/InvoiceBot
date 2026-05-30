@@ -14,4 +14,5 @@ gunicorn==22.0.0
 email-validator==2.1.1
 flask-limiter==3.5.0
 flask-talisman==1.1.0
-resend
+requests==2.31.0
+itsdangerous==2.2.0
