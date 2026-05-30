@@ -20,3 +20,14 @@ migrations/versions/*.py
 cookies.txt
 *.cookies
 *.session
+venv/
+__pycache__/
+*.pyc
+.env
+.env
+*.txt
+cookies.txt
+__pycache__/
+*.pyc
+.DS_Store
+*.swp
