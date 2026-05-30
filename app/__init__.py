@@ -68,7 +68,7 @@ def create_app(config_name="default"):
 
     # Start background scheduler
     from app.scheduler.jobs import start_scheduler
-    start_scheduler(app)
+    if os.environ.get("DISABLE_SCHEDULER") != "1": start_scheduler(app)
 
     @app.errorhandler(404)
     def not_found_error(error):
