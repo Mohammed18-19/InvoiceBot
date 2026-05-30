@@ -56,6 +56,7 @@ def create_app(config_name="default"):
     from app.billing.routes import billing_bp
     from app.admin.routes import admin_bp
     from app.routes import main_bp
+    from app.cron_routes import cron_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
@@ -63,6 +64,7 @@ def create_app(config_name="default"):
     app.register_blueprint(billing_bp, url_prefix="/billing")
     app.register_blueprint(admin_bp, url_prefix="/admin")
     app.register_blueprint(main_bp)
+    app.register_blueprint(cron_bp)
 
     # Start background scheduler
     from app.scheduler.jobs import start_scheduler

@@ -47,6 +47,7 @@ class Config:
 
     # App
     APP_URL = normalize_url(env("APP_URL", "http://localhost:5000"))
+    CRON_SECRET = env("CRON_SECRET", "")
 
 
     # Security
