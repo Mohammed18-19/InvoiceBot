@@ -270,9 +270,79 @@ def export_pdf():
     )
 
     try:
-        from weasyprint import HTML
-        pdf = HTML(string=html).write_pdf()
-        response = make_response(pdf)
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib import colors
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+        from reportlab.lib.units import cm
+        import io
+
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=2*cm, bottomMargin=2*cm, leftMargin=2*cm, rightMargin=2*cm)
+        styles = getSampleStyleSheet()
+        elements = []
+
+        # Title
+        title_style = ParagraphStyle("title", fontSize=20, textColor=colors.HexColor("#E91E8C"), spaceAfter=4)
+        elements.append(Paragraph("InvoiceBot Report", title_style))
+        meta = f"{current_user.name or current_user.email} · Generated {date.today().strftime('%B %d, %Y')}"
+        elements.append(Paragraph(meta, ParagraphStyle("meta", fontSize=9, textColor=colors.HexColor("#64748b"), spaceAfter=20)))
+
+        # Stats table
+        stats_data = [
+            ["Total Invoiced", "Collected", "Pending", "Overdue"],
+            [f"${total_invoiced:,.2f}", f"${total_collected:,.2f}", f"${total_pending:,.2f}", f"${total_overdue:,.2f}"],
+        ]
+        stats_table = Table(stats_data, colWidths=[4*cm, 4*cm, 4*cm, 4*cm])
+        stats_table.setStyle(TableStyle([
+            ("BACKGROUND", (0,0), (-1,0), colors.HexColor("#f1f5f9")),
+            ("TEXTCOLOR", (0,0), (-1,0), colors.HexColor("#94a3b8")),
+            ("FONTSIZE", (0,0), (-1,0), 8),
+            ("FONTSIZE", (0,1), (-1,1), 14),
+            ("FONTNAME", (0,1), (-1,1), "Helvetica-Bold"),
+            ("ALIGN", (0,0), (-1,-1), "CENTER"),
+            ("BOX", (0,0), (-1,-1), 0.5, colors.HexColor("#e2e8f0")),
+            ("INNERGRID", (0,0), (-1,-1), 0.25, colors.HexColor("#e2e8f0")),
+            ("ROWBACKGROUNDS", (0,1), (-1,-1), [colors.white]),
+            ("TOPPADDING", (0,0), (-1,-1), 8),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 8),
+        ]))
+        elements.append(stats_table)
+        elements.append(Spacer(1, 20))
+
+        # Invoices table
+        headers = ["Invoice #", "Client", "Amount", "Due Date", "Status", "Reminders"]
+        rows = [headers]
+        for inv in invoices:
+            status = "Paid" if inv.status == "paid" else ("Overdue" if inv.days_overdue > 0 else "Pending")
+            rows.append([
+                inv.invoice_number or inv.id[:8].upper(),
+                inv.client_name[:25],
+                f"${float(inv.amount):,.2f} {inv.currency}",
+                inv.due_date.strftime("%b %d, %Y"),
+                status,
+                f"{inv.sent_emails_count}/3",
+            ])
+
+        col_widths = [3*cm, 5*cm, 3.5*cm, 3*cm, 2.5*cm, 2.5*cm]
+        inv_table = Table(rows, colWidths=col_widths)
+        inv_table.setStyle(TableStyle([
+            ("BACKGROUND", (0,0), (-1,0), colors.HexColor("#0f172a")),
+            ("TEXTCOLOR", (0,0), (-1,0), colors.white),
+            ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
+            ("FONTSIZE", (0,0), (-1,-1), 9),
+            ("ALIGN", (0,0), (-1,-1), "LEFT"),
+            ("ROWBACKGROUNDS", (0,1), (-1,-1), [colors.white, colors.HexColor("#f8fafc")]),
+            ("GRID", (0,0), (-1,-1), 0.25, colors.HexColor("#e2e8f0")),
+            ("TOPPADDING", (0,0), (-1,-1), 6),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 6),
+        ]))
+        elements.append(inv_table)
+
+        doc.build(elements)
+        pdf_bytes = buffer.getvalue()
+
+        response = make_response(pdf_bytes)
         response.headers["Content-Type"] = "application/pdf"
         response.headers["Content-Disposition"] = f"attachment; filename=invoicebot-report-{date.today()}.pdf"
         return response
