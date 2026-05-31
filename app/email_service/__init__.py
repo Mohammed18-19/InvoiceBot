@@ -574,34 +574,42 @@ def send_mail(
             logger.exception("Resend error sending email")
             return False, None, str(e)
 
-    # ── SMTP mode ──────────────────────────────────────────────────────────
+    # ── SMTP / Brevo API mode ─────────────────────────────────────────────
     if email_mode in ("smtp", ""):
         if not mail_username or not mail_password:
             msg = "SMTP credentials not configured"
             logger.warning(msg)
             return False, None, msg
 
-        msg = MIMEMultipart()
-        msg["From"]    = f"{mail_name} <{mail_from}>"
-        msg["To"]      = to_address
-        msg["Subject"] = subject
-        msg.attach(MIMEText(body, "plain"))
-
+        # Use Brevo HTTP API (avoids SMTP port blocking on Render/cloud)
         try:
-            if mail_use_ssl or int(mail_port) == 465:
-                server = smtplib.SMTP_SSL(mail_server, int(mail_port), timeout=10)
+            import requests as _requests
+            brevo_url = "https://api.brevo.com/v3/smtp/email"
+            payload = {
+                "sender": {"name": mail_name, "email": mail_from},
+                "to": [{"email": to_address}],
+                "subject": subject,
+                "textContent": body,
+            }
+            if html_body:
+                payload["htmlContent"] = html_body
+            # Brevo API key is the SMTP password for API v3
+            resp = _requests.post(
+                brevo_url,
+                json=payload,
+                headers={
+                    "api-key": mail_password,
+                    "Content-Type": "application/json",
+                },
+                timeout=15,
+            )
+            if resp.status_code in (200, 201):
+                return True, "brevo-api-sent", None
             else:
-                server = smtplib.SMTP(mail_server, int(mail_port), timeout=10)
-                server.ehlo()
-                if mail_use_tls:
-                    server.starttls()
-                    server.ehlo()
-            server.login(mail_username, mail_password)
-            server.sendmail(mail_from, to_address, msg.as_string())
-            server.quit()
-            return True, "smtp-sent", None
+                logger.error(f"Brevo API error: {resp.status_code} {resp.text}")
+                return False, None, f"Brevo API {resp.status_code}: {resp.text}"
         except Exception as e:
-            logger.exception("SMTP error sending email")
+            logger.exception("Brevo API error sending email")
             return False, None, str(e)
 
     msg = f"Unsupported EMAIL_MODE: {email_mode}"
