@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: Arial, sans-serif; color: #1e293b; margin: 40px; font-size: 13px; }
+  h1 { font-size: 22px; color: #E91E8C; margin-bottom: 4px; }
+  .meta { color: #64748b; font-size: 11px; margin-bottom: 30px; }
+  .stats { display: flex; gap: 20px; margin-bottom: 30px; }
+  .stat { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 20px; flex: 1; }
+  .stat-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; }
+  .stat-value { font-size: 20px; font-weight: 700; color: #0f172a; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th { background: #f1f5f9; font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: #64748b; padding: 8px 10px; text-align: left; }
+  td { padding: 9px 10px; border-bottom: 1px solid #f1f5f9; font-size: 12px; }
+  .badge-paid { background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 600; }
+  .badge-pending { background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 600; }
+  .badge-overdue { background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 600; }
+  .footer { margin-top: 40px; font-size: 10px; color: #94a3b8; text-align: center; }
+</style>
+</head>
+<body>
+  <h1>InvoiceBot Report</h1>
+  <div class="meta">{{ user.name or user.email }} {% if user.company %}· {{ user.company }}{% endif %} · Generated {{ today.strftime('%B %d, %Y') }}</div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">Total Invoiced</div>
+      <div class="stat-value">${{ "%.2f"|format(total_invoiced) }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Collected</div>
+      <div class="stat-value">${{ "%.2f"|format(total_collected) }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Pending</div>
+      <div class="stat-value">${{ "%.2f"|format(total_pending) }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Overdue</div>
+      <div class="stat-value">${{ "%.2f"|format(total_overdue) }}</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Invoice #</th>
+        <th>Client</th>
+        <th>Amount</th>
+        <th>Due Date</th>
+        <th>Status</th>
+        <th>Reminders</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inv in invoices %}
+      <tr>
+        <td>{{ inv.invoice_number or inv.id[:8].upper() }}</td>
+        <td>{{ inv.client_name }}</td>
+        <td>${{ "%.2f"|format(inv.amount|float) }} {{ inv.currency }}</td>
+        <td>{{ inv.due_date.strftime('%b %d, %Y') }}</td>
+        <td>
+          {% if inv.status == 'paid' %}<span class="badge-paid">Paid</span>
+          {% elif inv.days_overdue > 0 %}<span class="badge-overdue">Overdue</span>
+          {% else %}<span class="badge-pending">Pending</span>{% endif %}
+        </td>
+        <td>{{ inv.sent_emails_count }}/3</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="footer">InvoiceBot by AINTORA SYSTEMS · invoicebot-re76.onrender.com</div>
+</body>
+</html>

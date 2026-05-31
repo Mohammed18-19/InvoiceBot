@@ -240,3 +240,42 @@ def export_csv():
         mimetype="text/csv",
         headers={"Content-Disposition": f"attachment; filename=invoices_{date.today()}.csv"}
     )
+
+
+@invoices_bp.route("/report/export/pdf")
+@login_required
+def export_pdf():
+    from datetime import date
+    from flask import make_response
+
+    if not current_user.can_export_pdf:
+        flash("PDF reports are available on the Pro plan. Upgrade to access this feature.", "warning")
+        return redirect(url_for("invoices.report"))
+
+    invoices = Invoice.query.filter_by(user_id=current_user.id).order_by(Invoice.created_at.desc()).all()
+
+    total_invoiced  = sum(float(inv.amount) for inv in invoices)
+    total_collected = sum(float(inv.amount) for inv in invoices if inv.status == "paid")
+    total_pending   = sum(float(inv.amount) for inv in invoices if inv.status == "pending")
+    total_overdue   = sum(float(inv.amount) for inv in invoices if inv.status == "pending" and inv.due_date < date.today())
+
+    html = render_template("invoices/report_pdf.html",
+        invoices=invoices,
+        total_invoiced=total_invoiced,
+        total_collected=total_collected,
+        total_pending=total_pending,
+        total_overdue=total_overdue,
+        user=current_user,
+        today=date.today(),
+    )
+
+    try:
+        from weasyprint import HTML
+        pdf = HTML(string=html).write_pdf()
+        response = make_response(pdf)
+        response.headers["Content-Type"] = "application/pdf"
+        response.headers["Content-Disposition"] = f"attachment; filename=invoicebot-report-{date.today()}.pdf"
+        return response
+    except Exception as e:
+        flash(f"PDF generation failed: {str(e)}", "danger")
+        return redirect(url_for("invoices.report"))

@@ -16,3 +16,5 @@ flask-limiter==3.5.0
 flask-talisman==1.1.0
 requests==2.31.0
 itsdangerous==2.2.0
+
+weasyprint==62.3

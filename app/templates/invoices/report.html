@@ -29,7 +29,7 @@
         </a>
       {% endif %}
       {% if current_user.can_export_pdf %}
-        <a href="#" class="btn btn-sm btn-brand">
+        <a href="{{ url_for('invoices.export_pdf') }}" class="btn btn-sm btn-brand">
           <i class="bi bi-file-earmark-pdf me-1"></i>Export PDF
         </a>
       {% else %}
