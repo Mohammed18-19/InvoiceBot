@@ -22,7 +22,7 @@ def upgrade():
         if base == "#":
             return base
         sep = "&" if "?" in base else "?"
-        return f"{base}{sep}checkout[custom][user_id]={current_user.id}&checkout[email]={current_user.email}"
+        return f"{base}{sep}checkout[custom][user_id]={current_user.id}&checkout[custom][user_email]={current_user.email}"
 
     return render_template(
         "billing/upgrade.html",
