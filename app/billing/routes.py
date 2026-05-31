@@ -90,7 +90,7 @@ def _handle_subscription_active(attrs, meta):
         logger.warning(f"LS webhook: user not found — meta={meta}")
         return
     status       = attrs.get("status", "")
-    variant_name = (attrs.get("variant_name") or attrs.get("product_name") or "").lower()
+    variant_name = (attrs.get("product_name") or attrs.get("variant_name") or "").lower()
     sub_id       = str(attrs.get("id", ""))
     if status in ("active", "on_trial"):
         user.plan = "pro" if "pro" in variant_name else "starter"
