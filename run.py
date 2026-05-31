@@ -11,6 +11,11 @@ from app.models import User, Invoice, EmailSchedule, EmailLog
 
 app = create_app(os.environ.get("FLASK_ENV", "development"))
 
+# Auto-create all tables on startup (production safe — skips existing tables)
+with app.app_context():
+    from app import db
+    db.create_all()
+
 
 @app.shell_context_processor
 def make_shell_context():
