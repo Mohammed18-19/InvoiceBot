@@ -41,7 +41,7 @@ def index():
 
     starter_count = User.query.filter_by(plan="starter").count()
     pro_count = User.query.filter_by(plan="pro").count()
-    mrr = (starter_count * 9) + (pro_count * 19)
+    mrr = (starter_count * 10) + (pro_count * 20)
 
     recent_users = (
         User.query
