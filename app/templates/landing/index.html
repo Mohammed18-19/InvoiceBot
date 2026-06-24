@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>InvoiceBot — Stop chasing invoices. Start getting paid.</title>
-<meta name="description" content="Automated invoice reminders in Arabic, French and English. Built for freelancers in Morocco, Algeria, and across MENA. Set up in 2 minutes.">
+<title>Automated Invoice Reminders for Freelancers — InvoiceBot</title>
+<meta name="description" content="InvoiceBot sends automated invoice reminders for freelancers in Arabic, French, and English. Stop chasing clients for payment. Free plan available. Built for MENA.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -39,8 +39,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,12,24,0.88
 .nav-links{display:flex;align-items:center;gap:2rem}
 .nav-links a{text-decoration:none;font-size:.875rem;color:var(--text2);font-weight:500;transition:color .15s}
 .nav-links a:hover{color:var(--text)}
-.nav-cta{background:var(--brand) !important;color:#fff !important;padding:.5rem 1.25rem !important;border-radius:8px;font-weight:600 !important;transition:background .15s !important}
-.nav-cta:hover{background:var(--brand-dark) !important}
 .nav-auth{display:flex;align-items:center;gap:.75rem}
 
 .hero{padding:140px 2rem 100px;text-align:center;position:relative;overflow:hidden}
@@ -63,14 +61,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,12,24,0.88
 .mockup-bar{background:#0d1220;padding:.625rem 1rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid var(--border)}
 .mockup-dot{width:10px;height:10px;border-radius:50%}
 .mockup-url{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:.25rem .75rem;font-size:.72rem;color:var(--text3);margin:0 .75rem;text-align:center}
-.mockup-body{background:var(--surface);display:grid;grid-template-columns:220px 1fr;min-height:400px}
-.mockup-sidebar{background:var(--navy2);padding:1.25rem 1rem;display:flex;flex-direction:column;gap:.25rem;border-right:1px solid var(--border)}
-.mockup-sb-brand{display:flex;align-items:center;gap:8px;padding:.5rem .75rem;margin-bottom:.75rem;border-bottom:1px solid var(--border);padding-bottom:1rem}
-.mockup-sb-brand-icon{width:28px;height:28px;background:var(--brand);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.mockup-sb-brand span{font-size:.8rem;font-weight:600;color:#fff}
-.mockup-sb-item{padding:.5rem .75rem;border-radius:7px;font-size:.73rem;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:8px}
-.mockup-sb-item.active{background:rgba(233,30,140,.1);color:#fff;border-left:2px solid var(--brand);padding-left:calc(.75rem - 2px)}
-.mockup-sb-section{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:.875rem .75rem .375rem}
+.mockup-body{background:var(--surface);display:grid;min-height:300px}
 .mockup-main{padding:1.5rem;background:#0f1624}
 .mockup-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
 .mockup-topbar-title{font-size:.875rem;font-weight:600;color:var(--text)}
@@ -171,8 +162,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
 @media(max-width:768px){
   .nav-links{display:none}
   .nav-auth{display:flex !important}
-  .mockup-sidebar{display:none}
-  .mockup-body{grid-template-columns:1fr}
+  .mockup-stats{grid-template-columns:repeat(2,1fr) !important}
   .lang-cards{grid-template-columns:1fr}
   .pricing-grid{grid-template-columns:1fr}
   .lang-wrap{padding:0 0 80px}
@@ -180,6 +170,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
   .cta-wrap{padding:0 0 60px}
   .cta-banner{border-radius:0;border-left:none;border-right:none;padding:3rem 1.5rem}
   .hero-actions{flex-direction:column;align-items:stretch;max-width:280px;margin:0 auto 3rem}
+  #pain .pain-cols-grid{grid-template-columns:1fr !important}
 }
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
@@ -206,25 +197,20 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
       <a href="#faq">FAQ</a>
     </div>
     <div class="nav-auth">
-      {% if current_user.is_authenticated %}
-        <a href="{{ url_for('dashboard.home') }}" class="nav-cta">Go to dashboard →</a>
-      {% else %}
-        <a href="{{ url_for('auth.login') }}" style="font-size:.875rem;color:rgba(255,255,255,.6);font-weight:500;text-decoration:none;">Sign in</a>
-        <a href="{{ url_for('auth.register') }}" class="nav-cta">Get started free →</a>
-      {% endif %}
+      <a href="{{ url_for('auth.login') }}" style="font-size:.875rem;color:rgba(255,255,255,.6);font-weight:500;text-decoration:none;">Sign in</a>
     </div>
   </div>
 </nav>
 
 <section class="hero">
   <div class="hero-badge"><span></span> Built for MENA freelancers</div>
-  <h1>Stop chasing invoices.<br><em>Start getting paid.</em></h1>
-  <p class="hero-sub">Automated overdue reminders in Arabic, French, and English. Add an invoice, set a tone, and let InvoiceBot do the awkward follow-ups.</p>
+  <h1>Stop chasing clients.<br><em>Get paid faster.</em></h1>
+  <p class="hero-sub">Automated invoice reminders for freelancers in Arabic, French, and English. Set up your first invoice in less than 60 seconds.</p>
   <div class="hero-actions">
-    <a href="{{ url_for('auth.register') }}" class="btn-primary">Start free — no credit card</a>
+    <a href="{{ url_for('auth.register') }}" class="btn-primary">Automate My Reminders</a>
     <a href="#how" class="btn-secondary">See how it works</a>
   </div>
-  <p class="hero-flags">For freelancers in 🇲🇦 🇩🇿 🇹🇳 🇪🇬 &nbsp;·&nbsp; <strong>Free plan always available</strong></p>
+  <p class="hero-flags">For freelancers in 🇲🇦 🇩🇿 🇹🇳 🇪🇬 &nbsp;·&nbsp; <strong>Free plan available · No credit card required</strong></p>
 
   <div style="margin-top:3rem"></div>
 
@@ -235,28 +221,13 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
       <div class="mockup-dot" style="background:#28c840"></div>
       <div class="mockup-url">app.invoicebot.aintora.com</div>
     </div>
-    <div class="mockup-body">
-      <div class="mockup-sidebar">
-        <div class="mockup-sb-brand">
-          <div class="mockup-sb-brand-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/></svg>
-          </div>
-          <span>InvoiceBot</span>
-        </div>
-        <div class="mockup-sb-item active">📊 Dashboard</div>
-        <div class="mockup-sb-item">📄 Invoices</div>
-        <div class="mockup-sb-item">📈 Reports</div>
-        <div class="mockup-sb-item">➕ New invoice</div>
-        <div class="mockup-sb-section">Account</div>
-        <div class="mockup-sb-item">💳 Billing</div>
-        <div class="mockup-sb-item">⚙️ Settings</div>
-      </div>
+    <div class="mockup-body" style="grid-template-columns:1fr">
       <div class="mockup-main">
         <div class="mockup-topbar">
           <span class="mockup-topbar-title">Dashboard</span>
           <span class="mockup-topbar-user">Youssef B. · Starter</span>
         </div>
-        <div class="mockup-stats">
+        <div class="mockup-stats" style="grid-template-columns:repeat(4,1fr)">
           <div class="mockup-stat" style="border-left-color:#34d399">
             <div class="mockup-stat-label">Collected</div>
             <div class="mockup-stat-value">$4,200</div>
@@ -271,6 +242,11 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
             <div class="mockup-stat-label">Overdue</div>
             <div class="mockup-stat-value">1</div>
             <div class="mockup-stat-sub">Reminder sent</div>
+          </div>
+          <div class="mockup-stat" style="border-left-color:#a78bfa">
+            <div class="mockup-stat-label">Reminders sent</div>
+            <div class="mockup-stat-value">9</div>
+            <div class="mockup-stat-sub">This month</div>
           </div>
         </div>
         <div class="mockup-table-wrap">
@@ -287,7 +263,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
             <span style="font-weight:500">Studio Design</span>
             <span class="num">INV-005</span>
             <span style="font-weight:600">$800</span>
-            <span><span class="badge badge-sent">Sent</span></span>
+            <span><span class="badge badge-sent">Reminder sent</span></span>
           </div>
           <div class="mockup-table-row">
             <span style="font-weight:500;color:#f87171">Iron Bars Co.</span>
@@ -298,6 +274,77 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<section id="pain" style="padding:80px 2rem;background:var(--navy2)">
+  <div class="section-inner">
+    <p class="section-label">The problem</p>
+    <h2 class="section-title" style="margin-bottom:3rem">Late payments are costing you time</h2>
+
+    <div class="pain-cols-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:3rem">
+
+      <div style="background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.15);border-radius:var(--radius);padding:1.75rem">
+        <div style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#f87171;margin-bottom:1.25rem">Without InvoiceBot</div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--text2)"><span style="color:#34d399;font-weight:600;flex-shrink:0">✓</span> Work delivered on time</div>
+          <div style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--text2)"><span style="color:#34d399;font-weight:600;flex-shrink:0">✓</span> Invoice sent to client</div>
+          <div style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--text2)"><span style="color:#f87171;font-weight:600;flex-shrink:0">✗</span> Client forgets to pay</div>
+          <div style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--text2)"><span style="color:#f87171;font-weight:600;flex-shrink:0">✗</span> You write reminder #1</div>
+          <div style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--text2)"><span style="color:#f87171;font-weight:600;flex-shrink:0">✗</span> Awkward reminder #2</div>
+          <div style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--text2)"><span style="color:#f87171;font-weight:600;flex-shrink:0">✗</span> Days lost chasing payment</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.2);border-radius:var(--radius);padding:1.75rem">
+        <div style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#34d399;margin-bottom:1.25rem">With InvoiceBot</div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--text2)"><span style="color:#34d399;font-weight:600;flex-shrink:0">✓</span> Work delivered on time</div>
+          <div style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--text2)"><span style="color:#34d399;font-weight:600;flex-shrink:0">✓</span> Invoice sent to client</div>
+          <div style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--text2)"><span style="color:#34d399;font-weight:600;flex-shrink:0">✓</span> Reminder #1 sent automatically</div>
+          <div style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--text2)"><span style="color:#34d399;font-weight:600;flex-shrink:0">✓</span> Reminder #2 sent automatically</div>
+          <div style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--text2)"><span style="color:#34d399;font-weight:600;flex-shrink:0">✓</span> Client pays — you mark it done</div>
+          <div style="display:flex;align-items:center;gap:.625rem;font-size:.9rem;color:var(--text2)"><span style="color:#34d399;font-weight:600;flex-shrink:0">✓</span> No manual follow-up written</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:rgba(233,30,140,.06);border:1px solid rgba(233,30,140,.2);border-radius:var(--radius);padding:1.5rem 2rem;text-align:center;margin-bottom:3rem">
+      <p style="font-size:1rem;color:var(--text2);font-weight:300">InvoiceBot automatically follows up on overdue invoices — in the right language — <strong style="color:var(--text);font-weight:600">until you mark the invoice as paid.</strong></p>
+    </div>
+
+    <div style="background:var(--navy3);border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;max-width:560px;margin:0 auto">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-size:.8rem;font-weight:600;color:var(--text)">Invoice #47</div>
+          <div style="font-size:.7rem;color:var(--text3);margin-top:2px">Due: March 18, 2026 · 14 days ago</div>
+        </div>
+        <div style="font-size:1.5rem;font-weight:600;color:var(--text);font-family:var(--serif)">€2,000</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr)">
+        <div style="padding:1.1rem .75rem;text-align:center;border-right:1px solid var(--border)">
+          <div style="width:28px;height:28px;background:rgba(16,185,129,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;font-size:.75rem;color:#34d399">✓</div>
+          <div style="font-size:.68rem;color:var(--text2);line-height:1.4">Invoice<br>Sent</div>
+        </div>
+        <div style="padding:1.1rem .75rem;text-align:center;border-right:1px solid var(--border)">
+          <div style="width:28px;height:28px;background:rgba(16,185,129,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;font-size:.75rem;color:#34d399">✓</div>
+          <div style="font-size:.68rem;color:var(--text2);line-height:1.4">Reminder<br>#1 Sent</div>
+        </div>
+        <div style="padding:1.1rem .75rem;text-align:center;border-right:1px solid var(--border)">
+          <div style="width:28px;height:28px;background:rgba(16,185,129,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;font-size:.75rem;color:#34d399">✓</div>
+          <div style="font-size:.68rem;color:var(--text2);line-height:1.4">Reminder<br>#2 Sent</div>
+        </div>
+        <div style="padding:1.1rem .75rem;text-align:center">
+          <div style="width:28px;height:28px;background:rgba(16,185,129,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;font-size:.75rem;color:#34d399;border:1px solid rgba(16,185,129,.4)">✓</div>
+          <div style="font-size:.68rem;color:var(--text2);line-height:1.4">Marked<br>Paid</div>
+        </div>
+      </div>
+      <div style="padding:.75rem 1.5rem;background:rgba(16,185,129,.08);border-top:1px solid rgba(16,185,129,.2);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:.8rem;font-weight:600;color:#34d399">Recovered</span>
+        <span style="font-size:.95rem;font-weight:600;color:#34d399">€2,000</span>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -327,8 +374,8 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
       </div>
       <div class="how-card">
         <div class="how-number">04</div>
-        <div class="how-title">Get paid. Automatically.</div>
-        <p class="how-desc">InvoiceBot sends 3 timed reminders on your behalf. You get notified when the client pays.</p>
+        <div class="how-title">Mark it paid. Done.</div>
+        <p class="how-desc">InvoiceBot automatically follows up on overdue invoices until you mark the invoice as paid. All scheduled reminders cancel immediately.</p>
       </div>
     </div>
   </div>
@@ -344,17 +391,21 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
         <div class="lang-flag">🇬🇧</div>
         <div class="lang-name">English</div>
         <div class="lang-desc">For international clients and global projects</div>
-        </div>
+        <div style="font-size:.62rem;color:var(--brand);letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:.375rem;margin-top:.25rem">Real reminder email example</div>
+        <div class="lang-preview">"Hi Thomas, this is a friendly reminder that Invoice #INV-014 for $1,500 is now 3 days overdue. If you have any questions or need an alternative arrangement, please reply to this email..."</div>
+      </div>
       <div class="lang-card">
         <div class="lang-flag">🇫🇷</div>
         <div class="lang-name">Français</div>
         <div class="lang-desc">Pour vos clients francophones au Maghreb et en Europe</div>
+        <div style="font-size:.62rem;color:var(--brand);letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:.375rem">Real reminder email example</div>
         <div class="lang-preview">"Bonjour Ahmed, je vous envoie un rappel amical concernant la facture #INV-012 d'un montant de 1 200 $. Si vous avez déjà effectué le paiement..."</div>
       </div>
       <div class="lang-card">
         <div class="lang-flag">🇸🇦</div>
         <div class="lang-name">العربية</div>
         <div class="lang-desc">للعملاء الناطقين بالعربية في المغرب والجزائر ومصر</div>
+        <div style="font-size:.62rem;color:var(--brand);letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:.375rem">Real reminder email example</div>
         <div class="lang-preview rtl">"مرحباً يوسف، أرسل إليك هذا التذكير الودي بشأن الفاتورة رقم #INV-012 بمبلغ 1200 دولار. إذا كنت قد أرسلت الدفعة بالفعل..."</div>
       </div>
     </div>
@@ -371,17 +422,14 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
       <div class="pricing-card">
         <div class="pricing-plan free">Free</div>
         <div class="pricing-price">$0</div>
-        <div class="pricing-period">forever · no credit card</div>
+        <div class="pricing-period">forever · no credit card required</div>
         <ul class="pricing-features">
           <li>3 active invoices</li>
-          <li>3-stage email reminders</li>
-          <li>Arabic, French, English</li>
-          <li>Email preview per stage</li>
-          <li class="no">CSV export</li>
-          <li class="no">PDF reports</li>
-          <li class="no">Unlimited invoices</li>
+          <li>Email reminders</li>
+          <li>Basic reminder automation</li>
+          <li>No credit card required</li>
         </ul>
-        <a href="{{ url_for('auth.register') }}" class="pricing-btn free-btn">Get started free</a>
+        <a href="{{ url_for('auth.register') }}" class="pricing-btn free-btn">Automate My Reminders</a>
       </div>
 
       <div class="pricing-card featured">
@@ -391,14 +439,11 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
         <div class="pricing-period">/ month · cancel anytime</div>
         <ul class="pricing-features">
           <li>20 active invoices</li>
-          <li>3-stage email reminders</li>
+          <li>Reminder automation</li>
+          <li>CSV reports</li>
           <li>Arabic, French, English</li>
-          <li>Email preview per stage</li>
-          <li>CSV export</li>
-          <li>Custom reminder schedule</li>
-          <li class="no">PDF reports</li>
         </ul>
-        <a href="{{ url_for('auth.register') }}" class="pricing-btn starter-btn">Start with Starter →</a>
+        <a href="{{ url_for('auth.register') }}" class="pricing-btn starter-btn">Automate My Reminders</a>
       </div>
 
       <div class="pricing-card">
@@ -408,13 +453,10 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
         <ul class="pricing-features">
           <li>Unlimited invoices</li>
           <li>Everything in Starter</li>
-          <li>PDF invoice reports</li>
-          <li>Priority support</li>
-          <li>WhatsApp reminders <span style="background:rgba(245,158,11,.15);color:#fbbf24;font-size:.62rem;padding:1px 6px;border-radius:4px;font-weight:600">Soon</span></li>
-          <li>Custom email templates</li>
-          <li>Advanced analytics</li>
+          <li>PDF reports</li>
+          <li>WhatsApp reminders <span style="background:rgba(245,158,11,.15);color:#fbbf24;font-size:.62rem;padding:1px 6px;border-radius:4px;font-weight:600">Coming soon</span></li>
         </ul>
-        <a href="{{ url_for('auth.register') }}" class="pricing-btn pro-btn">Go Pro →</a>
+        <a href="{{ url_for('auth.register') }}" class="pricing-btn pro-btn">Automate My Reminders</a>
       </div>
 
     </div>
@@ -437,7 +479,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
       </div>
       <div class="faq-item">
         <div class="faq-q">What happens when a client pays?</div>
-        <div class="faq-a">You mark the invoice as paid in InvoiceBot. Once marked paid, all remaining scheduled reminders are cancelled immediately — no awkward follow-ups after payment.</div>
+        <div class="faq-a">When a client pays, simply mark the invoice as paid in your dashboard. All future reminders are immediately cancelled — no awkward follow-ups after payment.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">Is my data safe?</div>
@@ -457,9 +499,9 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
 
 <div class="cta-wrap">
   <div class="cta-banner">
-    <h2>Your next invoice is overdue.<br>Let InvoiceBot chase it.</h2>
-    <p>Free to start. 2 minutes to set up. Works in Arabic, French, and English.</p>
-    <a href="{{ url_for('auth.register') }}" class="btn-primary">Start for free →</a>
+    <h2>Stop chasing clients.<br>Automate your reminders.</h2>
+    <p>Free plan available. Set up your first invoice in less than 60 seconds. Works in Arabic, French, and English.</p>
+    <a href="{{ url_for('auth.register') }}" class="btn-primary">Automate My Reminders</a>
   </div>
 </div>
 
@@ -472,7 +514,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
       <a href="{{ url_for('main.terms') }}">Terms</a>
       <a href="{{ url_for('main.privacy') }}">Privacy</a>
       <a href="{{ url_for('main.contact') }}">Contact</a>
-      <a href="{{ url_for('auth.register') }}">Sign up</a>
+      <a href="{{ url_for('auth.register') }}">Automate My Reminders</a>
     </div>
     <div class="footer-copy">© 2026 AINTORA SYSTEMS · All rights reserved</div>
   </div>
