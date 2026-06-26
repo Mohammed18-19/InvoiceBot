@@ -32,3 +32,4 @@ __pycache__/
 .DS_Store
 *.swp
 .DS_Store
+frontend/node_modules/
