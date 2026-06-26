@@ -84,4 +84,25 @@ def create_app(config_name="default"):
     def forbidden_error(error):
         return render_template("errors/403.html"), 403
 
+    register_react_routes(app)
+
     return app
+
+def register_react_routes(app):
+    from app.api_routes import api_bp
+    from flask_login import login_required
+    from flask import send_from_directory
+    import os
+
+    app.register_blueprint(api_bp)
+
+    @app.route("/app/", defaults={"path": ""})
+    @app.route("/app/<path:path>")
+    @login_required
+    def react_app(path):
+        react_dist = os.path.join(app.root_path, "static", "react")
+        safe_exts = {".js", ".css", ".ico", ".png", ".svg", ".woff", ".woff2", ".map"}
+        _, ext = os.path.splitext(path)
+        if path and ext.lower() in safe_exts:
+            return send_from_directory(react_dist, path)
+        return send_from_directory(react_dist, "index.html")

@@ -74,6 +74,7 @@ class DevelopmentConfig(Config):
 
 
 class ProductionConfig(Config):
+    SESSION_COOKIE_SECURE = True
     DEBUG = False
     db_url = os.environ.get("DATABASE_URL", "")
     if db_url.startswith("postgres://"):
