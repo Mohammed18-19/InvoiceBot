@@ -1,79 +1,198 @@
 # InvoiceBot
 
-Automated invoice follow-up for freelancers and small businesses. Add invoices, schedule multi-stage reminder emails, manage clients, and keep overdue payments moving with graceful reminder sequences.
+> **Automated invoice payment reminders for freelancers and small businesses.**  
+> Add invoices, schedule multi-stage reminder emails, manage clients, and keep overdue payments moving — without writing a single follow-up manually.
 
-## What this project does
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-getinvoicebot.com-brightgreen?style=flat-square)](https://getinvoicebot.com)
+[![Tech Stack](https://img.shields.io/badge/Stack-Flask%20%7C%20PostgreSQL%20%7C%20React-blue?style=flat-square)](#tech-stack)
+[![Deployment](https://img.shields.io/badge/Deployed%20on-Render-46E3B7?style=flat-square)](https://render.com)
+[![License](https://img.shields.io/badge/License-Proprietary-red?style=flat-square)](#license)
 
-- User registration, login, and password reset
-- Create invoices with client email, amount, due date, tone, and payment link
-- Automatically schedule 3 reminder emails per invoice
-- Send reminder emails on a schedule using SMTP or Brevo
-- Track email logs and delivery success/failure
-- Support pricing plans via Lemon Squeezy webhook billing
-- Show graceful custom error pages for `403`, `404`, and `500`
-- Multi-language email reminders (English, French, Arabic)
-- Welcome email on new user registration
-- Email preview per reminder stage before sending
-- Invoice report with per-client breakdown and CSV export
-- User settings: company name, default payment link, email language
+---
+
+## What is InvoiceBot?
+
+InvoiceBot is a production SaaS application that automates invoice follow-up for freelancers who work directly with clients — without the overhead of enterprise invoicing tools or the chaos of writing reminder emails manually.
+
+A user adds an invoice, sets a due date and tone, and InvoiceBot handles the rest: scheduling and sending 3 escalating reminder emails (polite → professional → firm) in the client's language. The user marks invoices as paid when payment arrives.
+
+**Built for MENA freelancers.** Email reminders support Arabic, French, and English — a deliberate product decision to serve the underserved Moroccan and MENA freelance market where no such localized tooling exists.
+
+---
+
+## Product Showcase
+
+### Full Application Overview
+
+![InvoiceBot Application Collage](./app/screenshots/InvoiceBot.png)
+
+> A full overview of the production application: landing page, dashboard, invoice management, invoice creation, registration, and subscription billing — all live at [getinvoicebot.com](https://getinvoicebot.com).
+
+---
+
+### 1 — Landing Page · `getinvoicebot.com`
+
+The public-facing landing page communicates the core value proposition to freelancers in under 5 seconds: stop writing follow-up emails, get paid faster. Highlights the free plan, multi-language support, and a sub-60-second setup time.
+
+---
+
+### 2 — Registration · `getinvoicebot.com/auth/register`
+
+Clean, frictionless signup flow. No credit card required. The free plan allows 3 active invoices and full access to email reminders, making it genuinely useful before asking for payment.
+
+---
+
+### 3 — Dashboard · `app.invoicebot.aintora.com`
+
+The authenticated dashboard gives users a real-time overview of total invoices, pending amounts, overdue counts, collected revenue, and reminders sent. New users see an onboarding checklist that guides them through setup (company name → default payment link → first invoice). The checklist disappears once all three steps are complete.
+
+---
+
+### 4 — Invoice Management · `app.invoicebot.aintora.com/invoices`
+
+A filterable invoice list (All / Pending / Paid / Cancelled) with status badges. Each invoice links to a detail page with a per-stage email preview, so users can see exactly what their clients will receive before the reminders go out.
+
+---
+
+### 5 — Create Invoice · `app.invoicebot.aintora.com/invoices/new`
+
+Invoice creation form with client details (name, email), invoice metadata (number, amount, currency, due date), an optional payment link embedded in reminder emails, and an email tone selector (Polite / Professional / Firm). Once created, the reminder schedule is set automatically.
+
+---
+
+### 6 — Subscription & Billing · `app.invoicebot.aintora.com/billing`
+
+The billing page shows the user's current plan, monthly cost, payment history, and plan features. Upgrades are handled through Lemon Squeezy checkout. Webhooks automatically update the user's plan on the backend upon a successful subscription event.
+
+---
 
 ## Features
 
-- Authenticated user dashboard with invoice status and payment tracking
-- Onboarding checklist on dashboard for new users (company, payment link, first invoice)
-- Invoice creation and detail view with email preview per stage
-- Configurable follow-up tone: `polite`, `professional`, `firm`
-- Multi-language reminder emails: English, French, Arabic (set per user in Settings)
-- Automatic overdue email scheduling and sending
-- Welcome email sent on registration
-- Password reset email flow
-- Admin panel for managing blocked users and monitoring email logs
-- Invoice report page: total invoiced, collected, pending, overdue, per-client breakdown
-- CSV export of all invoices (Starter plan and above)
+**Invoice management**
+- Create invoices with client email, amount, currency, due date, tone, and optional payment link
+- Per-invoice email preview across all 3 reminder stages before they send
+- Mark invoices as paid manually; status updates immediately
+- Invoice report with total invoiced, collected, pending, and overdue amounts
+- Per-client revenue breakdown
+
+**Automated reminders**
+- 3 scheduled reminder emails per invoice (sent via APScheduler background jobs)
+- Configurable tone per invoice: `polite`, `professional`, `firm`
+- Multi-language support per user account: English, French, Arabic
+- Email logs with delivery success/failure per reminder
+
+**User accounts**
+- Registration, login, password reset
+- User settings: company name, default payment link, email language
+- Welcome email on signup
+- Onboarding checklist for new users
+
+**Billing & plans**
+- Free plan: 3 active invoices, no credit card required
+- Starter ($10/month): up to 20 invoices + CSV export
+- Pro ($20/month): unlimited invoices + CSV export + PDF report
+- Lemon Squeezy webhook integration for automatic plan upgrades
+
+**Reporting & export**
+- Invoice report page with summary stats and per-client breakdown
+- CSV export (Starter plan and above)
 - PDF report export (Pro plan)
-- Lemon Squeezy upgrade flow for paid plans
-- Production-ready Flask setup with Talisman security hardening
 
-## Tech stack
+**Production quality**
+- Flask-Talisman security hardening (HTTPS, CSP, HSTS)
+- Custom error pages for 403, 404, and 500
+- Admin panel for blocked user management and email log monitoring
+- Debug email route for verifying delivery in production
 
-- Python 3.12
-- Flask 3
-- PostgreSQL
-- SQLAlchemy + Flask-Migrate
-- Flask-Login
-- Flask-WTF + WTForms
-- APScheduler for background email processing
-- SMTP email delivery via Brevo (recommended) or any SMTP provider
-- Lemon Squeezy webhook billing
-- Bootstrap 5 for UI styling
+---
 
-## Repository structure
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Python 3.12, Flask 3 |
+| Database | PostgreSQL, SQLAlchemy, Flask-Migrate |
+| Auth | Flask-Login, Flask-WTF |
+| Background Jobs | APScheduler |
+| Email Delivery | Brevo (HTTP API / SMTP relay) |
+| Payments | Lemon Squeezy (webhooks) |
+| Frontend | Vite, React 18, Tailwind CSS v4, shadcn/ui, Framer Motion |
+| Deployment | Render (app server + managed PostgreSQL) |
+| Security | Flask-Talisman (HTTPS, CSP, HSTS, X-Frame-Options) |
+
+---
+
+## Architecture
+
+```
+Client (Browser)
+    │
+    ├── React SPA (Vite build → app/static/react/)
+    │       Served at /app/  via Flask static file handler
+    │
+    └── Flask Application (Gunicorn on Render)
+            │
+            ├── Auth          /auth/*
+            ├── Dashboard     /dashboard/* → redirects to /app/
+            ├── Invoices      /invoices/*
+            ├── Billing       /billing/*
+            ├── Admin         /admin/*
+            │
+            ├── APScheduler   Background job: checks and sends due reminder emails
+            │
+            ├── Brevo         Transactional email delivery (SMTP relay)
+            ├── Lemon Squeezy Checkout + webhook → plan update
+            │
+            └── PostgreSQL    Users, Invoices, EmailSchedule, EmailLog
+```
+
+**Email scheduling flow:**
+1. User creates an invoice with a due date.
+2. The app computes 3 reminder send times relative to the due date.
+3. APScheduler runs on a recurring interval and queries `EmailSchedule` for due reminders.
+4. Due reminders are rendered in the user's language and tone, then sent via Brevo.
+5. Delivery result is written to `EmailLog`.
+
+---
+
+## Folder Structure
 
 ```
 invoicebot/
 ├── app/
 │   ├── __init__.py          # App factory, extensions, error handlers, scheduler bootstrap
 │   ├── models.py            # User, Invoice, EmailSchedule, EmailLog models
-│   ├── auth/                # Authentication: register, login, forgot/reset password, settings
-│   ├── billing/             # Lemon Squeezy upgrade and webhook handling
-│   ├── dashboard/           # Main authenticated dashboard with onboarding checklist
-│   ├── invoices/            # Invoice CRUD, email preview, report, CSV export
-│   ├── email_service/       # Email content (EN/FR/AR), SMTP send logic, welcome email
-│   ├── scheduler/           # APScheduler job for sending due emails
-│   ├── templates/           # Jinja views and error pages
-│   └── static/              # CSS/JS assets
+│   ├── auth/                # Registration, login, password reset, settings
+│   ├── billing/             # Lemon Squeezy checkout and webhook handling
+│   ├── dashboard/           # Authenticated dashboard, onboarding checklist
+│   ├── invoices/            # Invoice CRUD, email preview, report, CSV/PDF export
+│   ├── email_service/       # Email templates (EN/FR/AR), send logic, welcome email
+│   ├── scheduler/           # APScheduler job for processing due reminder emails
+│   ├── templates/           # Jinja2 views and custom error pages
+│   └── static/              # CSS/JS assets and React build output
 ├── config.py                # App configuration, environment settings, plan limits
 ├── init_db.py               # Database initialization script
-├── run.py                   # Local run entry point
-├── seed.py                  # Seed development data
+├── run.py                   # Local development entry point
+├── seed.py                  # Development data seeder
 ├── requirements.txt         # Python dependencies
-├── Procfile                 # Railway/Heroku process file
-├── railway.toml             # Railway deployment config
-├── .env.example             # Example environment variables
-└── README.md                # Project documentation
+├── Procfile                 # Gunicorn process definition for Render/Heroku
+└── .env.example             # Required environment variables reference
 ```
 
-## Local setup
+---
+
+## Database Models
+
+| Model | Purpose |
+|---|---|
+| `User` | Account, plan, settings (language, company, payment link) |
+| `Invoice` | Client info, amount, due date, tone, status |
+| `EmailSchedule` | Three scheduled send times per invoice with sent/failed state |
+| `EmailLog` | Delivery record per reminder: provider response, timestamp, success flag |
+
+---
+
+## Local Setup
 
 ### 1. Clone the repository
 
@@ -92,32 +211,29 @@ pip install -r requirements.txt
 
 ### 3. Configure environment variables
 
-Copy the example env file and update the values:
-
 ```bash
 cp .env.example .env
 ```
 
-Then edit `.env` with your own settings.
+**Required variables:**
 
-#### Required variables
-
-- `FLASK_ENV=development`
-- `SECRET_KEY` (strong random secret)
-- `DATABASE_URL=postgresql://localhost/invoicebot_dev`
-- `MAIL_SERVER` (e.g. `smtp-relay.brevo.com`)
-- `MAIL_PORT` (e.g. `587`)
-- `MAIL_USE_TLS=True`
-- `MAIL_USE_SSL=False`
-- `MAIL_USERNAME`
-- `MAIL_PASSWORD`
-- `MAIL_FROM`
-- `MAIL_FROM_NAME`
-- `EMAIL_MODE=smtp`
-- `LS_WEBHOOK_SECRET`
-- `LS_STARTER_URL`
-- `LS_PRO_URL`
-- `APP_URL=http://localhost:5000`
+| Variable | Description |
+|---|---|
+| `SECRET_KEY` | Strong random secret for Flask sessions |
+| `DATABASE_URL` | PostgreSQL connection string |
+| `MAIL_SERVER` | SMTP host (e.g. `smtp-relay.brevo.com`) |
+| `MAIL_PORT` | SMTP port (e.g. `587`) |
+| `MAIL_USE_TLS` | `True` for Brevo |
+| `MAIL_USERNAME` | SMTP username |
+| `MAIL_PASSWORD` | SMTP password / API key |
+| `MAIL_FROM` | Sender email address |
+| `MAIL_FROM_NAME` | Sender display name |
+| `EMAIL_MODE` | `smtp` / `resend` / `db` / `test` |
+| `LS_WEBHOOK_SECRET` | Lemon Squeezy webhook signature secret |
+| `LS_STARTER_URL` | Lemon Squeezy Starter plan checkout URL |
+| `LS_PRO_URL` | Lemon Squeezy Pro plan checkout URL |
+| `APP_URL` | Public base URL (e.g. `http://localhost:5000`) |
+| `FLASK_ENV` | `development` or `production` |
 
 ### 4. Initialize the database
 
@@ -125,7 +241,7 @@ Then edit `.env` with your own settings.
 python init_db.py
 ```
 
-If you prefer manual migrations:
+Or via Flask-Migrate:
 
 ```bash
 flask db init
@@ -133,25 +249,27 @@ flask db migrate -m "initial schema"
 flask db upgrade
 ```
 
-### 5. Seed optional demo data
+### 5. Seed demo data (optional)
 
 ```bash
 python seed.py
 ```
 
-### 6. Run the app
+### 6. Run the development server
 
 ```bash
 python run.py
 ```
 
-Open `http://localhost:5000` in your browser.
+Open `http://localhost:5000`.
 
-## Email configuration
+---
 
-### Brevo (recommended — free, inbox delivery)
+## Email Configuration
 
-Brevo provides 300 free emails/day with proper SPF/DKIM authentication, meaning reminders land in inbox rather than spam. Sign up at [brevo.com](https://brevo.com) and use the SMTP credentials from your dashboard:
+### Brevo (recommended for production)
+
+Brevo provides 300 free emails/day with proper SPF/DKIM setup, which significantly improves inbox delivery rates compared to generic SMTP.
 
 ```env
 MAIL_SERVER=smtp-relay.brevo.com
@@ -160,186 +278,134 @@ MAIL_USE_TLS=True
 MAIL_USE_SSL=False
 MAIL_USERNAME=your_brevo_login@smtp-brevo.com
 MAIL_PASSWORD=your_brevo_smtp_key
-MAIL_FROM=yourapp@gmail.com
-MAIL_FROM_NAME=InvoiceBot by YourCompany
+MAIL_FROM=yourapp@yourdomain.com
+MAIL_FROM_NAME=InvoiceBot
 EMAIL_MODE=smtp
 ```
 
-### Gmail SMTP (development only)
+### Email modes
 
-For Gmail SMTP, use an App Password (requires 2FA enabled on the account):
+| Mode | Behavior |
+|---|---|
+| `smtp` | Sends via configured SMTP provider |
+| `resend` | Sends via Resend API (3,000 free emails/month) |
+| `db` | Stores email drafts in database without sending |
+| `test` | Logs email content to terminal only |
 
-```env
-MAIL_SERVER=smtp.gmail.com
-MAIL_PORT=465
-MAIL_USE_SSL=True
-MAIL_USE_TLS=False
-MAIL_USERNAME=your@gmail.com
-MAIL_PASSWORD=your-16-char-app-password
-MAIL_FROM=your@gmail.com
-MAIL_FROM_NAME=Your Name
-EMAIL_MODE=smtp
-```
-
-> Note: Gmail SMTP is not recommended for production as reminder emails may land in spam for recipients. Use Brevo for production.
-
-### Resend (alternative)
-
-Resend provides 3,000 free emails/month. The SDK is already installed:
-
-```env
-EMAIL_MODE=resend
-RESEND_API_KEY=re_xxxxxxxxxxxxxxxx
-```
-
-### DB draft-only mode
-
-To store emails as database drafts without sending (useful for debugging):
-
-```env
-EMAIL_MODE=db
-```
-
-Drafts are viewable from the admin panel.
-
-### Test mode
-
-To log emails to the terminal without sending:
-
-```env
-EMAIL_MODE=test
-```
-
-## Multi-language email reminders
-
-Users can set their preferred reminder language in **Settings → Language**. Supported languages:
-
-- English (`en`) — default
-- French (`fr`) — Français
-- Arabic (`ar`) — العربية
-
-The language applies to all 3 reminder stages across all tones (polite, professional, firm). Clients receive reminders in the language the user has selected.
-
-## User settings
-
-Each user can configure the following from `/auth/settings`:
-
-- **Full name** — shown in email signatures
-- **Company name** — appended to sender name in reminders (e.g. "Issam — AINTORA Systems")
-- **Default payment link** — auto-filled on every new invoice (can be overridden per invoice)
-- **Email language** — language for all client-facing reminder emails
-
-## Plan limits
-
-| Feature | Free | Starter | Pro |
-|---|---|---|---|
-| Active invoices | 3 | 20 | Unlimited |
-| Email reminders | ✓ | ✓ | ✓ |
-| CSV export | ✗ | ✓ | ✓ |
-| PDF report | ✗ | ✗ | ✓ |
-
-Plans are managed via Lemon Squeezy webhooks. When a subscription event is received, the user's plan updates automatically.
-
-## Invoice report
-
-The report page (`/invoices/report`) shows:
-
-- Total invoiced, collected, pending, and overdue amounts
-- Per-client breakdown with invoice count and revenue
-- Full invoice list with status and due dates
-- CSV export button (Starter+) and PDF export button (Pro)
-
-Currency shown is automatically detected from the user's most-used invoice currency.
-
-## Onboarding checklist
-
-New users see a checklist on the dashboard until they complete the three setup steps:
-
-1. Add company name in Settings
-2. Set a default payment link in Settings
-3. Create their first invoice
-
-Each item shows a green checkmark once completed and the checklist disappears when all three are done.
-
-## Email preview
-
-From any invoice detail page, users can preview exactly what each reminder stage will look like before it sends — including subject line, body, sender, and recipient — across all 3 stages. The preview reflects the user's current language and tone settings.
-
-## Lemon Squeezy billing setup
-
-Billing is handled through Lemon Squeezy webhooks and plan URLs.
-
-- `LS_WEBHOOK_SECRET` is used to verify incoming webhook signatures
-- `LS_STARTER_URL` and `LS_PRO_URL` are the product checkout URLs
-
-When a subscription event occurs, the webhook updates the user's plan to `starter`, `pro`, or `free`.
-
-## Testing error pages
-
-With the app running locally, test the custom error pages by visiting:
-
-- `http://localhost:5000/this-page-does-not-exist` → `404`
-- Add a temporary route that raises an exception to test `500`
-- Add a temporary route that calls `abort(403)` to test `403`
-
-## Testing email
-
-Hit the debug route while logged in to verify email delivery:
+### Verify email delivery in production
 
 ```
-http://localhost:5000/debug/test-email
+GET /debug/test-email
 ```
 
-Returns a JSON response with `success`, `provider`, `error`, and config details.
+Returns a JSON response with `success`, `provider`, `error`, and active configuration details.
 
-## Testing password reset
+---
 
-1. Go to `/auth/forgot-password`
-2. Enter a registered email
-3. Confirm the reset email arrives via your configured provider
+## Deployment
 
-## Deployment notes
+The app is deployed on **Render** using a standard Gunicorn `Procfile`. The database is a Render-managed PostgreSQL instance.
 
-This project includes a `Procfile` for deployment on Railway, Render, Heroku, or any Gunicorn-compatible host.
+### Steps
 
-### Recommended deployment workflow
-
-1. Push code to GitHub
-2. Connect the repo to your hosting provider
-3. Add all environment variables from `.env.example` in the dashboard
-4. Run database migrations via the provider's shell or a release command:
+1. Push code to GitHub.
+2. Connect the repository to Render.
+3. Add all environment variables from `.env.example` in the Render dashboard.
+4. Run database migrations via the Render shell:
    ```bash
    flask db upgrade
    ```
-5. Deploy
+5. Deploy.
 
-### Environment variables for production
+**Critical production variables:**
 
-All variables from the local `.env` file must be added to your hosting provider's environment settings. The most critical ones for production:
+```env
+FLASK_ENV=production
+SECRET_KEY=<strong-random-secret>
+DATABASE_URL=<render-postgres-url>
+APP_URL=https://yourdomain.com
+```
 
-- `FLASK_ENV=production`
-- `SECRET_KEY` (strong, random, never reuse the dev key)
-- `DATABASE_URL` (provided by your hosting PostgreSQL add-on)
-- `MAIL_*` (Brevo credentials recommended)
-- `APP_URL` (your public domain, e.g. `https://invoicebot.yourcompany.com`)
+> Note: This project was previously deployed on Railway and migrated to Render. Railway is no longer used.
 
-## Useful commands
+---
+
+## Plan Limits
+
+| Feature | Free | Starter ($10/mo) | Pro ($20/mo) |
+|---|---|---|---|
+| Active invoices | 3 | 20 | Unlimited |
+| Automated email reminders | ✓ | ✓ | ✓ |
+| All email tones | ✓ | ✓ | ✓ |
+| CSV export | ✗ | ✓ | ✓ |
+| PDF report export | ✗ | ✗ | ✓ |
+
+Plans are managed via Lemon Squeezy webhooks. The webhook handler reads the `product_name` field from the event payload to determine which plan to activate.
+
+---
+
+## Multi-Language Reminders
+
+Reminder language is set per user account in **Settings → Language**. All 3 reminder stages and all 3 tones are fully translated.
+
+| Language | Code |
+|---|---|
+| English | `en` (default) |
+| French | `fr` |
+| Arabic | `ar` |
+
+---
+
+## Engineering Decisions
+
+**Why APScheduler instead of Celery?**  
+For a focused SaaS with predictable email volumes at this scale, APScheduler running in-process is sufficient and eliminates the operational overhead of a separate message broker (Redis/RabbitMQ). The scheduler queries `EmailSchedule` for due reminders on each tick and sends in batches.
+
+**Why Brevo for email delivery?**  
+Brevo provides free transactional email with proper SPF/DKIM authentication out of the box, which is the most impactful factor in avoiding spam folders. Gmail SMTP does not offer this for outgoing mail to third-party recipients.
+
+**Why Lemon Squeezy instead of Stripe?**  
+Lemon Squeezy acts as a Merchant of Record, handling VAT and international payment compliance automatically. This removes significant legal and accounting overhead for a solo-founder product.
+
+**Why `product_name` for plan detection in webhooks?**  
+Lemon Squeezy webhook payloads include both `variant_name` and `product_name`. Using `product_name` provides more stable plan detection since product names are less likely to change than variant names.
+
+**Landing page is intentionally frozen.**  
+After initial launch, further iteration on the landing page was deliberately paused to focus engineering and marketing energy on customer acquisition rather than design polish.
+
+---
+
+## Useful Commands
 
 ```bash
+# Activate virtual environment
 source venv/bin/activate
+
+# Run locally
 python run.py
+
+# Reset and reinitialize the database
 python init_db.py
+
+# Seed development data
 python seed.py
+
+# Create and apply a migration
 flask db migrate -m "description"
 flask db upgrade
+
+# List all registered routes
 flask routes
 ```
 
+---
+
 ## License
 
-This project is released under a proprietary license. All rights are reserved by Mohammed.
+This project is released under a proprietary license. All rights are reserved by Mohammed.  
 Unauthorized copying, distribution, or derivative use is prohibited without express written permission.
 
 ---
 
-Built with Flask and PostgreSQL for fast, secure invoice follow-up automation.
+Built with Flask and PostgreSQL.  
+**[Live Demo →](https://getinvoicebot.com)**
