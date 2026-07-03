@@ -4,37 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Automated Invoice Reminders for Freelancers — InvoiceBot</title>
-<meta name="description" content="InvoiceBot sends automated invoice reminders for freelancers in Arabic, French, and English. Set your invoice once — InvoiceBot follows up automatically until you get paid.">
+<meta name="description" content="InvoiceBot sends automated invoice reminders for freelancers worldwide. Set your invoice once — InvoiceBot follows up automatically until you get paid.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#F5F1E8;
-  --navy2:#EDE6D6;
-  --navy3:#FFFFFF;
-  --brand:#B5482A;
-  --brand-dark:#973A20;
-  --brand-glow:rgba(181,72,42,0.12);
-  --text:#1C1A17;
-  --text2:#5C564C;
-  --text3:#8B8477;
-  --border:rgba(28,26,23,0.10);
-  --border2:rgba(28,26,23,0.16);
-  --surface:#FFFFFF;
-  --serif:'Fraunces',Georgia,serif;
-  --sans:'Inter',system-ui,sans-serif;
-  --radius:10px;
+  --navy:#080C18;
+  --navy2:#0D1220;
+  --navy3:#131929;
+  --brand:#E91E8C;
+  --brand-dark:#c4166f;
+  --brand-glow:rgba(233,30,140,0.15);
+  --text:#F1F5F9;
+  --text2:#94A3B8;
+  --text3:#64748B;
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.12);
+  --surface:#0F1624;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --radius:12px;
 }
 html{scroll-behavior:smooth}
 body{font-family:var(--sans);color:var(--text);background:var(--navy);line-height:1.6;overflow-x:hidden}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,241,232,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,12,24,0.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem}
 .nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo-icon{width:32px;height:32px;background:var(--brand);border-radius:8px;display:flex;align-items:center;justify-content:center}
-.nav-logo-icon svg{width:18px;height:18px;stroke:white;fill:none;stroke-width:1.8}
 .nav-logo span{font-weight:600;font-size:1rem;color:var(--text)}
 .nav-links{display:flex;align-items:center;gap:2rem}
 .nav-links a{text-decoration:none;font-size:.875rem;color:var(--text2);font-weight:500;transition:color .15s}
@@ -42,8 +40,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,241,232,
 .nav-auth{display:flex;align-items:center;gap:.75rem}
 
 .hero{padding:140px 2rem 100px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(circle,rgba(181,72,42,0.1) 0%,transparent 65%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(181,72,42,0.1);color:var(--brand);font-size:.72rem;font-weight:600;padding:.375rem .875rem;border-radius:999px;border:1px solid rgba(181,72,42,.25);margin-bottom:1.5rem;letter-spacing:.05em;text-transform:uppercase}
+.hero::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(circle,rgba(233,30,140,0.1) 0%,transparent 65%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(233,30,140,0.1);color:var(--brand);font-size:.72rem;font-weight:600;padding:.375rem .875rem;border-radius:999px;border:1px solid rgba(233,30,140,.25);margin-bottom:1.5rem;letter-spacing:.05em;text-transform:uppercase}
 .hero-badge span{width:6px;height:6px;border-radius:50%;background:var(--brand);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .hero h1{font-family:var(--serif);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:400;line-height:1.1;max-width:800px;margin:0 auto 1.25rem;color:var(--text)}
@@ -58,14 +56,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,241,232,
 .hero-flags strong{color:var(--text2)}
 
 .hero-mockup{max-width:900px;margin:0 auto;border-radius:16px;border:1px solid var(--border2);overflow:hidden;box-shadow:0 32px 100px rgba(0,0,0,.5)}
-.hero-mockup{position:relative;z-index:2}
-.hero-mockup::before,.hero-mockup::after{content:'';position:absolute;inset:0;background:var(--navy3);border:1px solid var(--border2);border-radius:16px;z-index:-1}
-.hero-mockup::before{transform:rotate(-2.5deg) translateY(10px);opacity:.45}
-.hero-mockup::after{transform:rotate(2.5deg) translateY(10px);opacity:.25}
 .mockup-bar{background:#0d1220;padding:.625rem 1rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid var(--border)}
 .mockup-dot{width:10px;height:10px;border-radius:50%}
 .mockup-url{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:.25rem .75rem;font-size:.72rem;color:var(--text3);margin:0 .75rem;text-align:center}
-.mockup-body{background:#0F1624;display:grid;min-height:300px}
+.mockup-body{background:var(--surface);display:grid;min-height:300px}
 .mockup-main{padding:1.5rem;background:#0f1624}
 .mockup-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
 .mockup-topbar-title{font-size:.875rem;font-weight:600;color:var(--text)}
@@ -96,7 +90,7 @@ section{padding:100px 2rem}
 .how-section{background:var(--navy2)}
 .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2rem;margin-top:4rem}
 .how-card{position:relative}
-.how-number{font-family:var(--serif);font-size:4rem;font-weight:400;color:rgba(181,72,42,.15);line-height:1;margin-bottom:.75rem}
+.how-number{font-family:var(--serif);font-size:4rem;font-weight:400;color:rgba(233,30,140,.15);line-height:1;margin-bottom:.75rem}
 .how-title{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--text)}
 .how-desc{font-size:.9rem;color:var(--text2);line-height:1.7}
 .how-connector{position:absolute;top:2.5rem;right:-1rem;width:2rem;height:1px;background:var(--border)}
@@ -149,7 +143,7 @@ section{padding:100px 2rem}
 
 .cta-wrap{padding:60px 2rem 100px}
 .cta-banner{background:var(--navy3);border:1px solid var(--border2);border-radius:24px;padding:5rem 3rem;text-align:center;position:relative;overflow:hidden}
-.cta-banner::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(181,72,42,0.12) 0%,transparent 70%);pointer-events:none}
+.cta-banner::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(233,30,140,0.12) 0%,transparent 70%);pointer-events:none}
 .cta-banner h2{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;color:var(--text);margin-bottom:1rem;position:relative}
 .cta-banner p{font-size:1.05rem;color:var(--text2);margin-bottom:2.5rem;font-weight:300;position:relative}
 .cta-banner .btn-primary{font-size:1.05rem;padding:1rem 2.5rem;position:relative}
@@ -169,7 +163,6 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
   .mockup-stats{grid-template-columns:repeat(2,1fr) !important}
   .lang-cards{grid-template-columns:1fr}
   .pricing-grid{grid-template-columns:1fr}
-  .inbox-widget{grid-template-columns:1fr}
   .lang-wrap{padding:0 0 80px}
   .lang-section{border-radius:0;padding:2.5rem 1.5rem;border-left:none;border-right:none}
   .cta-wrap{padding:0 0 60px}
@@ -184,18 +177,6 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
 .hero-sub{animation:fadeUp .6s .2s ease both}
 .hero-actions{animation:fadeUp .6s .3s ease both}
 .hero-mockup{animation:fadeUp .9s .4s ease both}
-
-.inbox-section{background:var(--navy2)}
-.inbox-widget{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:3rem}
-.inbox-col{background:var(--navy3);border:1px solid var(--border);border-radius:14px;padding:1.25rem}
-.inbox-col-header{display:flex;align-items:center;justify-content:space-between;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin-bottom:1rem}
-.inbox-count{background:rgba(255,255,255,.08);color:var(--text2);font-size:.65rem;padding:.15rem .5rem;border-radius:999px}
-.inbox-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:.875rem 1rem;margin-bottom:.75rem}
-.inbox-card:last-child{margin-bottom:0}
-.inbox-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
-.inbox-card-client{font-size:.85rem;font-weight:600;color:var(--text)}
-.inbox-card-amount{font-size:.85rem;font-weight:600;color:var(--text)}
-.inbox-card-meta{font-size:.7rem;color:var(--text3)}
 </style>
 </head>
 <body>
@@ -203,9 +184,15 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
 <nav>
   <div class="nav-inner">
     <a href="#" class="nav-logo">
-      <div class="nav-logo-icon">
-        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/></svg>
-      </div>
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" rx="22" fill="#E91E8C"/>
+        <rect x="20" y="26" width="44" height="6" rx="3" fill="white" opacity="0.95"/>
+        <rect x="20" y="38" width="30" height="5" rx="2.5" fill="white" opacity="0.55"/>
+        <rect x="20" y="51" width="44" height="5" rx="2.5" fill="white" opacity="0.95"/>
+        <rect x="20" y="63" width="24" height="5" rx="2.5" fill="white" opacity="0.55"/>
+        <circle cx="72" cy="70" r="16" fill="#080C18" opacity="0.9"/>
+        <path d="M65 70 L70 75 L79 63" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
       <span>InvoiceBot</span>
     </a>
     <div class="nav-links">
@@ -221,13 +208,13 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
 
 <section class="hero">
   <div class="hero-badge"><span></span> Automated payment follow-up</div>
-  <h1>The simplest way to make sure<br>your invoices <em>actually get paid</em>.</h1>
-  <p class="hero-sub">Set up your invoice once. InvoiceBot follows up automatically — in Arabic, French, or English — so you can focus on the work.</p>
+  <h1>Stop chasing clients.<br><em>Get paid faster.</em></h1>
+  <p class="hero-sub">Automated invoice reminders for freelancers worldwide. Set up your first invoice in less than 60 seconds.</p>
   <div class="hero-actions">
     <a href="{{ url_for('auth.register') }}" class="btn-primary">Automate My Reminders</a>
     <a href="#how" class="btn-secondary">See how it works</a>
   </div>
-  <p class="hero-flags">🇬🇧 🇫🇷 🇸🇦 Reminders sent in your client's language &nbsp;·&nbsp; <strong>Free plan available · No credit card required</strong></p>
+  <p class="hero-flags">🇬🇧 🇫🇷 🇸🇦 Reminders in your client's language &nbsp;·&nbsp; <strong>Free plan available · No credit card required</strong></p>
 
   <div style="margin-top:3rem"></div>
 
@@ -236,7 +223,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
       <div class="mockup-dot" style="background:#ff5f57"></div>
       <div class="mockup-dot" style="background:#ffbd2e"></div>
       <div class="mockup-dot" style="background:#28c840"></div>
-      <div class="mockup-url">app.invoicebot.aintora.com</div>
+      <div class="mockup-url">app.getinvoicebot.com</div>
     </div>
     <div class="mockup-body" style="grid-template-columns:1fr">
       <div class="mockup-main">
@@ -326,7 +313,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
       </div>
     </div>
 
-    <div style="background:rgba(181,72,42,.06);border:1px solid rgba(181,72,42,.2);border-radius:var(--radius);padding:1.5rem 2rem;text-align:center;margin-bottom:3rem">
+    <div style="background:rgba(233,30,140,.06);border:1px solid rgba(233,30,140,.2);border-radius:var(--radius);padding:1.5rem 2rem;text-align:center;margin-bottom:3rem">
       <p style="font-size:1rem;color:var(--text2);font-weight:300">InvoiceBot automatically follows up on overdue invoices — in the right language — <strong style="color:var(--text);font-weight:600">until you mark the invoice as paid.</strong></p>
     </div>
 
@@ -400,9 +387,9 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
 
 <div class="lang-wrap">
   <div class="lang-section">
-    <p class="section-label">The MENA advantage</p>
+    <p class="section-label">Multi-language reminders</p>
     <h2 class="section-title">The only reminder tool<br>that speaks your client's language</h2>
-    <p class="section-sub">Zoho, FreshBooks, Wave — all English-first. Your Moroccan client reads Arabic. Your Parisian client reads French. InvoiceBot knows the difference.</p>
+    <p class="section-sub">Zoho, FreshBooks, Wave — all English-first. Your client reads Arabic. Your European client reads French. InvoiceBot knows the difference.</p>
     <div class="lang-cards">
       <div class="lang-card">
         <div class="lang-flag">🇬🇧</div>
@@ -414,55 +401,20 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
       <div class="lang-card">
         <div class="lang-flag">🇫🇷</div>
         <div class="lang-name">Français</div>
-        <div class="lang-desc">Pour vos clients francophones au Maghreb et en Europe</div>
+        <div class="lang-desc">Pour vos clients francophones partout dans le monde</div>
         <div style="font-size:.62rem;color:var(--brand);letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:.375rem">Real reminder email example</div>
         <div class="lang-preview">"Bonjour Ahmed, je vous envoie un rappel amical concernant la facture #INV-012 d'un montant de 1 200 $. Si vous avez déjà effectué le paiement..."</div>
       </div>
       <div class="lang-card">
         <div class="lang-flag">🇸🇦</div>
         <div class="lang-name">العربية</div>
-        <div class="lang-desc">للعملاء الناطقين بالعربية في المغرب والجزائر ومصر</div>
+        <div class="lang-desc">للعملاء الناطقين بالعربية في أي مكان حول العالم</div>
         <div style="font-size:.62rem;color:var(--brand);letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:.375rem">Real reminder email example</div>
         <div class="lang-preview rtl">"مرحباً يوسف، أرسل إليك هذا التذكير الودي بشأن الفاتورة رقم #INV-012 بمبلغ 1200 دولار. إذا كنت قد أرسلت الدفعة بالفعل..."</div>
       </div>
     </div>
   </div>
 </div>
-
-<section id="inbox-preview" class="inbox-section">
-  <div class="section-inner">
-    <p class="section-label">Your dashboard</p>
-    <h2 class="section-title">Every invoice, tracked automatically</h2>
-    <p class="section-sub">No spreadsheets, no guessing who owes what. See exactly where every invoice stands, at a glance.</p>
-    <div class="inbox-widget">
-      <div class="inbox-col">
-        <div class="inbox-col-header">Overdue <span class="inbox-count">2</span></div>
-        <div class="inbox-card">
-          <div class="inbox-card-top"><span class="inbox-card-client">Iron Bars Co.</span><span class="inbox-card-amount">$1,000</span></div>
-          <div class="inbox-card-meta">INV-006 &middot; 6 days overdue</div>
-        </div>
-        <div class="inbox-card">
-          <div class="inbox-card-top"><span class="inbox-card-client">Nomad Studio</span><span class="inbox-card-amount">$650</span></div>
-          <div class="inbox-card-meta">INV-011 &middot; 2 days overdue</div>
-        </div>
-      </div>
-      <div class="inbox-col">
-        <div class="inbox-col-header">Reminder sent <span class="inbox-count">1</span></div>
-        <div class="inbox-card">
-          <div class="inbox-card-top"><span class="inbox-card-client">Studio Design</span><span class="inbox-card-amount">$800</span></div>
-          <div class="inbox-card-meta">INV-005 &middot; Reminder #1 sent today</div>
-        </div>
-      </div>
-      <div class="inbox-col">
-        <div class="inbox-col-header">Paid <span class="inbox-count">1</span></div>
-        <div class="inbox-card">
-          <div class="inbox-card-top"><span class="inbox-card-client">Acme Corp</span><span class="inbox-card-amount">$1,200</span></div>
-          <div class="inbox-card-meta">INV-004 &middot; Paid on time</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section id="pricing" class="pricing-section">
   <div class="section-inner">
