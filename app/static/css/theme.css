@@ -1,0 +1,278 @@
+/* ==========================================================================
+   AINTORA SYSTEMS — Design System
+   Applied to InvoiceBot (product under the AINTORA SYSTEMS company).
+   Single source of truth for tokens + shared component classes.
+   Do not introduce colors, fonts, or effects outside this file's tokens.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Primary / Ink */
+  --primary: #0B2545;
+  --primary-hover: #14335E;
+  --primary-active: #081A33;
+  --primary-subtle: #EAEEF2;
+
+  /* Secondary / Slate */
+  --secondary: #3D4E5C;
+  --secondary-hover: #4C6070;
+  --secondary-active: #2E3B46;
+
+  /* Accent / Signal */
+  --accent: #13866B;
+  --accent-hover: #189E7E;
+  --accent-active: #0F6B55;
+  --accent-subtle: #E3F3EE;
+
+  /* Neutral scale */
+  --n-50: #F7F9FA;
+  --n-100: #EFF3F5;
+  --n-200: #E1E7EA;
+  --n-300: #C9D2D7;
+  --n-400: #A9B6BD;
+  --n-500: #84949D;
+  --n-600: #64747E;
+  --n-700: #4B5A63;
+  --n-800: #333F47;
+  --n-900: #1D262B;
+  --n-950: #10161A;
+
+  /* Semantic */
+  --success: #2E7D32;
+  --warning: #F9A825;
+  --danger: #C62828;
+  --info: #2A6FB0;
+  --pending: #5B6B8C;
+  --focus: #2F6FED;
+
+  /* Role tokens (dark-first) */
+  --background: var(--n-950);
+  --surface: var(--n-900);
+  --surface-raised: var(--n-800);
+  --foreground: var(--n-50);
+  --muted: var(--n-400);
+  --line: var(--n-800);
+  --accent-text: var(--accent-hover); /* base accent fails AA as text on dark bg */
+
+  --sidebar-w: 230px;
+  --radius-card: 12px;
+  --radius-lg: 16px;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+html, body { background: var(--background); }
+body {
+  font-family: var(--font-sans);
+  color: var(--foreground);
+}
+a { color: inherit; }
+
+/* Eyebrow labels — mono, uppercase, accent-hover, above H2s */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  display: inline-block;
+  margin-bottom: .5rem;
+}
+
+/* Cards */
+.card-section, .stat-card, .aint-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 1.375rem;
+  transition: transform .3s ease-out, border-color .3s ease-out, box-shadow .3s ease-out;
+}
+.stat-card { padding: 1.25rem; }
+.card-section:hover, .stat-card:hover, .aint-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--n-700);
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+
+.icon-badge {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--n-800);
+  color: var(--n-300);
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s ease-out, color .2s ease-out;
+}
+.aint-card:hover .icon-badge, .icon-badge:hover {
+  background: var(--accent-subtle);
+  color: var(--primary);
+}
+
+/* Buttons */
+.btn-brand, .btn-accent {
+  background: var(--accent);
+  color: var(--n-50);
+  border: none;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: .625rem 1.375rem;
+  transition: transform .2s ease-out, box-shadow .2s ease-out, background .2s ease-out;
+}
+.btn-brand:hover, .btn-accent:hover {
+  background: var(--accent-hover);
+  color: var(--n-50);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+}
+.btn-brand:active, .btn-accent:active { background: var(--accent-active); transform: translateY(0); }
+
+.btn-outline-brand {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-weight: 600;
+  padding: .625rem 1.375rem;
+  transition: transform .2s ease-out, border-color .2s ease-out, background .2s ease-out;
+}
+.btn-outline-brand:hover {
+  border-color: var(--n-600);
+  background: var(--n-900);
+  color: var(--foreground);
+  transform: translateY(-2px);
+}
+
+/* Stat cards */
+.stat-card .label { font-family: var(--font-mono); font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.stat-card .value { font-size: 1.625rem; font-weight: 800; color: var(--foreground); line-height: 1.1; margin: .25rem 0 .125rem; }
+.stat-card .sub { font-size: .75rem; color: var(--muted); }
+.stat-card.accent-pink   { border-left: 3px solid var(--accent); }
+.stat-card.accent-green  { border-left: 3px solid var(--success); }
+.stat-card.accent-red    { border-left: 3px solid var(--danger); }
+.stat-card.accent-amber  { border-left: 3px solid var(--warning); }
+.stat-card.accent-blue   { border-left: 3px solid var(--info); }
+
+/* Tables */
+.invoice-table th { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); border-bottom: 1px solid var(--line); font-weight: 600; padding: .625rem .875rem; }
+.invoice-table td { font-size: .8375rem; vertical-align: middle; padding: .75rem .875rem; color: var(--foreground); border-color: var(--line) !important; }
+.invoice-table tbody tr:hover { background: var(--n-900); }
+
+/* Status badges (semantic tokens, not the raw accent) */
+.badge-pending    { background: rgba(249,168,37,.15); color: var(--warning); font-weight: 600; }
+.badge-paid       { background: rgba(46,125,50,.15); color: #66BB6A; font-weight: 600; }
+.badge-cancelled  { background: var(--n-800); color: var(--muted); font-weight: 600; }
+.badge-overdue    { background: rgba(198,40,40,.15); color: #EF5350; font-weight: 600; }
+.tone-polite       { background: rgba(42,111,176,.15); color: #64B5F6; }
+.tone-professional { background: var(--accent-subtle); color: var(--primary); }
+.tone-firm         { background: rgba(249,168,37,.15); color: var(--warning); }
+
+.timeline-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.dot-sent    { background: var(--success); }
+.dot-pending { background: var(--n-800); border: 2px solid var(--n-500); }
+.dot-failed  { background: var(--danger); }
+
+/* Forms */
+.form-label { font-size: .8rem; font-weight: 600; color: var(--n-300); }
+.form-control, .form-select {
+  font-size: .875rem;
+  background: var(--n-900);
+  border: 1px solid var(--line);
+  color: var(--foreground);
+  border-radius: 8px;
+  padding: .625rem .875rem;
+}
+.form-control::placeholder { color: var(--n-600); }
+.form-control:focus, .form-select:focus {
+  background: var(--n-900);
+  color: var(--foreground);
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px rgba(47,111,237,.2);
+}
+.form-check-input:checked { background-color: var(--accent); border-color: var(--accent); }
+
+/* Sidebar / app shell */
+.sidebar {
+  width: var(--sidebar-w); min-height: 100vh;
+  background: var(--n-950); position: fixed; top: 0; left: 0;
+  display: flex; flex-direction: column; z-index: 100;
+  border-right: 1px solid var(--line);
+}
+.sidebar-brand { padding: 1.375rem 1.25rem 1rem; border-bottom: 1px solid var(--line); }
+.sidebar-brand a { text-decoration: none; color: var(--n-50); font-size: 1.0625rem; font-weight: 800; letter-spacing: -.02em; }
+.sidebar-brand a span { color: var(--accent-text); }
+.sidebar-company { font-family: var(--font-mono); font-size: .55rem; letter-spacing: .16em; color: var(--n-600); text-transform: uppercase; margin-top: 2px; }
+.sidebar-plan { display: inline-block; font-size: .65rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; margin-top: 6px; }
+.plan-free    { background: var(--n-800); color: var(--n-400); }
+.plan-starter { background: var(--accent-subtle); color: var(--accent); }
+.plan-pro     { background: rgba(124,58,237,.18); color: #A78BFA; }
+.sidebar nav { padding: .625rem 0; flex: 1; }
+.sidebar .nav-link { color: var(--n-500); padding: .5625rem 1.25rem; font-size: .8375rem; display: flex; align-items: center; gap: 10px; transition: color .15s, background .15s; border-left: 2px solid transparent; }
+.sidebar .nav-link:hover { color: var(--n-100); background: var(--n-900); }
+.sidebar .nav-link.active { color: var(--n-50); background: var(--accent-subtle-on-dark, rgba(19,134,107,.12)); border-left-color: var(--accent); padding-left: calc(1.25rem - 2px); }
+.nav-section-label { font-family: var(--font-mono); font-size: .62rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--n-600); padding: .875rem 1.25rem .375rem; }
+.sidebar-footer { padding: .875rem 1.25rem 1rem; border-top: 1px solid var(--line); }
+.sidebar-footer a { color: var(--n-500); font-size: .78rem; text-decoration: none; display: flex; align-items: center; gap: .5rem; padding: .25rem 0; transition: color .15s; }
+.sidebar-footer a:hover { color: var(--n-100); }
+
+.main-wrap { margin-left: var(--sidebar-w); background: var(--background); min-height: 100vh; }
+.topbar { background: var(--n-950); border-bottom: 1px solid var(--line); padding: .875rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; transition: box-shadow .2s; }
+.topbar-title { font-size: .9375rem; font-weight: 700; color: var(--foreground); }
+.topbar-user { font-size: .8rem; color: var(--muted); background: var(--n-900); border: 1px solid var(--line); padding: .375rem .875rem; border-radius: 999px; }
+.content { padding: 1.5rem; max-width: 980px; }
+
+/* Upgrade banner — flat surface, no gradient */
+.upgrade-banner { background: var(--n-900); border: 1px solid var(--line); color: var(--foreground); border-radius: var(--radius-card); padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; gap: 1rem; }
+.upgrade-banner .bi { color: var(--accent-text); }
+
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .main-wrap { margin-left: 0; }
+}
+
+/* Public marketing nav (landing, legal pages) */
+.aint-navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background .2s ease-out, border-color .2s ease-out;
+}
+.aint-navbar.scrolled { background: rgba(16,22,26,.92); border-bottom-color: var(--line); backdrop-filter: none; }
+.aint-navbar a.brand { color: var(--n-50); font-weight: 800; text-decoration: none; }
+.aint-navbar a.brand span { color: var(--accent-text); }
+.aint-nav-link {
+  position: relative; color: var(--n-300); text-decoration: none; font-size: .875rem;
+  padding-bottom: 2px;
+}
+.aint-nav-link::after {
+  content: ""; position: absolute; left: 0; bottom: -2px; height: 1px; width: 0;
+  background: var(--accent-text); transition: width .3s ease-out;
+}
+.aint-nav-link:hover { color: var(--n-50); }
+.aint-nav-link:hover::after { width: 100%; }
+
+/* Status dot (the one permitted "alive" touch) */
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; animation: aint-pulse 2s ease-in-out infinite; }
+@keyframes aint-pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+/* Scroll reveal */
+.reveal { opacity: 0; transform: translateY(12px); transition: opacity .7s ease-out, transform .7s ease-out; }
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .card-section, .stat-card, .aint-card, .btn-brand, .btn-accent, .btn-outline-brand, .icon-badge, .status-dot { transition: none; animation: none; }
+}
+
+/* Bootstrap alert overrides for dark-first surface */
+.alert { border: 1px solid var(--line); font-size: .875rem; border-radius: 10px; }
+.alert-success { background: rgba(46,125,50,.12); color: #66BB6A; border-color: rgba(46,125,50,.3); }
+.alert-danger  { background: rgba(198,40,40,.12); color: #EF5350; border-color: rgba(198,40,40,.3); }
+.alert-warning { background: rgba(249,168,37,.12); color: var(--warning); border-color: rgba(249,168,37,.3); }
+.alert-info    { background: rgba(42,111,176,.12); color: #64B5F6; border-color: rgba(42,111,176,.3); }
+.btn-close { filter: invert(1) grayscale(1) opacity(.7); }
+
+/* Section heading rhythm for marketing pages */
+.section-pad { padding: 5rem 0; }
+.text-muted-aint { color: var(--muted); }
+.section-bg-alt { background: var(--surface); }
