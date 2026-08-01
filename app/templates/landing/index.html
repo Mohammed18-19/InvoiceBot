@@ -7,24 +7,23 @@
 <meta name="description" content="InvoiceBot sends automated invoice reminders for freelancers worldwide. Set your invoice once — InvoiceBot follows up automatically until you get paid.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#080C18;
-  --navy2:#0D1220;
-  --navy3:#131929;
-  --brand:#E91E8C;
-  --brand-dark:#c4166f;
-  --brand-glow:rgba(233,30,140,0.15);
-  --text:#F1F5F9;
-  --text2:#94A3B8;
-  --text3:#64748B;
+  --navy:#10161A;
+  --navy2:#1D262B;
+  --navy3:#333F47;
+  --brand:#13866B;
+  --brand-dark:#0F6B55;
+  --text:#F7F9FA;
+  --text2:#A9B6BD;
+  --text3:#84949D;
   --border:rgba(255,255,255,0.08);
   --border2:rgba(255,255,255,0.12);
-  --surface:#0F1624;
-  --serif:'Instrument Serif',Georgia,serif;
-  --sans:'DM Sans',system-ui,sans-serif;
+  --surface:#1D262B;
+  --sans:'General Sans','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --radius:12px;
 }
 html{scroll-behavior:smooth}
@@ -40,11 +39,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,12,24,0.88
 .nav-auth{display:flex;align-items:center;gap:.75rem}
 
 .hero{padding:140px 2rem 100px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(circle,rgba(233,30,140,0.1) 0%,transparent 65%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(233,30,140,0.1);color:var(--brand);font-size:.72rem;font-weight:600;padding:.375rem .875rem;border-radius:999px;border:1px solid rgba(233,30,140,.25);margin-bottom:1.5rem;letter-spacing:.05em;text-transform:uppercase}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(19,134,107,0.1);color:var(--brand);font-size:.72rem;font-weight:600;padding:.375rem .875rem;border-radius:999px;border:1px solid rgba(19,134,107,.25);margin-bottom:1.5rem;letter-spacing:.05em;text-transform:uppercase}
 .hero-badge span{width:6px;height:6px;border-radius:50%;background:var(--brand);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.hero h1{font-family:var(--serif);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:400;line-height:1.1;max-width:800px;margin:0 auto 1.25rem;color:var(--text)}
+.hero h1{font-family:var(--sans);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;line-height:1.1;max-width:800px;margin:0 auto 1.25rem;color:var(--text)}
 .hero h1 em{font-style:italic;color:var(--brand)}
 .hero-sub{font-size:clamp(1rem,2vw,1.15rem);color:var(--text2);max-width:520px;margin:0 auto 2.5rem;font-weight:300;line-height:1.75}
 .hero-actions{display:flex;align-items:center;justify-content:center;gap:.875rem;flex-wrap:wrap;margin-bottom:3.5rem}
@@ -75,7 +73,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,12,24,0.88
 .mockup-table-row{display:grid;grid-template-columns:1fr 1.2fr .8fr .8fr;padding:.625rem .875rem;border-bottom:1px solid rgba(255,255,255,.04);align-items:center}
 .mockup-table-row:last-child{border-bottom:none}
 .mockup-table-row span{font-size:.72rem;color:var(--text)}
-.mockup-table-row .num{font-family:monospace;font-size:.66rem;color:var(--text2)}
+.mockup-table-row .num{font-family:var(--mono);font-size:.66rem;color:var(--text2)}
 .badge{display:inline-block;font-size:.6rem;font-weight:600;padding:2px 8px;border-radius:99px}
 .badge-paid{background:rgba(16,185,129,.15);color:#34d399}
 .badge-sent{background:rgba(59,130,246,.15);color:#60a5fa}
@@ -84,13 +82,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,12,24,0.88
 section{padding:100px 2rem}
 .section-inner{max-width:1100px;margin:0 auto}
 .section-label{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);margin-bottom:.875rem}
-.section-title{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;line-height:1.15;margin-bottom:1rem;color:var(--text)}
+.section-title{font-family:var(--sans);font-size:clamp(2rem,4vw,3rem);font-weight:700;line-height:1.15;margin-bottom:1rem;color:var(--text)}
 .section-sub{font-size:1.05rem;color:var(--text2);max-width:520px;line-height:1.75;font-weight:300}
 
 .how-section{background:var(--navy2)}
 .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2rem;margin-top:4rem}
 .how-card{position:relative}
-.how-number{font-family:var(--serif);font-size:4rem;font-weight:400;color:rgba(233,30,140,.15);line-height:1;margin-bottom:.75rem}
+.how-number{font-family:var(--sans);font-size:4rem;font-weight:700;color:rgba(19,134,107,.15);line-height:1;margin-bottom:.75rem}
 .how-title{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--text)}
 .how-desc{font-size:.9rem;color:var(--text2);line-height:1.7}
 .how-connector{position:absolute;top:2.5rem;right:-1rem;width:2rem;height:1px;background:var(--border)}
@@ -115,8 +113,8 @@ section{padding:100px 2rem}
 .pricing-plan{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
 .pricing-plan.free{color:var(--text2)}
 .pricing-plan.starter{color:var(--brand)}
-.pricing-plan.pro{color:#a78bfa}
-.pricing-price{font-family:var(--serif);font-size:3.25rem;font-weight:400;line-height:1;margin-bottom:.25rem;color:var(--text)}
+.pricing-plan.pro{color:#C9D2D7}
+.pricing-price{font-family:var(--sans);font-size:3.25rem;font-weight:700;line-height:1;margin-bottom:.25rem;color:var(--text)}
 .pricing-period{font-size:.8rem;color:var(--text3);margin-bottom:1.5rem}
 .pricing-features{list-style:none;display:flex;flex-direction:column;gap:.625rem;margin-bottom:2rem}
 .pricing-features li{font-size:.875rem;display:flex;align-items:center;gap:.625rem;color:var(--text2)}
@@ -128,8 +126,8 @@ section{padding:100px 2rem}
 .pricing-btn.free-btn:hover{background:rgba(255,255,255,.05)}
 .pricing-btn.starter-btn{background:var(--brand);color:#fff}
 .pricing-btn.starter-btn:hover{background:var(--brand-dark)}
-.pricing-btn.pro-btn{background:#7c3aed;color:#fff}
-.pricing-btn.pro-btn:hover{background:#6d28d9}
+.pricing-btn.pro-btn{background:#3D4E5C;color:#fff}
+.pricing-btn.pro-btn:hover{background:#4C6070}
 
 .faq-section{background:var(--navy2)}
 .faq-list{margin-top:3rem;max-width:680px}
@@ -143,8 +141,7 @@ section{padding:100px 2rem}
 
 .cta-wrap{padding:60px 2rem 100px}
 .cta-banner{background:var(--navy3);border:1px solid var(--border2);border-radius:24px;padding:5rem 3rem;text-align:center;position:relative;overflow:hidden}
-.cta-banner::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(233,30,140,0.12) 0%,transparent 70%);pointer-events:none}
-.cta-banner h2{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;color:var(--text);margin-bottom:1rem;position:relative}
+.cta-banner h2{font-family:var(--sans);font-size:clamp(2rem,4vw,3rem);font-weight:700;color:var(--text);margin-bottom:1rem;position:relative}
 .cta-banner p{font-size:1.05rem;color:var(--text2);margin-bottom:2.5rem;font-weight:300;position:relative}
 .cta-banner .btn-primary{font-size:1.05rem;padding:1rem 2.5rem;position:relative}
 
@@ -185,12 +182,12 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
   <div class="nav-inner">
     <a href="#" class="nav-logo">
       <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="22" fill="#E91E8C"/>
+        <rect width="100" height="100" rx="22" fill="#13866B"/>
         <rect x="20" y="26" width="44" height="6" rx="3" fill="white" opacity="0.95"/>
         <rect x="20" y="38" width="30" height="5" rx="2.5" fill="white" opacity="0.55"/>
         <rect x="20" y="51" width="44" height="5" rx="2.5" fill="white" opacity="0.95"/>
         <rect x="20" y="63" width="24" height="5" rx="2.5" fill="white" opacity="0.55"/>
-        <circle cx="72" cy="70" r="16" fill="#080C18" opacity="0.9"/>
+        <circle cx="72" cy="70" r="16" fill="#10161A" opacity="0.9"/>
         <path d="M65 70 L70 75 L79 63" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       <span>InvoiceBot</span>
@@ -247,7 +244,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
             <div class="mockup-stat-value">1</div>
             <div class="mockup-stat-sub">Reminder sent</div>
           </div>
-          <div class="mockup-stat" style="border-left-color:#a78bfa">
+          <div class="mockup-stat" style="border-left-color:#3D4E5C">
             <div class="mockup-stat-label">Reminders sent</div>
             <div class="mockup-stat-value">9</div>
             <div class="mockup-stat-sub">This month</div>
@@ -313,7 +310,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
       </div>
     </div>
 
-    <div style="background:rgba(233,30,140,.06);border:1px solid rgba(233,30,140,.2);border-radius:var(--radius);padding:1.5rem 2rem;text-align:center;margin-bottom:3rem">
+    <div style="background:rgba(19,134,107,.06);border:1px solid rgba(19,134,107,.2);border-radius:var(--radius);padding:1.5rem 2rem;text-align:center;margin-bottom:3rem">
       <p style="font-size:1rem;color:var(--text2);font-weight:300">InvoiceBot automatically follows up on overdue invoices — in the right language — <strong style="color:var(--text);font-weight:600">until you mark the invoice as paid.</strong></p>
     </div>
 
@@ -323,7 +320,7 @@ footer{padding:3rem 2rem;border-top:1px solid var(--border)}
           <div style="font-size:.8rem;font-weight:600;color:var(--text)">Invoice #47</div>
           <div style="font-size:.7rem;color:var(--text3);margin-top:2px">Due: March 18, 2026 · 14 days ago</div>
         </div>
-        <div style="font-size:1.5rem;font-weight:600;color:var(--text);font-family:var(--serif)">€2,000</div>
+        <div style="font-size:1.5rem;font-weight:600;color:var(--text);font-family:var(--sans);font-weight:700">€2,000</div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr)">
         <div style="padding:1.1rem .75rem;text-align:center;border-right:1px solid var(--border)">
