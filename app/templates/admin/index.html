@@ -5,10 +5,10 @@
 {% block content %}
 
 <!-- MRR Banner -->
-<div style="background:linear-gradient(135deg,#0A0F1E,#1a0a14);border:1px solid rgba(233,30,140,.3);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+<div style="background:#1D262B;border:1px solid rgba(19,134,107,.3);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
   <div>
     <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:.25rem;">Monthly Recurring Revenue</div>
-    <div style="font-size:2rem;font-weight:800;color:#E91E8C;">${{ stats.mrr }}<span style="font-size:.875rem;font-weight:400;color:rgba(255,255,255,.4);">/mo</span></div>
+    <div style="font-size:2rem;font-weight:800;color:#13866B;">${{ stats.mrr }}<span style="font-size:.875rem;font-weight:400;color:rgba(255,255,255,.4);">/mo</span></div>
   </div>
   <div style="display:flex;gap:1.5rem;">
     <div class="text-center">
@@ -16,7 +16,7 @@
       <div style="font-size:.72rem;color:rgba(255,255,255,.4);">Starter ($10)</div>
     </div>
     <div class="text-center">
-      <div style="font-size:1.25rem;font-weight:800;color:#a78bfa;">{{ stats.pro_count }}</div>
+      <div style="font-size:1.25rem;font-weight:800;color:#C9D2D7;">{{ stats.pro_count }}</div>
       <div style="font-size:.72rem;color:rgba(255,255,255,.4);">Pro ($20)</div>
     </div>
     <div class="text-center">
@@ -28,7 +28,7 @@
   <form action="{{ url_for('admin.trigger_emails') }}" method="POST">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <button type="submit" class="btn btn-sm px-3 py-2"
-            style="background:rgba(233,30,140,.2);color:#E91E8C;border:1px solid rgba(233,30,140,.3);border-radius:8px;font-weight:600;font-size:.8rem;">
+            style="background:rgba(19,134,107,.2);color:#13866B;border:1px solid rgba(19,134,107,.3);border-radius:8px;font-weight:600;font-size:.8rem;">
       ▶ Trigger emails now
     </button>
   </form>

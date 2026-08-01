@@ -37,7 +37,7 @@
         {% if current_user.plan == 'free' %}
         <div class="mt-4 text-center">
           <span class="badge px-3 py-2"
-                style="background:rgba(233,30,140,.1);color:var(--brand);font-size:.75rem;border-radius:20px;">
+                style="background:rgba(19,134,107,.1);color:var(--brand);font-size:.75rem;border-radius:20px;">
             ✓ Current plan
           </span>
         </div>
@@ -48,7 +48,7 @@
 
     <!-- STARTER -->
     <div class="col-md-4">
-      <div class="card-section h-100" style="border:2px solid #E91E8C;position:relative;">
+      <div class="card-section h-100" style="border:2px solid #13866B;position:relative;">
 
         <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);">
           <span style="background:var(--brand);color:#fff;font-size:.68rem;font-weight:700;padding:3px 12px;border-radius:20px;">
@@ -89,7 +89,7 @@
           {% if current_user.plan == 'starter' %}
           <div class="text-center">
             <span class="badge px-3 py-2"
-                  style="background:rgba(233,30,140,.1);color:var(--brand);font-size:.75rem;border-radius:20px;">
+                  style="background:rgba(19,134,107,.1);color:var(--brand);font-size:.75rem;border-radius:20px;">
               ✓ Current plan
             </span>
           </div>
@@ -120,7 +120,7 @@
     <div class="col-md-4">
       <div class="card-section h-100">
 
-        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#7c3aed;margin-bottom:.5rem;">
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#3D4E5C;margin-bottom:.5rem;">
           Pro
         </div>
 
@@ -143,7 +143,7 @@
           {% if current_user.plan == "pro" %}
           <div class="text-center">
             <span class="badge px-3 py-2 d-block mb-3"
-                  style="background:rgba(124,58,237,.1);color:#7c3aed;font-size:.75rem;border-radius:20px;">
+                  style="background:rgba(61,78,92,.1);color:#3D4E5C;font-size:.75rem;border-radius:20px;">
               ✓ Current plan
             </span>
             <a href="{{ url_for('billing.cancel') }}"
@@ -157,7 +157,7 @@
           <a href="{{ pro_url }}?checkout[custom][user_id]={{ current_user.id }}&checkout[custom][user_email]={{ current_user.email }}"
              class="btn w-100 py-2"
              target="_blank"
-             style="background:#7c3aed;color:#fff;font-weight:700;border:none;border-radius:8px;">
+             style="background:#3D4E5C;color:#fff;font-weight:700;border:none;border-radius:8px;">
             Upgrade to Pro →
           </a>
 

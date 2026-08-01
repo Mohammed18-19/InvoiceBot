@@ -126,14 +126,14 @@
 </div>
 
 <style>
-  input[type="radio"].tone-radio:checked + .tone-card { border-color:#E91E8C !important; background:rgba(233,30,140,.04); }
+  input[type="radio"].tone-radio:checked + .tone-card { border-color:#13866B !important; background:rgba(19,134,107,.04); }
 </style>
 {% block extra_js %}
 <script>
   document.querySelectorAll('.tone-radio').forEach(r => {
     r.addEventListener('change', () => {
       document.querySelectorAll('.tone-card').forEach(c => { c.style.borderColor='#e2e8f0'; c.style.background=''; });
-      if(r.checked){ r.nextElementSibling.style.borderColor='#E91E8C'; r.nextElementSibling.style.background='rgba(233,30,140,.04)'; }
+      if(r.checked){ r.nextElementSibling.style.borderColor='#13866B'; r.nextElementSibling.style.background='rgba(19,134,107,.04)'; }
     });
   });
 </script>

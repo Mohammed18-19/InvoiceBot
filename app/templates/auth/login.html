@@ -1,18 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Sign in — InvoiceBot
-    <p class="text-center mt-2" style="font-size:.8rem;">
-      <a href="{{ url_for('main.landing') }}" style="color:rgba(255,255,255,.3);">← Back to home</a>
-    </p>
-{% endblock %}
+{% block title %}Sign in — InvoiceBot{% endblock %}
 
 {% block auth_content %}
-<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background:var(--background);padding:1rem;">
+<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background:#10161A;padding:1rem;">
   <div style="width:100%;max-width:420px;">
     <div class="text-center mb-4">
-      <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
-        <img src="{{ url_for('static', filename='img/aintora-mark.png') }}" alt="AINTORA SYSTEMS" style="height:28px;width:auto;"/>
-        <h1 style="font-size:1.75rem;font-weight:800;color:#fff;letter-spacing:-.02em;margin:0;">Invoice<span style="color:var(--accent);">Bot</span></h1>
-      </div>
+      <h1 style="font-size:1.75rem;font-weight:800;color:#fff;letter-spacing:-.02em;">Invoice<span style="color:#13866B;">Bot</span></h1>
       <div style="font-size:.6rem;letter-spacing:.16em;color:rgba(255,255,255,.25);text-transform:uppercase;margin-top:3px;">AINTORA SYSTEMS</div>
       <p style="font-size:.875rem;color:rgba(255,255,255,.4);margin-top:.75rem;">Stop chasing. Start automating.</p>
     </div>
@@ -23,13 +16,13 @@
       {% endfor %}
     {% endwith %}
 
-    <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:2rem;">
+    <div style="background:#111827;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:2rem;">
       <h2 style="font-size:1.125rem;font-weight:700;color:#fff;margin-bottom:1.5rem;">Sign in to your account</h2>
       <form method="POST">
         {{ form.hidden_tag() }}
         <div class="mb-3">
           <label style="font-size:.8rem;font-weight:600;color:rgba(255,255,255,.55);display:block;margin-bottom:.375rem;">Email</label>
-          {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="you@example.com", style="background:var(--background);border-color:rgba(255,255,255,.1);color:#fff;padding:.75rem 1rem;border-radius:8px;") }}
+          {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="you@example.com", style="background:#10161A;border-color:rgba(255,255,255,.1);color:#fff;padding:.75rem 1rem;border-radius:8px;") }}
           {% for e in form.email.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
         </div>
         <div class="mb-4">
@@ -37,24 +30,20 @@
             <label style="font-size:.8rem;font-weight:600;color:rgba(255,255,255,.55);">Password</label>
             <a href="{{ url_for('auth.forgot_password') }}" style="font-size:.75rem;color:rgba(255,255,255,.35);">Forgot password?</a>
           </div>
-          {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="••••••••", style="background:var(--background);border-color:rgba(255,255,255,.1);color:#fff;padding:.75rem 1rem;border-radius:8px;") }}
+          {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="••••••••", style="background:#10161A;border-color:rgba(255,255,255,.1);color:#fff;padding:.75rem 1rem;border-radius:8px;") }}
           {% for e in form.password.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
         </div>
         <div class="mb-4 d-flex align-items-center gap-2">
-          {{ form.remember(class="form-check-input", style="background:var(--background);border-color:rgba(255,255,255,.2);") }}
+          {{ form.remember(class="form-check-input", style="background:#10161A;border-color:rgba(255,255,255,.2);") }}
           <label style="font-size:.8rem;color:rgba(255,255,255,.4);cursor:pointer;">Remember me for 30 days</label>
         </div>
-        <button type="submit" class="btn w-100 py-3" style="background:var(--accent);color:#fff;font-weight:700;font-size:.95rem;border-radius:8px;border:none;">Sign in →</button>
+        <button type="submit" class="btn w-100 py-3" style="background:#13866B;color:#fff;font-weight:700;font-size:.95rem;border-radius:8px;border:none;">Sign in →</button>
       </form>
     </div>
 
     <p class="text-center mt-3" style="font-size:.875rem;color:rgba(255,255,255,.3);">
-      No account yet? <a href="{{ url_for('auth.register') }}" style="color:var(--accent);font-weight:600;">Create one free →</a>
+      No account yet? <a href="{{ url_for('auth.register') }}" style="color:#13866B;font-weight:600;">Create one free →</a>
     </p>
   </div>
 </div>
-
-    <p class="text-center mt-2" style="font-size:.8rem;">
-      <a href="{{ url_for('main.landing') }}" style="color:rgba(255,255,255,.3);">← Back to home</a>
-    </p>
 {% endblock %}

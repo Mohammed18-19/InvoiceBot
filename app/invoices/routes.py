@@ -283,7 +283,7 @@ def export_pdf():
         elements = []
 
         # Title
-        title_style = ParagraphStyle("title", fontSize=20, textColor=colors.HexColor("#E91E8C"), spaceAfter=4)
+        title_style = ParagraphStyle("title", fontSize=20, textColor=colors.HexColor("#13866B"), spaceAfter=4)
         elements.append(Paragraph("InvoiceBot Report", title_style))
         meta = f"{current_user.name or current_user.email} · Generated {date.today().strftime('%B %d, %Y')}"
         elements.append(Paragraph(meta, ParagraphStyle("meta", fontSize=9, textColor=colors.HexColor("#64748b"), spaceAfter=20)))

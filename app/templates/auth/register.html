@@ -32,7 +32,8 @@
     position: absolute;
     top: -120px; left: -120px;
     width: 480px; height: 480px;
-    background: radial-gradient(circle, rgba(233,30,140,.18) 0%, transparent 70%);
+    background: rgba(19,134,107,.06);
+    border-radius: 50%;
     pointer-events: none;
   }
 
@@ -41,14 +42,15 @@
     position: absolute;
     bottom: -80px; right: -80px;
     width: 320px; height: 320px;
-    background: radial-gradient(circle, rgba(99,102,241,.12) 0%, transparent 70%);
+    background: rgba(61,78,92,.08);
+    border-radius: 50%;
     pointer-events: none;
   }
 
   .reg-brand {
     font-size: .6rem;
     letter-spacing: .2em;
-    color: #E91E8C;
+    color: #13866B;
     text-transform: uppercase;
     font-weight: 700;
     margin-bottom: 2.5rem;
@@ -61,7 +63,7 @@
     content: '';
     display: inline-block;
     width: 18px; height: 2px;
-    background: #E91E8C;
+    background: #13866B;
   }
 
   .reg-headline {
@@ -76,7 +78,7 @@
 
   .reg-headline em {
     font-style: normal;
-    color: #E91E8C;
+    color: #13866B;
   }
 
   .reg-sub {
@@ -115,7 +117,7 @@
   .reg-feature-dot {
     width: 6px; height: 6px;
     border-radius: 50%;
-    background: #E91E8C;
+    background: #13866B;
     flex-shrink: 0;
   }
 
@@ -211,8 +213,8 @@
   .reg-input::placeholder { color: rgba(255,255,255,.2); }
 
   .reg-input:focus {
-    border-color: #E91E8C;
-    background: rgba(233,30,140,.04);
+    border-color: #13866B;
+    background: rgba(19,134,107,.04);
   }
 
   .reg-input.is-invalid {
@@ -228,7 +230,7 @@
   .reg-submit {
     width: 100%;
     padding: .9rem;
-    background: #E91E8C;
+    background: #13866B;
     color: #fff;
     font-family: 'DM Sans', sans-serif;
     font-size: .9rem;
@@ -242,15 +244,7 @@
     overflow: hidden;
   }
 
-  .reg-submit::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,.1), transparent);
-    pointer-events: none;
-  }
-
-  .reg-submit:hover { background: #d4186f; }
+  .reg-submit:hover { background: #0F6B55; }
   .reg-submit:active { transform: scale(.99); }
 
   .reg-disclaimer {
@@ -268,7 +262,7 @@
   }
 
   .reg-signin a {
-    color: #E91E8C;
+    color: #13866B;
     font-weight: 600;
     text-decoration: none;
   }
